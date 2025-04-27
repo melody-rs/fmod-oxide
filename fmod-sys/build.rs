@@ -34,9 +34,32 @@ fn find_fmod_directory() -> PathBuf {
         return out_path;
     }
 
-    std::env::var_os("FMOD_SYS_FMOD_DIRECTORY")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fmod"))
+    println!("cargo:rerun-if-env-changed=FMOD_SYS_FMOD_DIRECTORY");
+    if let Some(fmod_dir) = std::env::var_os("FMOD_SYS_FMOD_DIRECTORY") {
+        let fmod_dir = PathBuf::from(fmod_dir);
+        if !fmod_dir.is_absolute() {
+            panic!(
+                "FMOD_SYS_FMOD_DIRECTORY should be an absolute path, but it is a relative path: {}",
+                fmod_dir.display()
+            );
+        }
+        if fmod_dir.exists() {
+            return fmod_dir;
+        } else {
+            panic!(
+                "FMOD_SYS_FMOD_DIRECTORY set to {:?}, but fmod directory not found there",
+                fmod_dir
+            );
+        }
+    }
+
+    // try to find it in _our_ crate root (useful for hacking on this fmod-audio-sys crate)
+    let in_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fmod");
+    if in_dir.exists() {
+        return in_dir;
+    }
+
+    panic!("fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation");
 }
 
 fn main() {
