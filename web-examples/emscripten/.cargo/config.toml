@@ -1,0 +1,2 @@
+[env]
+EMCC_CFLAGS="-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue" # FMOD requires this

@@ -1,4 +1,4 @@
 /.cargo/config.toml
-/fmod
+/fmod-sys/fmod
 /target/
 fmod-sys/docs/documentation.rs

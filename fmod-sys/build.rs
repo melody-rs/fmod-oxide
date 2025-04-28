@@ -33,7 +33,9 @@ fn find_fmod_directory() -> PathBuf {
         return in_dir;
     }
 
-    panic!("fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation");
+    panic!(
+        "fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation"
+    );
 }
 
 #[cfg(not(windows))]
@@ -69,7 +71,9 @@ fn find_fmod_directory() -> PathBuf {
         return in_dir;
     }
 
-    panic!("fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation");
+    panic!(
+        "fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation"
+    );
 }
 
 fn main() {
@@ -96,7 +100,7 @@ fn main() {
     println!("cargo:rerun-if-changed=\"{api_dir_display}/core/inc\"");
     println!("cargo:rerun-if-changed=\"{api_dir_display}/studio/inc\"");
 
-    let bindgen = bindgen::builder()
+    let mut bindgen = bindgen::builder()
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .clang_arg(format!("-I{api_dir_display}/core/inc"))
         .clang_arg(format!("-I{api_dir_display}/studio/inc"))
@@ -111,23 +115,28 @@ fn main() {
         .prepend_enum_name(false) // fmod already does this
         .header("src/wrapper.h");
 
-    #[cfg(target_arch = "x86")]
-    let target_arch = "x86";
-    #[cfg(all(target_arch = "x86_64", not(windows)))]
-    let target_arch = "x86_64";
-    #[cfg(all(target_arch = "x86_64", windows))]
-    let target_arch = "x64";
+    let build_is_windows = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "windows");
+    let build_is_wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "wasm32");
+    let build_is_emscripten =
+        std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "emscripten");
+    let build_is_macos = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "macos");
+
+    let build_is_x86 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86");
+    let build_is_x86_64 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86_64");
 
     let include_debug = cfg!(any(debug_assertions, feature = "force-debug"));
     let debug_char = if include_debug { "L" } else { "" };
+
+    if build_is_wasm {
+        bindgen = bindgen.clang_arg("-fvisibility=default")
+    }
 
     // On macOS the fmod library uses @rpath to find the dylib and the following doesn't work:
     // println!("cargo:rustc-link-args='-rpath {api_dir_display}/core/lib'");
     // Therefore, as workaround, copy the libraries to OUT_DIR before the build.
     // Note: you will probably have to run `xattr -d com.apple.quarantine` on all the `.dylib`s
     // in the fmod installation folder.
-    #[cfg(target_os = "macos")]
-    {
+    if build_is_macos {
         let corelib = format!("libfmod{debug_char}.dylib");
         fs::copy(
             api_dir.join("core").join("lib").join(&corelib),
@@ -143,26 +152,57 @@ fn main() {
         .expect("failed to copy studio lib");
     }
 
-    #[cfg(not(target_os = "macos"))]
-    {
+    // due to some weird shenanigans I can't figure out how to turn off, the linker searches for lib<library name> instead of just accepting the library name
+    if build_is_wasm {
+        fs::copy(
+            api_dir.join("studio/lib/upstream/w32/fmodstudio_wasm.a"),
+            api_dir.join("studio/lib/upstream/w32/libfmodstudio_wasm.a"),
+        )
+        .expect("failed to copy studio lib");
+    }
+
+    // FIXME: We should be setting this var ourselves.
+    // Using std::env::set_var doesn't work, nor does doing it through cargo:rustc-env.
+    if build_is_emscripten {
+        let needed_emcc_flags = "-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue";
+        let has_needed_args = match std::env::var("EMCC_CFLAGS") {
+            Ok(value) => value.contains(needed_emcc_flags),
+            Err(_) => false,
+        };
+        if !has_needed_args {
+            println!("cargo::error=EMCC_CFLAGS must include {needed_emcc_flags:?}!")
+        }
+    }
+
+    if build_is_wasm {
+        // studio includes core on this platform, so no need to link against it
+        println!("cargo:rustc-link-search={api_dir_display}/studio/lib/upstream/w32");
+    } else if build_is_macos {
+        println!("cargo:rustc-link-search={api_dir_display}/core/lib");
+        println!("cargo:rustc-link-search={api_dir_display}/studio/lib");
+    } else {
+        let target_arch = if build_is_x86_64 && !build_is_windows {
+            "x86_64"
+        } else if build_is_x86_64 {
+            "x64"
+        } else if build_is_x86 {
+            "x86"
+        } else {
+            todo!()
+        };
         println!("cargo:rustc-link-search={api_dir_display}/core/lib/{target_arch}");
         println!("cargo:rustc-link-search={api_dir_display}/studio/lib/{target_arch}");
     }
-    #[cfg(target_os = "macos")]
-    {
-        println!("cargo:rustc-link-search={api_dir_display}/core/lib");
-        println!("cargo:rustc-link-search={api_dir_display}/studio/lib");
-    }
 
-    #[cfg(not(windows))]
-    {
-        println!("cargo:rustc-link-lib=fmod{debug_char}");
-        println!("cargo:rustc-link-lib=fmodstudio{debug_char}");
-    }
-    #[cfg(windows)]
-    {
+    if build_is_wasm {
+        // studio includes core on this platform, so no need to link against it
+        println!("cargo:rustc-link-lib=fmodstudio_wasm");
+    } else if build_is_windows {
         println!("cargo:rustc-link-lib=fmod{debug_char}_vc");
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}_vc");
+    } else {
+        println!("cargo:rustc-link-lib=fmod{debug_char}");
+        println!("cargo:rustc-link-lib=fmodstudio{debug_char}");
     }
 
     let bindings = bindgen.generate().expect("failed to generate bindings");
@@ -189,13 +229,17 @@ fn main() {
         .cpp_link_stdlib(None)
         .cpp_set_stdlib(None)
         .include(format!("{api_dir_display}/core/inc"))
+        .flag_if_supported("-Wunused-command-line-argument") // TODO figure out why this warning is raised
         .file("src/channel_control.cpp");
-    #[cfg(target_os = "windows")]
-    {
-        #[cfg(target_arch = "x86_64")]
-        let target = "x86_64-pc-windows-msvc";
-        #[cfg(target_arch = "x86")]
-        let target = "i686-pc-windows-msvc";
+
+    if build_is_windows {
+        let target = if build_is_x86_64 {
+            "x86_64-pc-windows-msvc"
+        } else if build_is_x86 {
+            "i686-pc-windows-msvc"
+        } else {
+            todo!()
+        };
         let tool = cc::windows_registry::find_tool(target, "cl.exe").expect("failed to find cl");
         build.compiler(tool.path());
     }

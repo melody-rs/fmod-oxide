@@ -1,0 +1,11 @@
+cargo-features = ["per-package-target"]
+
+[package]
+name = "wasm-emscripten"
+version = "0.1.0"
+edition = "2021"
+publish = false
+forced-target = "wasm32-unknown-emscripten"
+
+[dependencies]
+fmod-oxide = { version = "2.2.0-pre.4", path = "../../fmod-oxide" }
