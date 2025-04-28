@@ -1,5 +1,0 @@
-[env]
-FMOD_SYS_FMOD_DIRECTORY = { value = "../fmod-2.0.22/", relative = true }
-
-[alias]
-xtask = "run --package xtask --"
