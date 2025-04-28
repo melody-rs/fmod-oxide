@@ -2,6 +2,12 @@ use std::{fs, path::PathBuf};
 
 #[cfg(windows)]
 fn find_fmod_directory() -> PathBuf {
+    if let Some(override_dir) = std::env::var_os("FMOD_SYS_FMOD_DIRECTORY").map(PathBuf::from) {
+        if override_dir.exists() {
+            return path;
+        }
+    }
+
     for drive in ["C", "D"] {
         let test_path = PathBuf::from(format!(
             "{drive}:/Program Files (x86)/FMOD SoundSystem/FMOD Studio API Windows"
@@ -21,9 +27,13 @@ fn find_fmod_directory() -> PathBuf {
         }
     }
 
-    std::env::var_os("FMOD_SYS_FMOD_DIRECTORY")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fmod"))
+    // try to find it in _our_ crate root (useful for hacking on this fmod-audio-sys crate)
+    let in_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("fmod");
+    if in_dir.exists() {
+        return in_dir;
+    }
+
+    panic!("fmod directory not found; set FMOD_SYS_FMOD_DIRECTORY to the path of the fmod installation");
 }
 
 #[cfg(not(windows))]

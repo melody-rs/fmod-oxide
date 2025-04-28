@@ -11,6 +11,32 @@ This means that for some functions/use cases I haven't gotten the API down quite
 Almost all of the crate is feature complete though. 
 I need to add support for more FMOD versions, and double check the safety of everything before I'm confident releasing this as anything but a beta.
 
+### Using this crate
+
+Due to licensing restrictions this crate can't bundle FMOD, so you'll need to [download](https://www.fmod.com/download) a copy of FMOD yourself.
+
+Make sure to download from `FMOD Engine` specifically.
+![https://github.com/melody-rs/fmod-oxide/blob/main/images/download_page.png]
+
+After downloading FMOD, you have to tell this crate where FMOD is located.
+**If you're on Windows and used the FMOD installer, you don't have to worry about this.**
+
+The easiest way is to use to create cargo config in your project's root.
+`.cargo/config.toml`:
+```toml
+[env]
+FMOD_SYS_FMOD_DIRECTORY = { value = "<absolute install path here>" }
+```
+You can also specify a relative install path like so:
+`.cargo/config.toml`:
+```toml
+[env]
+FMOD_SYS_FMOD_DIRECTORY = { value = "<install path here>", relative = true }
+```
+
+Alternatively, you can specify `FMOD_SYS_FMOD_DIRECTORY` when building your project: (not recommended because rust-analyzer won't know this)
+`FMOD_SYS_FMOD_DIRECTORY=<path> cargo run`
+
 ### Docs
 
 Most documentation is copied directly from the FMOD docs, however some information (such as parameter values) are excluded.
@@ -45,7 +71,7 @@ Luckily all FMOD functions return UTF-8 strings so this isn't really a problem i
 I'm trying to make these bindings as safe as possible, if you find UB please report it!
 There are a couple cases related to thread safety (You can initialize FMOD to be thread unsafe) and panics that I am aware of and actively trying to fix.
 
-Right now there are a some fns marked as unsafe that I'm not sure how to get working safely. 
+Right now there are some fns marked as unsafe that I'm not sure how to get working safely. 
 System creation, initialization, and cleanup is a pretty big one- creating a system is really unsafe, and certain functions can only be called before or after system creation.
 Releasing a system is probably the most unsafe operation of all though, as it invalidates all FMOD handles associated with that system!
 
