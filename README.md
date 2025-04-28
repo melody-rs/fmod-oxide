@@ -37,6 +37,34 @@ FMOD_SYS_FMOD_DIRECTORY = { value = "<install path here>", relative = true }
 Alternatively, you can specify `FMOD_SYS_FMOD_DIRECTORY` when building your project: (not recommended because rust-analyzer won't know this)
 `FMOD_SYS_FMOD_DIRECTORY=<path> cargo run`
 
+This crate doesn't support target-specific FMOD installs yet, but it does support cross compilation.
+
+### Using with webassembly
+
+Currently only `wasm32-unknown-emscripten` I know to work, but I can't verify that `wasm32-unknown-unknown` works.
+Unfortunately `wasm-bindgen` doesn't work right now, so your milage may vary.
+
+The setup is roughly the same, except you'll need to add some arguments `EMCC_FLAGS`. 
+You can do this by editing `.cargo/config.toml`:
+
+```toml
+[env]
+EMCC_CFLAGS="-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue" # FMOD requires this
+```
+
+If you're using `wasm32-unknown-unknown`, you'll additionally need to add this until [this issue](https://github.com/rust-lang/rust/issues/138762) is closed.
+```toml
+[build]
+rustflags="-Zwasm-c-abi=spec"
+```
+
+See [`web-examples/emscripten`](web-examples/emscripten) for a more detailed example.
+
+### Running Examples
+
+Examples expect FMOD to be installed inside `fmod-sys/fmod`. 
+You may see an error like `Error: Error { code: FMOD_RESULT(18), message: "File not found." }` if you don't do that!
+
 ### Docs
 
 Most documentation is copied directly from the FMOD docs, however some information (such as parameter values) are excluded.
