@@ -345,7 +345,7 @@ impl<'a> From<&'a Utf8CString> for Cow<'a, Utf8CStr> {
     }
 }
 
-impl<'a> From<Utf8CString> for Cow<'a, Utf8CStr> {
+impl From<Utf8CString> for Cow<'_, Utf8CStr> {
     fn from(value: Utf8CString) -> Self {
         Self::Owned(value)
     }

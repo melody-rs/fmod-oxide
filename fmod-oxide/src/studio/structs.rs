@@ -388,7 +388,7 @@ pub struct SoundInfo<'a> {
     pub subsound_index: c_int,
 }
 
-impl<'a> SoundInfo<'a> {
+impl SoundInfo<'_> {
     /// Create a safe [`SoundInfo`] struct from the FFI equivalent.
     ///
     /// # Safety

@@ -823,7 +823,7 @@ impl<'a> SoundBuilder<'a> {
     }
 }
 
-impl<'a> SoundBuilder<'a> {
+impl SoundBuilder<'_> {
     /// # Safety
     ///
     /// The mode must match the required fields of the [`FMOD_CREATESOUNDEXINFO`] struct.
