@@ -16,7 +16,7 @@ I need to add support for more FMOD versions, and double check the safety of eve
 Due to licensing restrictions this crate can't bundle FMOD, so you'll need to [download](https://www.fmod.com/download) a copy of FMOD yourself.
 
 Make sure to download from `FMOD Engine` specifically.
-![https://github.com/melody-rs/fmod-oxide/blob/main/images/download_page.png]
+![Download page screenshot](images/download_page.png?raw=true)
 
 After downloading FMOD, you have to tell this crate where FMOD is located.
 **If you're on Windows and used the FMOD installer, you don't have to worry about this.**
