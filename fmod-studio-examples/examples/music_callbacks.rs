@@ -96,15 +96,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.strings.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     let result = system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Music.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Music.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     );
     if let Err(e) = result {

@@ -11,7 +11,7 @@ use crossterm::{
     terminal::*,
 };
 
-use fmod::{c, studio::EventInstanceCallback, Utf8CStr};
+use fmod::{Utf8CStr, c, studio::EventInstanceCallback};
 use std::{io::Write, sync::Mutex};
 
 pub struct ProgrammerSoundContext {
@@ -73,22 +73,23 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.strings.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/SFX.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/SFX.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
 
     let mut bank_index = 0;
     const BANKS: [&str; 3] = ["Dialogue_EN.bank", "Dialogue_JP.bank", "Dialogue_CN.bank"];
 
-    let bank_path = "fmod/api/studio/examples/media/".to_string() + BANKS[bank_index] + "\0";
+    let bank_path =
+        "fmod-sys/fmod/api/studio/examples/media/".to_string() + BANKS[bank_index] + "\0";
     let bank_path = Utf8CStr::from_str_with_nul(&bank_path).unwrap();
 
     let mut localized_bank =
@@ -138,8 +139,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     localized_bank.unload()?;
 
                     bank_index = if bank_index < 2 { bank_index + 1 } else { 0 };
-                    let bank_path =
-                        "fmod/api/studio/examples/media/".to_string() + BANKS[bank_index] + "\0";
+                    let bank_path = "fmod-sys/fmod/api/studio/examples/media/".to_string()
+                        + BANKS[bank_index]
+                        + "\0";
                     let bank_path = Utf8CStr::from_str_with_nul(&bank_path).unwrap();
 
                     localized_bank =

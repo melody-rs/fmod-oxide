@@ -31,15 +31,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/Master.strings.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod/api/studio/examples/media/SFX.bank"),
+        c!("fmod-sys/fmod/api/studio/examples/media/SFX.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
 
