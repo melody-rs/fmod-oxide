@@ -25,8 +25,15 @@ unsafe impl Send for Reverb3D {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Reverb3D {}
 
-impl From<*mut FMOD_REVERB3D> for Reverb3D {
-    fn from(value: *mut FMOD_REVERB3D) -> Self {
+impl Reverb3D {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_REVERB3D) -> Self {
         let inner = NonNull::new(value).unwrap();
         Reverb3D { inner }
     }

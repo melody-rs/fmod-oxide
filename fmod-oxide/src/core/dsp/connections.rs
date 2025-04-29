@@ -25,8 +25,8 @@ impl Dsp {
                 kind.into(),
             )
             .to_result()?;
-        };
-        Ok(connection.into())
+            Ok(DspConnection::from_ffi(connection))
+        }
     }
 
     /// Retrieves the [`Dsp`] unit at the specified index in the input list.
@@ -38,9 +38,15 @@ impl Dsp {
         let mut connection = std::ptr::null_mut();
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetInput(self.inner.as_ptr(), index, &raw mut dsp, &raw mut connection).to_result()?;
-        };
-        Ok((dsp.into(), connection.into()))
+            FMOD_DSP_GetInput(
+                self.inner.as_ptr(),
+                index,
+                &raw mut dsp,
+                &raw mut connection,
+            )
+            .to_result()?;
+            Ok((Dsp::from_ffi(dsp), DspConnection::from_ffi(connection)))
+        }
     }
 
     /// Retrieves the [`Dsp`] unit at the specified index in the output list.
@@ -52,10 +58,15 @@ impl Dsp {
         let mut connection = std::ptr::null_mut();
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetOutput(self.inner.as_ptr(), index, &raw mut dsp, &raw mut connection)
-                .to_result()?;
-        };
-        Ok((dsp.into(), connection.into()))
+            FMOD_DSP_GetOutput(
+                self.inner.as_ptr(),
+                index,
+                &raw mut dsp,
+                &raw mut connection,
+            )
+            .to_result()?;
+            Ok((Dsp::from_ffi(dsp), DspConnection::from_ffi(connection)))
+        }
     }
 
     /// Retrieves the number of [`Dsp`] units in the input list.

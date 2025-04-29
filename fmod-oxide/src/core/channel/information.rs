@@ -32,7 +32,7 @@ impl Channel {
         Ok(if sound.is_null() {
             None
         } else {
-            Some(sound.into())
+            Some(unsafe { Sound::from_ffi(sound) })
         })
     }
 

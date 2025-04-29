@@ -28,8 +28,15 @@ unsafe impl Send for Sound {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Sound {}
 
-impl From<*mut FMOD_SOUND> for Sound {
-    fn from(value: *mut FMOD_SOUND) -> Self {
+impl Sound {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_SOUND) -> Self {
         let inner = NonNull::new(value).unwrap();
         Sound { inner }
     }

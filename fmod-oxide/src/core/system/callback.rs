@@ -57,34 +57,36 @@ impl ErrorCallbackInfo<'_> {
             instance: match value.instancetype {
                 FMOD_ERRORCALLBACK_INSTANCETYPE_NONE => Instance::None,
                 FMOD_ERRORCALLBACK_INSTANCETYPE_SYSTEM => {
-                    Instance::System(System::from(value.instance.cast()))
+                    Instance::System(unsafe { System::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNEL => {
-                    Instance::Channel(Channel::from(value.instance.cast()))
+                    Instance::Channel(unsafe { Channel::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELGROUP => {
-                    Instance::ChannelGroup(ChannelGroup::from(value.instance.cast()))
+                    Instance::ChannelGroup(unsafe { ChannelGroup::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELCONTROL => {
-                    Instance::ChannelControl(ChannelControl::from(value.instance.cast()))
+                    Instance::ChannelControl(unsafe {
+                        ChannelControl::from_ffi(value.instance.cast())
+                    })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_SOUND => {
-                    Instance::Sound(Sound::from(value.instance.cast()))
+                    Instance::Sound(unsafe { Sound::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_SOUNDGROUP => {
-                    Instance::SoundGroup(SoundGroup::from(value.instance.cast()))
+                    Instance::SoundGroup(unsafe { SoundGroup::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_DSP => {
-                    Instance::Dsp(Dsp::from(value.instance.cast()))
+                    Instance::Dsp(unsafe { Dsp::from_ffi(value.instance.cast()) })
                 }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_DSPCONNECTION => {
-                    Instance::DspConnection(DspConnection::from(value.instance.cast()))
-                }
+                FMOD_ERRORCALLBACK_INSTANCETYPE_DSPCONNECTION => Instance::DspConnection(unsafe {
+                    DspConnection::from_ffi(value.instance.cast())
+                }),
                 FMOD_ERRORCALLBACK_INSTANCETYPE_GEOMETRY => {
-                    Instance::Geometry(Geometry::from(value.instance.cast()))
+                    Instance::Geometry(unsafe { Geometry::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_REVERB3D => {
-                    Instance::Reverb3D(Reverb3D::from(value.instance.cast()))
+                    Instance::Reverb3D(unsafe { Reverb3D::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => Instance::StudioSystem(unsafe {
                     studio::System::from_ffi(value.instance.cast())
@@ -272,7 +274,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
     command_data_2: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let system = System::from(system);
+    let system = unsafe { System::from_ffi(system) };
     match callback_type {
         FMOD_SYSTEM_CALLBACK_DEVICELISTCHANGED => C::device_list_changed(system, userdata).into(),
         FMOD_SYSTEM_CALLBACK_DEVICELOST => C::device_lost(system, userdata).into(),
@@ -308,7 +310,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
         }
         FMOD_SYSTEM_CALLBACK_OUTPUTUNDERRUN => C::output_underrun(system, userdata).into(),
         FMOD_SYSTEM_CALLBACK_RECORDPOSITIONCHANGED => {
-            let sound = Sound::from(command_data_1.cast());
+            let sound = unsafe { Sound::from_ffi(command_data_1.cast()) };
             C::record_position_changed(system, sound, command_data_2 as c_int, userdata).into()
         }
         _ => {

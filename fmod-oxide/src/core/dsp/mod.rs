@@ -29,8 +29,15 @@ unsafe impl Send for Dsp {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Dsp {}
 
-impl From<*mut FMOD_DSP> for Dsp {
-    fn from(value: *mut FMOD_DSP) -> Self {
+impl Dsp {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_DSP) -> Self {
         let inner = NonNull::new(value).unwrap();
         Dsp { inner }
     }

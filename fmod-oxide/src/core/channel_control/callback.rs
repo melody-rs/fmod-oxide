@@ -63,11 +63,11 @@ unsafe extern "C" fn callback_impl<C: ChannelControlCallback>(
 ) -> FMOD_RESULT {
     let channel_control = match control_type {
         FMOD_CHANNELCONTROL_CHANNEL => {
-            let channel = Channel::from(channel_control.cast::<FMOD_CHANNEL>());
+            let channel = unsafe { Channel::from_ffi(channel_control.cast()) };
             ChannelControlType::Channel(channel)
         }
         FMOD_CHANNELCONTROL_CHANNELGROUP => {
-            let channel_group = ChannelGroup::from(channel_control.cast::<FMOD_CHANNELGROUP>());
+            let channel_group = unsafe { ChannelGroup::from_ffi(channel_control.cast()) };
             ChannelControlType::ChannelGroup(channel_group)
         }
         _ => return FMOD_RESULT::FMOD_ERR_INVALID_PARAM, // this should never happen

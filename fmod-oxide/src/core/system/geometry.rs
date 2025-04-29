@@ -28,8 +28,8 @@ impl System {
                 &raw mut geometry,
             )
             .to_result()?;
+            Ok(Geometry::from_ffi(geometry))
         }
-        Ok(geometry.into())
     }
 
     /// Sets the maximum world size for the geometry engine for performance / precision reasons.
@@ -73,8 +73,8 @@ impl System {
                 &raw mut geometry,
             )
             .to_result()?;
+            Ok(Geometry::from_ffi(geometry))
         }
-        Ok(geometry.into())
     }
 
     /// Calculates geometry occlusion between a listener and a sound source.

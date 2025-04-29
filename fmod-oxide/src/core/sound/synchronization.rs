@@ -12,7 +12,7 @@ use std::{
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 
-use crate::{get_string, Sound, TimeUnit};
+use crate::{Sound, TimeUnit, get_string};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
@@ -25,8 +25,15 @@ unsafe impl Send for SyncPoint {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for SyncPoint {}
 
-impl From<*mut FMOD_SYNCPOINT> for SyncPoint {
-    fn from(value: *mut FMOD_SYNCPOINT) -> Self {
+impl SyncPoint {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_SYNCPOINT) -> Self {
         let inner = NonNull::new(value).unwrap();
         SyncPoint { inner }
     }
@@ -46,8 +53,8 @@ impl Sound {
         let mut sync_point = std::ptr::null_mut();
         unsafe {
             FMOD_Sound_GetSyncPoint(self.inner.as_ptr(), index, &raw mut sync_point).to_result()?;
+            Ok(SyncPoint::from_ffi(sync_point))
         }
-        Ok(sync_point.into())
     }
 
     /// Retrieves information on an embedded sync point.
@@ -102,8 +109,8 @@ impl Sound {
                 &raw mut sync_point,
             )
             .to_result()?;
+            Ok(SyncPoint::from_ffi(sync_point))
         }
-        Ok(sync_point.into())
     }
 
     /// Deletes a sync point within the sound.

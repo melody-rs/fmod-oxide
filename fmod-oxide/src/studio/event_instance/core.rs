@@ -8,8 +8,8 @@ use std::ffi::{c_float, c_int};
 
 use fmod_sys::*;
 
-use crate::studio::EventInstance;
 use crate::ChannelGroup;
+use crate::studio::EventInstance;
 
 impl EventInstance {
     /// Retrieves the core [`ChannelGroup`].
@@ -20,8 +20,8 @@ impl EventInstance {
         unsafe {
             FMOD_Studio_EventInstance_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
                 .to_result()?;
+            Ok(ChannelGroup::from_ffi(channel_group))
         }
-        Ok(channel_group.into())
     }
 
     /// Sets the core reverb send level.

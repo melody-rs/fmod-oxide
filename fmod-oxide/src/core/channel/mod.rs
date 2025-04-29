@@ -23,8 +23,15 @@ unsafe impl Send for Channel {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Channel {}
 
-impl From<*mut FMOD_CHANNEL> for Channel {
-    fn from(value: *mut FMOD_CHANNEL) -> Self {
+impl Channel {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_CHANNEL) -> Self {
         let inner = NonNull::new(value).unwrap();
         Channel { inner }
     }

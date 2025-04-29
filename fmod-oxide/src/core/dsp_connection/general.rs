@@ -18,8 +18,10 @@ impl DspConnection {
     /// If so the function will return [`FMOD_RESULT::FMOD_ERR_NOTREADY`].
     pub fn get_input(&self) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
-        unsafe { FMOD_DSPConnection_GetInput(self.inner.as_ptr(), &raw mut dsp).to_result()? };
-        Ok(dsp.into())
+        unsafe {
+            FMOD_DSPConnection_GetInput(self.inner.as_ptr(), &raw mut dsp).to_result()?;
+            Ok(Dsp::from_ffi(dsp))
+        }
     }
 
     /// Retrieves the connection's output DSP unit.
@@ -29,15 +31,18 @@ impl DspConnection {
     /// If so the function will return [`FMOD_RESULT::FMOD_ERR_NOTREADY`].
     pub fn get_output(&self) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
-        unsafe { FMOD_DSPConnection_GetOutput(self.inner.as_ptr(), &raw mut dsp).to_result()? };
-        Ok(dsp.into())
+        unsafe {
+            FMOD_DSPConnection_GetOutput(self.inner.as_ptr(), &raw mut dsp).to_result()?;
+            Ok(Dsp::from_ffi(dsp))
+        }
     }
 
     /// Retrieves the type of the connection between 2 DSP units.
     pub fn get_type(&self) -> Result<DspConnectionType> {
         let mut connection_type = 0;
         unsafe {
-            FMOD_DSPConnection_GetType(self.inner.as_ptr(), &raw mut connection_type).to_result()?;
+            FMOD_DSPConnection_GetType(self.inner.as_ptr(), &raw mut connection_type)
+                .to_result()?;
         };
         let connection_type = connection_type.try_into()?;
         Ok(connection_type)

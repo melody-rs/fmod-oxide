@@ -37,8 +37,15 @@ unsafe impl Send for System {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for System {}
 
-impl From<*mut FMOD_SYSTEM> for System {
-    fn from(value: *mut FMOD_SYSTEM) -> Self {
+impl System {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_SYSTEM) -> Self {
         let inner = NonNull::new(value).unwrap();
         System { inner }
     }

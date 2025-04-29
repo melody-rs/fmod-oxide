@@ -11,8 +11,8 @@ use std::ffi::{c_float, c_int, c_uint};
 
 use super::{InstanceType, ParameterFlags, ParameterKind, UserPropertyKind};
 use crate::{
-    core::{Dsp, Sound},
     Guid, SoundBuilder,
+    core::{Dsp, Sound},
 };
 
 /// Memory usage statistics.
@@ -514,7 +514,7 @@ impl PluginInstanceProperties {
     pub unsafe fn from_ffi(value: FMOD_STUDIO_PLUGIN_INSTANCE_PROPERTIES) -> Self {
         PluginInstanceProperties {
             name: unsafe { Utf8CStr::from_ptr_unchecked(value.name) }.to_cstring(),
-            dsp: value.dsp.into(),
+            dsp: unsafe { Dsp::from_ffi(value.dsp) },
         }
     }
 }

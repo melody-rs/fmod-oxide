@@ -19,7 +19,7 @@ unsafe extern "C" fn callback_impl<C: DspCallback>(
     kind: FMOD_DSP_CALLBACK_TYPE,
     data: *mut c_void,
 ) -> FMOD_RESULT {
-    let dsp = dsp.into();
+    let dsp = unsafe { Dsp::from_ffi(dsp) };
     // FMOD may add more variants in the future, so keep the match for consistency
     #[allow(clippy::single_match_else)]
     let result = match kind {

@@ -99,9 +99,10 @@ impl Channel {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Channel_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group).to_result()?;
+            FMOD_Channel_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
+                .to_result()?;
+            Ok(ChannelGroup::from_ffi(channel_group))
         }
-        Ok(channel_group.into())
     }
 
     /// Sets the number of times to loop before stopping.

@@ -67,7 +67,9 @@ impl Dsp {
     /// Retrieves the parent System object.
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_DSP_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()? };
-        Ok(system.into())
+        unsafe {
+            FMOD_DSP_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
+            Ok(System::from_ffi(system))
+        }
     }
 }

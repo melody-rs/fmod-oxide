@@ -23,8 +23,15 @@ unsafe impl Send for Geometry {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Geometry {}
 
-impl From<*mut FMOD_GEOMETRY> for Geometry {
-    fn from(value: *mut FMOD_GEOMETRY) -> Self {
+impl Geometry {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_GEOMETRY) -> Self {
         let inner = NonNull::new(value).unwrap();
         Geometry { inner }
     }

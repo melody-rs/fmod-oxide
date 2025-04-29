@@ -8,7 +8,7 @@ use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::{c_int, c_uint};
 
-use crate::{get_string, Dsp, PluginType, System};
+use crate::{Dsp, PluginType, System, get_string};
 
 impl System {
     /// Specify a base search path for plugins so they can be placed somewhere else than the directory of the main executable.
@@ -59,7 +59,8 @@ impl System {
     pub fn get_nested_plugin_count(&self, handle: c_uint) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_GetNumNestedPlugins(self.inner.as_ptr(), handle, &raw mut count).to_result()?;
+            FMOD_System_GetNumNestedPlugins(self.inner.as_ptr(), handle, &raw mut count)
+                .to_result()?;
         }
         Ok(count)
     }
@@ -85,7 +86,8 @@ impl System {
     pub fn get_plugin_count(&self, kind: PluginType) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_GetNumPlugins(self.inner.as_ptr(), kind.into(), &raw mut count).to_result()?;
+            FMOD_System_GetNumPlugins(self.inner.as_ptr(), kind.into(), &raw mut count)
+                .to_result()?;
         }
         Ok(count)
     }
@@ -148,8 +150,8 @@ impl System {
         let mut dsp = std::ptr::null_mut();
         unsafe {
             FMOD_System_CreateDSPByPlugin(self.inner.as_ptr(), handle, &raw mut dsp).to_result()?;
+            Ok(Dsp::from_ffi(dsp))
         }
-        Ok(dsp.into())
     }
 
     /// Retrieve the description structure for a pre-existing DSP plugin.

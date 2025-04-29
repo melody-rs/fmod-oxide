@@ -16,7 +16,7 @@ unsafe extern "C" fn rolloff_callback_impl<C: RolloffCallback>(
     channel_control: *mut FMOD_CHANNELCONTROL,
     distance: c_float,
 ) -> c_float {
-    let channel_control = channel_control.into();
+    let channel_control = unsafe { ChannelControl::from_ffi(channel_control) };
     C::rolloff(channel_control, distance)
 }
 

@@ -47,8 +47,8 @@ impl ChannelControl {
         let mut dsp = std::ptr::null_mut();
         unsafe {
             FMOD_ChannelControl_GetDSP(self.inner.as_ptr(), index, &raw mut dsp).to_result()?;
+            Ok(Dsp::from_ffi(dsp))
         }
-        Ok(dsp.into())
     }
 
     /// Sets the index in the DSP chain of the specified DSP.
@@ -65,8 +65,12 @@ impl ChannelControl {
     pub fn get_dsp_index(&self, dsp: Dsp) -> Result<c_int> {
         let mut index = 0;
         unsafe {
-            FMOD_ChannelControl_GetDSPIndex(self.inner.as_ptr(), dsp.inner.as_ptr(), &raw mut index)
-                .to_result()?;
+            FMOD_ChannelControl_GetDSPIndex(
+                self.inner.as_ptr(),
+                dsp.inner.as_ptr(),
+                &raw mut index,
+            )
+            .to_result()?;
         }
         Ok(index)
     }

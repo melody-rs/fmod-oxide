@@ -152,8 +152,8 @@ impl Bus {
         unsafe {
             FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
                 .to_result()?;
+            Ok(ChannelGroup::from_ffi(channel_group))
         }
-        Ok(channel_group.into())
     }
 
     /// Locks the core [`ChannelGroup`].

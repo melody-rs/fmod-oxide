@@ -38,7 +38,7 @@ impl Sound {
         let mut system = std::ptr::null_mut();
         unsafe {
             FMOD_Sound_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
+            Ok(System::from_ffi(system))
         }
-        Ok(system.into())
     }
 }

@@ -24,8 +24,8 @@ impl Sound {
         let mut group = std::ptr::null_mut();
         unsafe {
             FMOD_Sound_GetSoundGroup(self.inner.as_ptr(), &raw mut group).to_result()?;
+            Ok(SoundGroup::from_ffi(group))
         }
-        Ok(group.into())
     }
 
     /// Retrieves the number of subsounds stored within a sound.
@@ -53,8 +53,8 @@ impl Sound {
         let mut sound = std::ptr::null_mut();
         unsafe {
             FMOD_Sound_GetSubSound(self.inner.as_ptr(), index, &raw mut sound).to_result()?;
+            Ok(Sound::from_ffi(sound))
         }
-        Ok(sound.into())
     }
 
     /// Retrieves the parent Sound object that contains this subsound.
@@ -66,7 +66,7 @@ impl Sound {
         if sound.is_null() {
             Ok(None)
         } else {
-            Ok(Some(sound.into()))
+            Ok(Some(unsafe { Sound::from_ffi(sound) }))
         }
     }
 }

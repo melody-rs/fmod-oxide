@@ -25,8 +25,8 @@ impl ChannelGroup {
                 &raw mut dsp_connection,
             )
             .to_result()?;
-        };
-        Ok(dsp_connection.into())
+            Ok(DspConnection::from_ffi(dsp_connection))
+        }
     }
 
     /// Retrieves the number of [`ChannelGroup`]s that feed into to this group.
@@ -39,8 +39,10 @@ impl ChannelGroup {
     /// Retrieves the [`ChannelGroup`] at the specified index in the list of group inputs.
     pub fn get_group(&self, index: c_int) -> Result<ChannelGroup> {
         let mut group = std::ptr::null_mut();
-        unsafe { FMOD_ChannelGroup_GetGroup(self.inner.as_ptr(), index, &raw mut group).to_result()? }
-        Ok(group.into())
+        unsafe {
+            FMOD_ChannelGroup_GetGroup(self.inner.as_ptr(), index, &raw mut group).to_result()?;
+            Ok(ChannelGroup::from_ffi(group))
+        }
     }
 
     /// Retrieves the [`ChannelGroup`] this object outputs to.
@@ -49,7 +51,7 @@ impl ChannelGroup {
         unsafe {
             FMOD_ChannelGroup_GetParentGroup(self.inner.as_ptr(), &raw mut channel_group)
                 .to_result()?;
+            Ok(ChannelGroup::from_ffi(channel_group))
         }
-        Ok(channel_group.into())
     }
 }

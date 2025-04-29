@@ -8,8 +8,8 @@ use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 use std::mem::MaybeUninit;
 
-use crate::studio::System;
 use crate::Guid;
+use crate::studio::System;
 
 impl System {
     /// Retrieves the Core System.
@@ -17,8 +17,8 @@ impl System {
         let mut system = std::ptr::null_mut();
         unsafe {
             FMOD_Studio_System_GetCoreSystem(self.inner.as_ptr(), &raw mut system).to_result()?;
+            Ok(crate::core::System::from_ffi(system))
         }
-        Ok(system.into())
     }
 
     /// Retrieves the ID for a bank, event, snapshot, bus or VCA.

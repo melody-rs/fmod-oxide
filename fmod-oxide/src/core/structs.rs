@@ -13,8 +13,8 @@ use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 
 use crate::{
-    string_from_utf16_be, string_from_utf16_le, ChannelOrder, DspParameterDataType, Mode,
-    SoundFormat, SoundGroup, SoundType, TagType, TimeUnit,
+    ChannelOrder, DspParameterDataType, Mode, SoundFormat, SoundGroup, SoundType, TagType,
+    TimeUnit, string_from_utf16_be, string_from_utf16_le,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
@@ -788,7 +788,7 @@ impl<'a> SoundBuilder<'a> {
     }
 
     pub fn initial_sound_group(&self) -> SoundGroup {
-        SoundGroup::from(self.create_sound_ex_info.initialsoundgroup)
+        unsafe { SoundGroup::from_ffi(self.create_sound_ex_info.initialsoundgroup) }
     }
 
     #[allow(clippy::missing_panics_doc)] // this function can't panic in practice as we control the seek position

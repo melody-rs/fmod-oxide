@@ -194,11 +194,11 @@ pub(crate) unsafe extern "C" fn event_callback_impl<C: EventInstanceCallback>(
             C::timeline_beat(event, props)
         }
         FMOD_STUDIO_EVENT_CALLBACK_SOUND_PLAYED => {
-            let sound = parameters.cast::<FMOD_SOUND>().into();
+            let sound = unsafe { Sound::from_ffi(parameters.cast()) };
             C::sound_played(event, sound)
         }
         FMOD_STUDIO_EVENT_CALLBACK_SOUND_STOPPED => {
-            let sound = parameters.cast::<FMOD_SOUND>().into();
+            let sound = unsafe { Sound::from_ffi(parameters.cast()) };
             C::sound_stopped(event, sound)
         }
         FMOD_STUDIO_EVENT_CALLBACK_REAL_TO_VIRTUAL => C::real_to_virtual(event),

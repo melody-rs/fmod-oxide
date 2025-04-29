@@ -23,8 +23,15 @@ unsafe impl Send for SoundGroup {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for SoundGroup {}
 
-impl From<*mut FMOD_SOUNDGROUP> for SoundGroup {
-    fn from(value: *mut FMOD_SOUNDGROUP) -> Self {
+impl SoundGroup {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_SOUNDGROUP) -> Self {
         let inner = NonNull::new(value).unwrap();
         SoundGroup { inner }
     }

@@ -25,8 +25,10 @@ impl SoundGroup {
     /// Use [`SoundGroup::get_sound_count`] in conjunction with this function to enumerate all sounds in a [`SoundGroup`].
     pub fn get_sound(&self, index: c_int) -> Result<Sound> {
         let mut sound = std::ptr::null_mut();
-        unsafe { FMOD_SoundGroup_GetSound(self.inner.as_ptr(), index, &raw mut sound).to_result()? };
-        Ok(sound.into())
+        unsafe {
+            FMOD_SoundGroup_GetSound(self.inner.as_ptr(), index, &raw mut sound).to_result()?;
+            Ok(Sound::from_ffi(sound))
+        }
     }
 
     /// Retrieves the number of currently playing [`Channel`]s for the [`SoundGroup`].

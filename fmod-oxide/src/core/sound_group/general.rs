@@ -8,7 +8,7 @@ use fmod_sys::*;
 use lanyard::Utf8CString;
 use std::ffi::{c_int, c_void};
 
-use crate::{get_string, SoundGroup, System};
+use crate::{SoundGroup, System, get_string};
 
 impl SoundGroup {
     /// Retrieves the name of the sound group.
@@ -45,7 +45,9 @@ impl SoundGroup {
     /// Retrieves the parent System object.
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_SoundGroup_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()? };
-        Ok(system.into())
+        unsafe {
+            FMOD_SoundGroup_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
+            Ok(System::from_ffi(system))
+        }
     }
 }

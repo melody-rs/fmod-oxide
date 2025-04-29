@@ -22,8 +22,15 @@ unsafe impl Send for DspConnection {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for DspConnection {}
 
-impl From<*mut FMOD_DSPCONNECTION> for DspConnection {
-    fn from(value: *mut FMOD_DSPCONNECTION) -> Self {
+impl DspConnection {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_DSPCONNECTION) -> Self {
         let inner = NonNull::new(value).unwrap();
         DspConnection { inner }
     }

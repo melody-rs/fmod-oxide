@@ -127,7 +127,7 @@ impl SystemBuilder {
         }
         unsafe {
             FMOD_System_Init(self.system, max_channels, flags.bits(), driver_data).to_result()?;
+            Ok(System::from_ffi(self.system))
         }
-        Ok(self.system.into())
     }
 }
