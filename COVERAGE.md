@@ -433,6 +433,7 @@
 ## Studio EventInstance
 - [x] FMOD_Studio_EventInstance_IsValid
 - [x] FMOD_Studio_EventInstance_GetDescription
+- [ ] FMOD_Studio_EventInstance_GetSystem
 - [x] FMOD_Studio_EventInstance_GetVolume
 - [x] FMOD_Studio_EventInstance_SetVolume
 - [x] FMOD_Studio_EventInstance_GetPitch

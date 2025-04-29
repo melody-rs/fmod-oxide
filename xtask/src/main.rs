@@ -6,10 +6,8 @@ use std::path::PathBuf;
 #[derive(Parser)]
 enum Args {
     Coverage {
-        #[arg(short = 'C', long)]
-        core_include_dir: Option<PathBuf>,
         #[arg(short = 'I', long)]
-        studio_include_dir: Option<PathBuf>,
+        api_dir: PathBuf,
         #[arg(short, long)]
         print: bool,
         #[arg(short, long)]
@@ -25,15 +23,13 @@ fn main() {
     let args = Args::parse();
     match args {
         Args::Coverage {
-            core_include_dir,
-            studio_include_dir,
+            api_dir,
             print,
             verbose,
         } => {
-            let core_include_dir =
-                core_include_dir.unwrap_or_else(|| PathBuf::from("fmod/api/core/inc"));
-            let studio_include_dir =
-                studio_include_dir.unwrap_or_else(|| PathBuf::from("fmod/api/studio/inc"));
+            let core_include_dir = api_dir.join("core").join("inc");
+            let studio_include_dir = api_dir.join("studio").join("inc");
+
             if let Err(e) = coverage::coverage(core_include_dir, studio_include_dir, print, verbose)
             {
                 eprintln!("Error: {e:?}");

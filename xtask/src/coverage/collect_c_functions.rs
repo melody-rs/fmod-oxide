@@ -29,6 +29,7 @@ pub fn collect(
             "-I",
             studio_include_dir.to_str().unwrap(),
         ])
+        .keep_going(true) // keep going even if we run into a fatal error (i.e. can't find stdbool)
         .parse()?;
     let entities = translation_unit.get_entity().get_children();
 

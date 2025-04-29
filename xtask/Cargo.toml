@@ -7,7 +7,7 @@ publish = false
 [dependencies]
 walkdir = "2.5.0"
 clap = { version = "4.5.4", features = ["derive"] }
-clang = "2.0.0"
+clang = { version = "2.0.0", features = ["clang_3_9"] }
 color-eyre = "0.6.3"
 syn = { version = "2.0.63", features = ["full"] }
 itertools = "0.12.1"
