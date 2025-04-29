@@ -255,6 +255,16 @@ fn main() {
         panic!("Failed to determine FMOD version!");
     }
 
+    let minor = version_number & 0xFF;
+    let major = (version_number >> 8) & 0xFF;
+    let product = version_number >> 16;
+    println!("cargo:rustc-cfg=fmod_minor=\"{minor}\"");
+    println!("cargo:rustc-cfg=fmod_major=\"{major}\"");
+    println!("cargo:rustc-cfg=fmod_product=\"{product}\"");
+    println!("cargo:rustc-cfg=fmod_version=\"{version_number}\"");
+    println!("cargo:rustc-cfg=fmod_version_str=\"{product}.{major:0>2}\"");
+    println!("cargo:rustc-cfg=fmod_full_version_str=\"{product}.{major:0>2}.{minor:0>2}\"");
+
     let docs_path = docs_dir.join("documentation.rs");
 
     bindings
