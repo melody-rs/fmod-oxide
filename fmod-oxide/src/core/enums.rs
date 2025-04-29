@@ -192,6 +192,8 @@ pub enum DspType {
     Transceiver = FMOD_DSP_TYPE_TRANSCEIVER,
     ObjectPan = FMOD_DSP_TYPE_OBJECTPAN,
     MultibandEq = FMOD_DSP_TYPE_MULTIBAND_EQ,
+    #[cfg(fmod_eq_2_3)]
+    MultibandDynamics = FMOD_DSP_TYPE_MULTIBAND_DYNAMICS,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -211,6 +213,10 @@ pub enum PortType {
     Personal = FMOD_PORT_TYPE_PERSONAL,
     Vibration = FMOD_PORT_TYPE_VIBRATION,
     AUX = FMOD_PORT_TYPE_AUX,
+    #[cfg(fmod_eq_2_3)]
+    Passthrough = FMOD_PORT_TYPE_PASSTHROUGH,
+    #[cfg(fmod_eq_2_3)]
+    VrVibration = FMOD_PORT_TYPE_VR_VIBRATION,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
