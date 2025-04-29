@@ -37,7 +37,12 @@ FMOD_SYS_FMOD_DIRECTORY = { value = "<install path here>", relative = true }
 Alternatively, you can specify `FMOD_SYS_FMOD_DIRECTORY` when building your project: (not recommended because rust-analyzer won't know this)
 `FMOD_SYS_FMOD_DIRECTORY=<path> cargo run`
 
-This crate doesn't support target-specific FMOD installs yet, but it does support cross compilation.
+### Cross compilation
+
+This crate supports cross compilation and will look for a target-specific FMOD install. 
+
+The logic is quite basic at the moment, but it'll look for `<fmod intall dir>/<target os>/<target arch>` first and then look for `<fmod intall dir>/<target os>`.
+If no target specific directory was found it'll default to `<fmod install dir>`.
 
 ### Using with webassembly
 

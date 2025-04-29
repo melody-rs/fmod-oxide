@@ -90,10 +90,62 @@ fn main() {
     let docs_dir = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap()).join("docs");
     fs::create_dir_all(&docs_dir).expect("Failed to create docs directory");
 
-    let fmod_dir = find_fmod_directory();
-    let api_dir = fmod_dir.join("api");
+    let build_is_windows = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "windows");
+    let build_is_wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "wasm32");
+    let build_is_emscripten =
+        std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "emscripten");
+    let build_is_macos = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "macos");
+    let build_is_linux = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "linux");
 
+    let cross_compile_api_dir = if build_is_windows {
+        Some("windows")
+    } else if build_is_wasm {
+        Some("html5")
+    } else if build_is_macos {
+        Some("macos")
+    } else if build_is_linux {
+        Some("linux")
+    } else {
+        None
+    };
+
+    let build_is_x86 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86");
+    let build_is_x86_64 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86_64");
+
+    let cross_compile_arch = if build_is_x86_64 {
+        Some("x86_64")
+    } else if build_is_x86 {
+        Some("x86")
+    } else {
+        None
+    };
+
+    let fmod_dir = find_fmod_directory();
     assert!(fmod_dir.exists(), "fmod directory not present");
+
+    let mut api_dir = None;
+    // check if fmod/cross_compile_api_dir/cross_compile_arch/api exists
+    if cross_compile_api_dir.is_some() && cross_compile_arch.is_some() {
+        let maybe_api_dir = fmod_dir
+            .join(cross_compile_api_dir.unwrap())
+            .join(cross_compile_arch.unwrap())
+            .join("api");
+        // if it does, target that
+        if maybe_api_dir.exists() {
+            api_dir = Some(maybe_api_dir);
+        }
+        // check if fmod/cross_compile_api_dir/api exists
+    }
+    if cross_compile_api_dir.is_some() && api_dir.is_none() {
+        let maybe_api_dir = fmod_dir.join(cross_compile_api_dir.unwrap()).join("api");
+        // if it does, target that
+        if maybe_api_dir.exists() {
+            api_dir = Some(maybe_api_dir);
+        }
+    }
+    // otherwise just default to fmod/api
+    let api_dir = api_dir.unwrap_or_else(|| fmod_dir.join("api"));
+
     assert!(api_dir.exists(), "fmod api dir does not exist");
 
     let api_dir_display = api_dir.display();
@@ -114,15 +166,6 @@ fn main() {
         .derive_default(true)
         .prepend_enum_name(false) // fmod already does this
         .header("src/wrapper.h");
-
-    let build_is_windows = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "windows");
-    let build_is_wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "wasm32");
-    let build_is_emscripten =
-        std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "emscripten");
-    let build_is_macos = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "macos");
-
-    let build_is_x86 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86");
-    let build_is_x86_64 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86_64");
 
     let include_debug = cfg!(any(debug_assertions, feature = "force-debug"));
     let debug_char = if include_debug { "L" } else { "" };
