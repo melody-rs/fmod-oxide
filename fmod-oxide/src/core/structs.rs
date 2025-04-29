@@ -17,6 +17,8 @@ use crate::{
     TimeUnit, string_from_utf16_be, string_from_utf16_le,
 };
 
+use super::{Resampler, Speaker};
+
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 // force this type to have the exact same layout as FMOD_STUDIO_PARAMETER_ID so we can safely transmute between them.
 #[repr(C)]
@@ -844,6 +846,136 @@ impl SoundBuilder<'_> {
             create_sound_ex_info,
             name_or_data,
             _phantom: PhantomData,
+        }
+    }
+}
+
+#[derive(Debug, Default)]
+pub struct AdvancedSettings {
+    pub max_mpeg_codecs: c_int,
+    pub max_adpcm_codecs: c_int,
+    pub max_xma_codecs: c_int,
+    pub max_vorbis_codecs: c_int,
+    pub max_at9_codecs: c_int,
+    pub max_fadpcm_codecs: c_int,
+    pub max_opus_codecs: c_int,
+
+    // The docs mention something about this "not being valid before System::init"
+    // No idea what that means. I don't think it's anything we need to worry about?
+    // This is also not used when calling `SetAdvancedSettings` so we don't need to worry about asio_speaker_list matching the same length.
+    // I *think*.
+    // Should this be an enum?
+    pub asio_channel_list: Option<Vec<Utf8CString>>,
+    pub asio_speaker_list: Option<Vec<Speaker>>, // FIXME: validate this is copied
+
+    pub vol0_virtual_vol: c_float,
+    pub default_decode_buffer_size: c_uint,
+    pub profile_port: c_ushort,
+    pub geometry_max_fade_time: c_uint,
+    pub distance_filter_center_freq: c_float,
+    pub reverb_3d_instance: c_int,
+    pub dsp_buffer_pool_size: c_int,
+    pub resampler_method: Resampler,
+    pub random_seed: c_uint,
+    pub max_convolution_threads: c_int,
+    pub max_spatial_objects: c_int,
+}
+
+impl From<&AdvancedSettings> for FMOD_ADVANCEDSETTINGS {
+    fn from(value: &AdvancedSettings) -> Self {
+        let speaker_count = value.asio_speaker_list.as_ref().map_or(0, Vec::len);
+        let speaker_ptr: *const Speaker = value
+            .asio_speaker_list
+            .as_ref()
+            .map_or(std::ptr::null_mut(), Vec::as_ptr);
+
+        Self {
+            cbSize: size_of::<FMOD_ADVANCEDSETTINGS>() as c_int,
+            maxMPEGCodecs: value.max_mpeg_codecs,
+            maxADPCMCodecs: value.max_adpcm_codecs,
+            maxXMACodecs: value.max_xma_codecs,
+            maxVorbisCodecs: value.max_vorbis_codecs,
+            maxAT9Codecs: value.max_at9_codecs,
+            maxFADPCMCodecs: value.max_fadpcm_codecs,
+            maxOpusCodecs: value.max_opus_codecs,
+            ASIONumChannels: speaker_count as i32,
+            ASIOChannelList: std::ptr::null_mut(),
+            // Speaker has the same repr() as i32
+            // So this SHOULD be ok
+            ASIOSpeakerList: speaker_ptr.cast_mut().cast(),
+            vol0virtualvol: value.vol0_virtual_vol,
+            defaultDecodeBufferSize: value.default_decode_buffer_size,
+            profilePort: value.profile_port,
+            geometryMaxFadeTime: value.geometry_max_fade_time,
+            distanceFilterCenterFreq: value.distance_filter_center_freq,
+            reverb3Dinstance: value.reverb_3d_instance,
+            DSPBufferPoolSize: value.dsp_buffer_pool_size,
+            resamplerMethod: value.resampler_method.into(),
+            randomSeed: value.random_seed,
+            maxConvolutionThreads: value.max_convolution_threads,
+            maxSpatialObjects: value.max_spatial_objects,
+        }
+    }
+}
+
+impl AdvancedSettings {
+    /// Due to how [`FMOD_ADVANCEDSETTINGS`] interacts with `FMOD_System_GetAdvancedSettings` this won't read `ASIOSpeakerList`.
+    /// Usually `ASIOSpeakerList` won't be filled out. If you're 100% certain that's not the case, you will have to convert it yourself.
+    ///
+    /// ```ignore
+    /// let slice = unsafe { std::slice::from_raw_parts(value.ASIOSpeakerList, value.ASIONumChannels) };
+    /// let speakers: Result<Speaker, _> = slice.iter().copied().map(Speaker::try_from).collect();
+    /// let speakers = speakers.expect("invalid speaker value");
+    /// ```
+    ///
+    /// # Safety
+    ///
+    /// `ASIOChannelList` must be valid for reads up to `ASIONumChannels`.
+    /// Every pointer inside `ASIOChannelList` must be a null-terminated and must be valid for reads of bytes up to and including the nul terminator.
+    ///
+    ///
+    /// See [`Utf8CStr::from_ptr_unchecked`] for more information.
+    ///
+    /// # Panics
+    ///
+    /// This function will panic if `resamplerMethod` is not a valid user resampler.
+    pub unsafe fn from_ffi(value: FMOD_ADVANCEDSETTINGS) -> Self {
+        let channels = if value.ASIONumChannels > 0 {
+            let slice = unsafe {
+                std::slice::from_raw_parts(value.ASIOChannelList, value.ASIONumChannels as _)
+            };
+            let vec = slice
+                .iter()
+                .map(|&ptr| unsafe { Utf8CStr::from_ptr_unchecked(ptr) }.to_cstring())
+                .collect();
+            Some(vec)
+        } else {
+            None
+        };
+
+        Self {
+            max_mpeg_codecs: value.maxMPEGCodecs,
+            max_adpcm_codecs: value.maxADPCMCodecs,
+            max_xma_codecs: value.maxXMACodecs,
+            max_vorbis_codecs: value.maxVorbisCodecs,
+            max_at9_codecs: value.maxAT9Codecs,
+            max_fadpcm_codecs: value.maxFADPCMCodecs,
+            max_opus_codecs: value.maxOpusCodecs,
+
+            asio_channel_list: channels,
+            asio_speaker_list: None,
+
+            vol0_virtual_vol: value.vol0virtualvol,
+            default_decode_buffer_size: value.defaultDecodeBufferSize,
+            profile_port: value.profilePort,
+            geometry_max_fade_time: value.geometryMaxFadeTime,
+            distance_filter_center_freq: value.distanceFilterCenterFreq,
+            reverb_3d_instance: value.reverb3Dinstance,
+            dsp_buffer_pool_size: value.DSPBufferPoolSize,
+            resampler_method: value.resamplerMethod.try_into().unwrap(),
+            random_seed: value.randomSeed,
+            max_convolution_threads: value.maxConvolutionThreads,
+            max_spatial_objects: value.maxSpatialObjects,
         }
     }
 }

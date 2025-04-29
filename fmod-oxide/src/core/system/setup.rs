@@ -7,7 +7,7 @@
 use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_uint};
 
-use crate::{ChannelControl, Speaker, SpeakerMode, System, TimeUnit};
+use crate::{AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit};
 
 pub trait RolloffCallback {
     fn rolloff(channel_control: ChannelControl, distance: c_float) -> c_float;
@@ -277,5 +277,25 @@ impl System {
     /// Unset the 3d rolloff callback, returning control of distance attenuation to FMOD.
     pub fn unset_3d_rolloff_callback(&self) -> Result<()> {
         unsafe { FMOD_System_Set3DRolloffCallback(self.inner.as_ptr(), None).to_result() }
+    }
+
+    /// Sets advanced settings for the system object, typically to allow adjusting of settings related to resource usage or audio quality.
+    pub fn set_advanced_settings(&self, settings: &AdvancedSettings) -> Result<()> {
+        let mut settings = settings.into();
+        unsafe {
+            FMOD_System_SetAdvancedSettings(self.inner.as_ptr(), &raw mut settings).to_result()
+        }
+    }
+
+    /// Retrieves the advanced settings for the system object.
+    pub fn get_advanced_settings(&self) -> Result<AdvancedSettings> {
+        unsafe {
+            // this structure is designed to be zeroed, so this should be ok
+            let mut settings: FMOD_ADVANCEDSETTINGS = std::mem::MaybeUninit::zeroed().assume_init();
+            settings.cbSize = size_of::<FMOD_ADVANCEDSETTINGS>() as _;
+            FMOD_System_GetAdvancedSettings(self.inner.as_ptr(), &raw mut settings).to_result()?;
+
+            Ok(AdvancedSettings::from_ffi(settings))
+        }
     }
 }

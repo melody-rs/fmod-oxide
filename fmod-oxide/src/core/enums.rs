@@ -396,3 +396,21 @@ pub enum ChannelOrder {
     AllStereo = FMOD_CHANNELORDER_ALLSTEREO,
     Alsa = FMOD_CHANNELORDER_ALSA,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(
+    num_enum::TryFromPrimitive,
+    num_enum::IntoPrimitive,
+    num_enum::UnsafeFromPrimitive
+)]
+// stupid enum repr hack
+#[cfg_attr(target_env = "msvc", repr(i32))]
+#[cfg_attr(not(target_env = "msvc"), repr(u32))]
+pub enum Resampler {
+    #[default]
+    Default = FMOD_DSP_RESAMPLER_DEFAULT,
+    NoInterp = FMOD_DSP_RESAMPLER_NOINTERP,
+    Linear = FMOD_DSP_RESAMPLER_LINEAR,
+    Cubic = FMOD_DSP_RESAMPLER_CUBIC,
+    Spline = FMOD_DSP_RESAMPLER_SPLINE,
+}
