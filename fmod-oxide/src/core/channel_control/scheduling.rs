@@ -18,7 +18,7 @@ impl ChannelControl {
         let mut dsp_clock = 0;
         let mut parent_clock = 0;
         unsafe {
-            FMOD_ChannelControl_GetDSPClock(self.inner.as_ptr(), &mut dsp_clock, &mut parent_clock)
+            FMOD_ChannelControl_GetDSPClock(self.inner.as_ptr(), &raw mut dsp_clock, &raw mut parent_clock)
                 .to_result()?;
         }
         Ok((dsp_clock, parent_clock))
@@ -47,9 +47,9 @@ impl ChannelControl {
         unsafe {
             FMOD_ChannelControl_GetDelay(
                 self.inner.as_ptr(),
-                &mut dsp_start,
-                &mut dsp_end,
-                &mut stop_channels,
+                &raw mut dsp_start,
+                &raw mut dsp_end,
+                &raw mut stop_channels,
             )
             .to_result()?;
         }
@@ -110,7 +110,7 @@ impl ChannelControl {
         unsafe {
             FMOD_ChannelControl_GetFadePoints(
                 self.inner.as_ptr(),
-                &mut num_points,
+                &raw mut num_points,
                 std::ptr::null_mut(),
                 std::ptr::null_mut(),
             )
@@ -122,7 +122,7 @@ impl ChannelControl {
         unsafe {
             FMOD_ChannelControl_GetFadePoints(
                 self.inner.as_ptr(),
-                &mut num_points,
+                &raw mut num_points,
                 dsp_clocks.as_mut_ptr(),
                 volumes.as_mut_ptr(),
             )

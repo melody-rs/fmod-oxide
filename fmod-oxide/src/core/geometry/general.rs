@@ -36,7 +36,7 @@ impl Geometry {
                 double_sided.into(),
                 vertices.len() as c_int,
                 vertices.as_ptr().cast(),
-                &mut index,
+                &raw mut index,
             )
             .to_result()?;
         }
@@ -52,7 +52,7 @@ impl Geometry {
     pub fn get_active(&self) -> Result<bool> {
         let mut active = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Geometry_GetActive(self.inner.as_ptr(), &mut active).to_result()?;
+            FMOD_Geometry_GetActive(self.inner.as_ptr(), &raw mut active).to_result()?;
         }
         Ok(active.into())
     }
@@ -64,7 +64,7 @@ impl Geometry {
         let mut max_polygons = 0;
         let mut max_vertices = 0;
         unsafe {
-            FMOD_Geometry_GetMaxPolygons(self.inner.as_ptr(), &mut max_polygons, &mut max_vertices)
+            FMOD_Geometry_GetMaxPolygons(self.inner.as_ptr(), &raw mut max_polygons, &raw mut max_vertices)
                 .to_result()?;
         }
         Ok((max_polygons, max_vertices))
@@ -74,7 +74,7 @@ impl Geometry {
     pub fn get_polygon_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Geometry_GetNumPolygons(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Geometry_GetNumPolygons(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -87,7 +87,7 @@ impl Geometry {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Geometry_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_Geometry_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -103,7 +103,7 @@ impl Geometry {
     pub fn save(&self) -> Result<Vec<u8>> {
         let mut data_size = 0;
         unsafe {
-            FMOD_Geometry_Save(self.inner.as_ptr(), std::ptr::null_mut(), &mut data_size)
+            FMOD_Geometry_Save(self.inner.as_ptr(), std::ptr::null_mut(), &raw mut data_size)
                 .to_result()?;
         }
 
@@ -112,7 +112,7 @@ impl Geometry {
             FMOD_Geometry_Save(
                 self.inner.as_ptr(),
                 data.as_mut_ptr().cast(),
-                &mut data_size,
+                &raw mut data_size,
             )
             .to_result()?;
         }

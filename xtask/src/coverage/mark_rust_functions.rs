@@ -143,7 +143,7 @@ fn process_expr(expr: syn::Expr, c_functions: &mut FunctionMap, verbose: bool) {
 
                 if let Some((_, exists)) = c_functions.get_mut(&ident) {
                     if verbose {
-                        println!("Found Rust calling C function: {}", ident);
+                        println!("Found Rust calling C function: {ident}");
                     }
                     *exists = true;
                 }

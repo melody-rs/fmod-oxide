@@ -16,7 +16,7 @@ impl System {
     pub fn get_core_system(&self) -> Result<crate::core::System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetCoreSystem(self.inner.as_ptr(), &mut system).to_result()?;
+            FMOD_Studio_System_GetCoreSystem(self.inner.as_ptr(), &raw mut system).to_result()?;
         }
         Ok(system.into())
     }
@@ -51,7 +51,7 @@ impl System {
                 &id.into(),
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -73,7 +73,7 @@ impl System {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 

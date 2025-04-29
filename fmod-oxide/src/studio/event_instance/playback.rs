@@ -32,7 +32,7 @@ impl EventInstance {
     pub fn get_playback_state(&self) -> Result<PlaybackState> {
         let mut state = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetPlaybackState(self.inner.as_ptr(), &mut state)
+            FMOD_Studio_EventInstance_GetPlaybackState(self.inner.as_ptr(), &raw mut state)
                 .to_result()?;
         }
         let state = state.try_into()?;
@@ -52,7 +52,7 @@ impl EventInstance {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventInstance_GetPaused(self.inner.as_ptr(), &mut paused).to_result()?;
+            FMOD_Studio_EventInstance_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
         }
         Ok(paused.into())
     }

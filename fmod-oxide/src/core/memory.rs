@@ -107,7 +107,7 @@ pub fn get_stats(blocking: bool) -> Result<(c_int, c_int)> {
     let mut current = 0;
     let mut max = 0;
     unsafe {
-        FMOD_Memory_GetStats(&mut current, &mut max, blocking.into()).to_result()?;
+        FMOD_Memory_GetStats(&raw mut current, &raw mut max, blocking.into()).to_result()?;
     }
     Ok((current, max))
 }

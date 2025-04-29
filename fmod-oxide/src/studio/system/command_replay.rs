@@ -47,7 +47,7 @@ impl System {
                 self.inner.as_ptr(),
                 filename.as_ptr(),
                 flags.into(),
-                &mut replay,
+                &raw mut replay,
             )
             .to_result()?;
             Ok(CommandReplay::from(replay))

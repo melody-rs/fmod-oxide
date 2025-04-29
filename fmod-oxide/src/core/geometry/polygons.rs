@@ -42,9 +42,9 @@ impl Geometry {
             FMOD_Geometry_GetPolygonAttributes(
                 self.inner.as_ptr(),
                 index,
-                &mut direct,
-                &mut reverb,
-                &mut double_sided,
+                &raw mut direct,
+                &raw mut reverb,
+                &raw mut double_sided,
             )
             .to_result()?;
         }
@@ -55,7 +55,7 @@ impl Geometry {
     pub fn get_polygon_vertex_count(&self, index: c_int) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Geometry_GetPolygonNumVertices(self.inner.as_ptr(), index, &mut count)
+            FMOD_Geometry_GetPolygonNumVertices(self.inner.as_ptr(), index, &raw mut count)
                 .to_result()?;
         }
         Ok(count)

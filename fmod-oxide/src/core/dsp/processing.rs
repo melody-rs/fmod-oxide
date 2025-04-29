@@ -27,7 +27,7 @@ impl Dsp {
     /// If `ChannelControl::addDSP` is used it will automatically be activated, otherwise it must be set to active manually.
     pub fn get_active(&self) -> Result<bool> {
         let mut active = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetActive(self.inner.as_ptr(), &mut active).to_result()? };
+        unsafe { FMOD_DSP_GetActive(self.inner.as_ptr(), &raw mut active).to_result()? };
         Ok(active.into())
     }
 
@@ -43,7 +43,7 @@ impl Dsp {
     /// If `bypass` is true, processing of this unit is skipped but it continues to process its inputs.
     pub fn get_bypass(&self) -> Result<bool> {
         let mut bypass = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetBypass(self.inner.as_ptr(), &mut bypass).to_result()? };
+        unsafe { FMOD_DSP_GetBypass(self.inner.as_ptr(), &raw mut bypass).to_result()? };
         Ok(bypass.into())
     }
 
@@ -60,7 +60,7 @@ impl Dsp {
         let mut post_wet = 0.0;
         let mut dry = 0.0;
         unsafe {
-            FMOD_DSP_GetWetDryMix(self.inner.as_ptr(), &mut pre_wet, &mut post_wet, &mut dry)
+            FMOD_DSP_GetWetDryMix(self.inner.as_ptr(), &raw mut pre_wet, &raw mut post_wet, &raw mut dry)
                 .to_result()?;
         }
         Ok((pre_wet, post_wet, dry))
@@ -74,7 +74,7 @@ impl Dsp {
     /// A reverb or echo may take a longer time to go idle after it stops receiving a valid signal, compared to an effect with a shorter tail length like an EQ filter.
     pub fn get_idle(&self) -> Result<bool> {
         let mut idle = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetIdle(self.inner.as_ptr(), &mut idle).to_result()? };
+        unsafe { FMOD_DSP_GetIdle(self.inner.as_ptr(), &raw mut idle).to_result()? };
         Ok(idle.into())
     }
 }

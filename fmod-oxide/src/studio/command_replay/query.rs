@@ -33,7 +33,7 @@ impl CommandReplay {
     pub fn command_at_time(&self, time: c_float) -> Result<c_int> {
         let mut index = 0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetCommandAtTime(self.inner.as_ptr(), time, &mut index)
+            FMOD_Studio_CommandReplay_GetCommandAtTime(self.inner.as_ptr(), time, &raw mut index)
                 .to_result()?;
         }
         Ok(index)
@@ -43,7 +43,7 @@ impl CommandReplay {
     pub fn get_command_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetCommandCount(self.inner.as_ptr(), &mut count)
+            FMOD_Studio_CommandReplay_GetCommandCount(self.inner.as_ptr(), &raw mut count)
                 .to_result()?;
         }
         Ok(count)
@@ -80,7 +80,7 @@ impl CommandReplay {
     pub fn get_length(&self) -> Result<c_float> {
         let mut length = 0.0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetLength(self.inner.as_ptr(), &mut length).to_result()?;
+            FMOD_Studio_CommandReplay_GetLength(self.inner.as_ptr(), &raw mut length).to_result()?;
         }
         Ok(length)
     }
@@ -89,7 +89,7 @@ impl CommandReplay {
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_CommandReplay_GetSystem(self.inner.as_ptr(), &mut system).to_result()?;
+            FMOD_Studio_CommandReplay_GetSystem(self.inner.as_ptr(), &raw mut system).to_result()?;
             Ok(System::from(system))
         }
     }

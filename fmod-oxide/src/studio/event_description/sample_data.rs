@@ -34,7 +34,7 @@ impl EventDescription {
         let error = unsafe {
             FMOD_Studio_EventDescription_GetSampleLoadingState(
                 self.inner.as_ptr(),
-                &mut loading_state,
+                &raw mut loading_state,
             )
             .to_error()
         };

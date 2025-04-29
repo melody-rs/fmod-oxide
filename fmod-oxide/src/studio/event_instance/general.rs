@@ -16,7 +16,7 @@ impl EventInstance {
     pub fn get_description(&self) -> Result<EventDescription> {
         let mut description = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_EventInstance_GetDescription(self.inner.as_ptr(), &mut description)
+            FMOD_Studio_EventInstance_GetDescription(self.inner.as_ptr(), &raw mut description)
                 .to_result()?;
             Ok(EventDescription::from(description))
         }

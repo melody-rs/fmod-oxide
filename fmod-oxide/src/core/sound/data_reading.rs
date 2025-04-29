@@ -30,10 +30,10 @@ impl Sound {
         let error = unsafe {
             FMOD_Sound_GetOpenState(
                 self.inner.as_ptr(),
-                &mut open_state,
-                &mut percent_buffered,
-                &mut starving,
-                &mut disk_busy,
+                &raw mut open_state,
+                &raw mut percent_buffered,
+                &raw mut starving,
+                &raw mut disk_busy,
             )
             .to_error()
         };

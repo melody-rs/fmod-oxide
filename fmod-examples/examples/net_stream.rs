@@ -153,7 +153,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         writeln!(stdout, "Buffer Percentage = {percent}")?;
         stdout.write_all(b"Tags:\n")?;
         for tag in tag_strings[tag_index..].iter() {
-            writeln!(stdout, "{}\n", tag)?;
+            writeln!(stdout, "{tag}\n")?;
         }
 
         crossterm::terminal::enable_raw_mode()?;

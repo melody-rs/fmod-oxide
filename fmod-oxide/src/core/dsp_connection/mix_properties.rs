@@ -18,7 +18,7 @@ impl DspConnection {
     /// Retrieves the connection's volume scale.
     pub fn get_mix(&self) -> Result<c_float> {
         let mut volume = 0.0;
-        unsafe { FMOD_DSPConnection_GetMix(self.inner.as_ptr(), &mut volume).to_result()? };
+        unsafe { FMOD_DSPConnection_GetMix(self.inner.as_ptr(), &raw mut volume).to_result()? };
         Ok(volume)
     }
 

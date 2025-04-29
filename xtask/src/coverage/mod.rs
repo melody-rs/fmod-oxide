@@ -40,7 +40,7 @@ pub fn coverage(
         if category != current_category {
             current_category = category;
             let category = categories.get_index(category).unwrap();
-            writeln!(coverage_md, "## {}", category)?;
+            writeln!(coverage_md, "## {category}")?;
             if print {
                 println!("{}", category.bright_yellow());
             }

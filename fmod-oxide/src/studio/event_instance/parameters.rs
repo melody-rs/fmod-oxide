@@ -78,8 +78,8 @@ impl EventInstance {
             FMOD_Studio_EventInstance_GetParameterByName(
                 self.inner.as_ptr(),
                 name.as_ptr(),
-                &mut value,
-                &mut final_value,
+                &raw mut value,
+                &raw mut final_value,
             )
             .to_result()?;
         }
@@ -145,8 +145,8 @@ impl EventInstance {
             FMOD_Studio_EventInstance_GetParameterByID(
                 self.inner.as_ptr(),
                 id.into(),
-                &mut value,
-                &mut final_value,
+                &raw mut value,
+                &raw mut final_value,
             )
             .to_result()?;
         }

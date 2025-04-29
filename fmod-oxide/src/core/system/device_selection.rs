@@ -34,7 +34,7 @@ impl System {
     pub fn get_output_type(&self) -> Result<OutputType> {
         let mut output_type = 0;
         unsafe {
-            FMOD_System_GetOutput(self.inner.as_ptr(), &mut output_type).to_result()?;
+            FMOD_System_GetOutput(self.inner.as_ptr(), &raw mut output_type).to_result()?;
         }
         let output_type = output_type.try_into()?;
         Ok(output_type)
@@ -49,7 +49,7 @@ impl System {
     pub fn get_driver_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_GetNumDrivers(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_System_GetNumDrivers(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -72,9 +72,9 @@ impl System {
                     name.as_mut_ptr().cast(),
                     name.len() as c_int,
                     guid.as_mut_ptr(),
-                    &mut system_rate,
-                    &mut speaker_mode,
-                    &mut speaker_mode_channels,
+                    &raw mut system_rate,
+                    &raw mut speaker_mode,
+                    &raw mut speaker_mode_channels,
                 )
             })?;
 
@@ -98,7 +98,7 @@ impl System {
     pub fn get_driver(&self) -> Result<c_int> {
         let mut driver = 0;
         unsafe {
-            FMOD_System_GetDriver(self.inner.as_ptr(), &mut driver).to_result()?;
+            FMOD_System_GetDriver(self.inner.as_ptr(), &raw mut driver).to_result()?;
         }
         Ok(driver)
     }

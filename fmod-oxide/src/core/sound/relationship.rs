@@ -23,7 +23,7 @@ impl Sound {
     pub fn sound_group(&self) -> Result<SoundGroup> {
         let mut group = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSoundGroup(self.inner.as_ptr(), &mut group).to_result()?;
+            FMOD_Sound_GetSoundGroup(self.inner.as_ptr(), &raw mut group).to_result()?;
         }
         Ok(group.into())
     }
@@ -34,7 +34,7 @@ impl Sound {
     pub fn get_sub_sound_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Sound_GetNumSubSounds(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Sound_GetNumSubSounds(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -52,7 +52,7 @@ impl Sound {
     pub fn get_sub_sound(&self, index: c_int) -> Result<Sound> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSubSound(self.inner.as_ptr(), index, &mut sound).to_result()?;
+            FMOD_Sound_GetSubSound(self.inner.as_ptr(), index, &raw mut sound).to_result()?;
         }
         Ok(sound.into())
     }
@@ -61,7 +61,7 @@ impl Sound {
     pub fn get_sub_sound_parent(&self) -> Result<Option<Sound>> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSubSoundParent(self.inner.as_ptr(), &mut sound).to_result()?;
+            FMOD_Sound_GetSubSoundParent(self.inner.as_ptr(), &raw mut sound).to_result()?;
         }
         if sound.is_null() {
             Ok(None)

@@ -20,8 +20,8 @@ impl EventInstance {
         unsafe {
             FMOD_Studio_EventInstance_GetCPUUsage(
                 self.inner.as_ptr(),
-                &mut exclusive,
-                &mut inclusive,
+                &raw mut exclusive,
+                &raw mut inclusive,
             )
             .to_result()?;
         }

@@ -32,7 +32,7 @@ impl System {
     pub fn get_software_channels(&self) -> Result<c_int> {
         let mut channels = 0;
         unsafe {
-            FMOD_System_GetSoftwareChannels(self.inner.as_ptr(), &mut channels).to_result()?;
+            FMOD_System_GetSoftwareChannels(self.inner.as_ptr(), &raw mut channels).to_result()?;
         }
         Ok(channels)
     }
@@ -45,9 +45,9 @@ impl System {
         unsafe {
             FMOD_System_GetSoftwareFormat(
                 self.inner.as_ptr(),
-                &mut sample_rate,
-                &mut speaker_mode,
-                &mut raw_speakers,
+                &raw mut sample_rate,
+                &raw mut speaker_mode,
+                &raw mut raw_speakers,
             )
             .to_result()?;
         }
@@ -74,8 +74,8 @@ impl System {
         unsafe {
             FMOD_System_GetDSPBufferSize(
                 self.inner.as_ptr(),
-                &mut buffer_length,
-                &mut buffer_count,
+                &raw mut buffer_length,
+                &raw mut buffer_count,
             )
             .to_result()?;
         }
@@ -118,8 +118,8 @@ impl System {
         unsafe {
             FMOD_System_GetStreamBufferSize(
                 self.inner.as_ptr(),
-                &mut file_buffer_size,
-                &mut time_unit,
+                &raw mut file_buffer_size,
+                &raw mut time_unit,
             )
             .to_result()?;
         }
@@ -182,9 +182,9 @@ impl System {
             FMOD_System_GetSpeakerPosition(
                 self.inner.as_ptr(),
                 speaker.into(),
-                &mut x,
-                &mut y,
-                &mut active,
+                &raw mut x,
+                &raw mut y,
+                &raw mut active,
             )
             .to_result()?;
         }
@@ -234,9 +234,9 @@ impl System {
         unsafe {
             FMOD_System_Get3DSettings(
                 self.inner.as_ptr(),
-                &mut doppler_scale,
-                &mut distance_factor,
-                &mut rolloff_scale,
+                &raw mut doppler_scale,
+                &raw mut distance_factor,
+                &raw mut rolloff_scale,
             )
             .to_result()?;
         }
@@ -259,7 +259,7 @@ impl System {
     pub fn get_3d_listener_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_Get3DNumListeners(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_System_Get3DNumListeners(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }

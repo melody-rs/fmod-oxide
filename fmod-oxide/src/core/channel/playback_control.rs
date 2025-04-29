@@ -25,7 +25,7 @@ impl Channel {
     /// Retrieves the playback frequency or playback rate.
     pub fn get_frequency(&self) -> Result<c_float> {
         let mut frequency = 0.0;
-        unsafe { FMOD_Channel_GetFrequency(self.inner.as_ptr(), &mut frequency).to_result()? }
+        unsafe { FMOD_Channel_GetFrequency(self.inner.as_ptr(), &raw mut frequency).to_result()? }
         Ok(frequency)
     }
     /// Sets the priority used for virtual voice ordering.
@@ -46,7 +46,7 @@ impl Channel {
     ///See the Virtual Voices guide for more information.
     pub fn get_priority(&self) -> Result<c_int> {
         let mut priority = 0;
-        unsafe { FMOD_Channel_GetPriority(self.inner.as_ptr(), &mut priority).to_result()? }
+        unsafe { FMOD_Channel_GetPriority(self.inner.as_ptr(), &raw mut priority).to_result()? }
         Ok(priority)
     }
 
@@ -78,7 +78,7 @@ impl Channel {
     pub fn get_position(&self, time_unit: TimeUnit) -> Result<c_uint> {
         let mut position = 0;
         unsafe {
-            FMOD_Channel_GetPosition(self.inner.as_ptr(), &mut position, time_unit.into())
+            FMOD_Channel_GetPosition(self.inner.as_ptr(), &raw mut position, time_unit.into())
                 .to_result()?;
         }
         Ok(position)
@@ -99,7 +99,7 @@ impl Channel {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Channel_GetChannelGroup(self.inner.as_ptr(), &mut channel_group).to_result()?;
+            FMOD_Channel_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group).to_result()?;
         }
         Ok(channel_group.into())
     }
@@ -117,7 +117,7 @@ impl Channel {
     /// Reset with [`Channel::set_loop_count`].
     pub fn get_loop_count(&self) -> Result<c_int> {
         let mut loop_count = 0;
-        unsafe { FMOD_Channel_GetLoopCount(self.inner.as_ptr(), &mut loop_count).to_result()? }
+        unsafe { FMOD_Channel_GetLoopCount(self.inner.as_ptr(), &raw mut loop_count).to_result()? }
         Ok(loop_count)
     }
 
@@ -162,9 +162,9 @@ impl Channel {
         unsafe {
             FMOD_Channel_GetLoopPoints(
                 self.inner.as_ptr(),
-                &mut start,
+                &raw mut start,
                 start_type.into(),
-                &mut end,
+                &raw mut end,
                 end_type.into(),
             )
             .to_result()?;

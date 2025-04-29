@@ -36,7 +36,7 @@ impl EventInstanceCallback for Callback {
                 .get_sound_info(context.dialogue_string)?
         };
         let sound = context.core_system.create_sound(&sound_info.builder)?;
-        eprintln!("{:#?}", sound_info);
+        eprintln!("{sound_info:#?}");
 
         *sound_props.sound = sound;
         *sound_props.subsound_index = sound_info.subsound_index;

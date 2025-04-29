@@ -34,7 +34,7 @@ impl SystemBuilder {
     /// Do not call these functions simultaneously from multiple threads at once.
     pub unsafe fn new() -> Result<Self> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_System_Create(&mut system, FMOD_VERSION).to_result()? };
+        unsafe { FMOD_System_Create(&raw mut system, FMOD_VERSION).to_result()? };
 
         Ok(SystemBuilder {
             system,

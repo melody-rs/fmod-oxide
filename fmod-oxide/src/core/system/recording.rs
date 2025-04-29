@@ -24,7 +24,7 @@ impl System {
         let mut drivers = 0;
         let mut connected = 0;
         unsafe {
-            FMOD_System_GetRecordNumDrivers(self.inner.as_ptr(), &mut drivers, &mut connected)
+            FMOD_System_GetRecordNumDrivers(self.inner.as_ptr(), &raw mut drivers, &raw mut connected)
                 .to_result()?;
         }
         Ok((drivers, connected))
@@ -47,10 +47,10 @@ impl System {
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
                 guid.as_mut_ptr(),
-                &mut system_rate,
-                &mut speaker_mode,
-                &mut speaker_mode_channels,
-                &mut state,
+                &raw mut system_rate,
+                &raw mut speaker_mode,
+                &raw mut speaker_mode_channels,
+                &raw mut state,
             )
         })?;
         unsafe {
@@ -79,7 +79,7 @@ impl System {
     pub fn get_record_position(&self, id: c_int) -> Result<c_uint> {
         let mut position = 0;
         unsafe {
-            FMOD_System_GetRecordPosition(self.inner.as_ptr(), id, &mut position).to_result()?;
+            FMOD_System_GetRecordPosition(self.inner.as_ptr(), id, &raw mut position).to_result()?;
         }
         Ok(position)
     }
@@ -120,7 +120,7 @@ impl System {
     pub fn is_recording(&self, id: c_int) -> Result<bool> {
         let mut recording = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_System_IsRecording(self.inner.as_ptr(), id, &mut recording).to_result()?;
+            FMOD_System_IsRecording(self.inner.as_ptr(), id, &raw mut recording).to_result()?;
         }
         Ok(recording.into())
     }

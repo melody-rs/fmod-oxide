@@ -31,7 +31,7 @@ impl Dsp {
     /// Retrieves the pre-defined type of a FMOD registered [`Dsp`] unit.
     pub fn get_type(&self) -> Result<DspType> {
         let mut dsp_type = 0;
-        unsafe { FMOD_DSP_GetType(self.inner.as_ptr(), &mut dsp_type).to_result()? };
+        unsafe { FMOD_DSP_GetType(self.inner.as_ptr(), &raw mut dsp_type).to_result()? };
         let dsp_type = dsp_type.try_into()?;
         Ok(dsp_type)
     }
@@ -45,7 +45,7 @@ impl Dsp {
         let mut exclusive = 0;
         let mut inclusive = 0;
         unsafe {
-            FMOD_DSP_GetCPUUsage(self.inner.as_ptr(), &mut exclusive, &mut inclusive)
+            FMOD_DSP_GetCPUUsage(self.inner.as_ptr(), &raw mut exclusive, &raw mut inclusive)
                 .to_result()?;
         }
         Ok((exclusive, inclusive))
@@ -59,7 +59,7 @@ impl Dsp {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_DSP_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -67,7 +67,7 @@ impl Dsp {
     /// Retrieves the parent System object.
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_DSP_GetSystemObject(self.inner.as_ptr(), &mut system).to_result()? };
+        unsafe { FMOD_DSP_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()? };
         Ok(system.into())
     }
 }

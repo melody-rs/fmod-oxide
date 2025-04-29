@@ -26,8 +26,8 @@ impl System {
             FMOD_Studio_System_GetParameterByID(
                 self.inner.as_ptr(),
                 id.into(),
-                &mut value,
-                &mut final_value,
+                &raw mut value,
+                &raw mut final_value,
             )
             .to_result()?;
         }
@@ -114,8 +114,8 @@ impl System {
             FMOD_Studio_System_GetParameterByName(
                 self.inner.as_ptr(),
                 name.as_ptr(),
-                &mut value,
-                &mut final_value,
+                &raw mut value,
+                &raw mut final_value,
             )
             .to_result()?;
         }
@@ -203,7 +203,7 @@ impl System {
     pub fn parameter_description_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_System_GetParameterDescriptionCount(self.inner.as_ptr(), &mut count)
+            FMOD_Studio_System_GetParameterDescriptionCount(self.inner.as_ptr(), &raw mut count)
                 .to_result()?;
         }
         Ok(count)
@@ -224,7 +224,7 @@ impl System {
                 list.as_mut_ptr()
                     .cast::<FMOD_STUDIO_PARAMETER_DESCRIPTION>(),
                 list.capacity() as c_int,
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
 
@@ -262,7 +262,7 @@ impl System {
                 label_index,
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -285,7 +285,7 @@ impl System {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 
@@ -316,7 +316,7 @@ impl System {
                 label_index,
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -339,7 +339,7 @@ impl System {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 

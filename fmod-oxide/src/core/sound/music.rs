@@ -15,7 +15,7 @@ impl Sound {
     pub fn get_music_channel_count(&self) -> Result<i32> {
         let mut num_channels = 0;
         unsafe {
-            FMOD_Sound_GetMusicNumChannels(self.inner.as_ptr(), &mut num_channels).to_result()?;
+            FMOD_Sound_GetMusicNumChannels(self.inner.as_ptr(), &raw mut num_channels).to_result()?;
         }
         Ok(num_channels)
     }
@@ -32,7 +32,7 @@ impl Sound {
     pub fn get_music_channel_volume(&self, channel: c_int) -> Result<c_float> {
         let mut volume = 0.0;
         unsafe {
-            FMOD_Sound_GetMusicChannelVolume(self.inner.as_ptr(), channel, &mut volume)
+            FMOD_Sound_GetMusicChannelVolume(self.inner.as_ptr(), channel, &raw mut volume)
                 .to_result()?;
         }
         Ok(volume)
@@ -50,7 +50,7 @@ impl Sound {
     pub fn get_music_speed(&self) -> Result<c_float> {
         let mut speed = 0.0;
         unsafe {
-            FMOD_Sound_GetMusicSpeed(self.inner.as_ptr(), &mut speed).to_result()?;
+            FMOD_Sound_GetMusicSpeed(self.inner.as_ptr(), &raw mut speed).to_result()?;
         }
         Ok(speed)
     }

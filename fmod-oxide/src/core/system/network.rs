@@ -40,7 +40,7 @@ impl System {
     pub fn get_network_timeout(&self) -> Result<c_int> {
         let mut timeout = 0;
         unsafe {
-            FMOD_System_GetNetworkTimeout(self.inner.as_ptr(), &mut timeout).to_result()?;
+            FMOD_System_GetNetworkTimeout(self.inner.as_ptr(), &raw mut timeout).to_result()?;
         }
         Ok(timeout)
     }

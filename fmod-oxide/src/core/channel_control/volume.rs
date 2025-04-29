@@ -25,7 +25,7 @@ impl ChannelControl {
     pub fn get_audibility(&self) -> Result<c_float> {
         let mut audibility = 0.0;
         unsafe {
-            FMOD_ChannelControl_GetAudibility(self.inner.as_ptr(), &mut audibility).to_result()?;
+            FMOD_ChannelControl_GetAudibility(self.inner.as_ptr(), &raw mut audibility).to_result()?;
         }
         Ok(audibility)
     }
@@ -43,7 +43,7 @@ impl ChannelControl {
     pub fn get_volume(&self) -> Result<c_float> {
         let mut volume = 0.0;
         unsafe {
-            FMOD_ChannelControl_GetVolume(self.inner.as_ptr(), &mut volume).to_result()?;
+            FMOD_ChannelControl_GetVolume(self.inner.as_ptr(), &raw mut volume).to_result()?;
         }
         Ok(volume)
     }
@@ -60,7 +60,7 @@ impl ChannelControl {
     pub fn get_volume_ramp(&self) -> Result<bool> {
         let mut ramp = false;
         unsafe {
-            FMOD_ChannelControl_GetVolumeRamp(self.inner.as_ptr(), &mut ramp).to_result()?;
+            FMOD_ChannelControl_GetVolumeRamp(self.inner.as_ptr(), &raw mut ramp).to_result()?;
         }
         Ok(ramp)
     }
@@ -84,7 +84,7 @@ impl ChannelControl {
     pub fn get_mute(&self) -> Result<bool> {
         let mut mute = false;
         unsafe {
-            FMOD_ChannelControl_GetMute(self.inner.as_ptr(), &mut mute).to_result()?;
+            FMOD_ChannelControl_GetMute(self.inner.as_ptr(), &raw mut mute).to_result()?;
         }
         Ok(mute)
     }

@@ -55,7 +55,7 @@ impl System {
                 builder.name_or_data,
                 builder.mode,
                 ex_info_ptr,
-                &mut sound,
+                &raw mut sound,
             )
             .to_result()?;
         }
@@ -84,7 +84,7 @@ impl System {
                 builder.name_or_data,
                 builder.mode,
                 ex_info_ptr,
-                &mut sound,
+                &raw mut sound,
             )
             .to_result()?;
         }
@@ -107,7 +107,7 @@ impl System {
     pub unsafe fn create_dsp(&self, description: *const FMOD_DSP_DESCRIPTION) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateDSP(self.inner.as_ptr(), description, &mut dsp).to_result()?;
+            FMOD_System_CreateDSP(self.inner.as_ptr(), description, &raw mut dsp).to_result()?;
         }
         Ok(dsp.into())
     }
@@ -123,7 +123,7 @@ impl System {
     pub fn create_dsp_by_type(&self, kind: DspType) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateDSPByType(self.inner.as_ptr(), kind.into(), &mut dsp).to_result()?;
+            FMOD_System_CreateDSPByType(self.inner.as_ptr(), kind.into(), &raw mut dsp).to_result()?;
         }
         Ok(dsp.into())
     }
@@ -142,7 +142,7 @@ impl System {
     pub fn create_channel_group(&self, name: &Utf8CStr) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateChannelGroup(self.inner.as_ptr(), name.as_ptr(), &mut channel_group)
+            FMOD_System_CreateChannelGroup(self.inner.as_ptr(), name.as_ptr(), &raw mut channel_group)
                 .to_result()?;
         }
         Ok(channel_group.into())
@@ -160,7 +160,7 @@ impl System {
     pub fn create_sound_group(&self, name: &Utf8CStr) -> Result<SoundGroup> {
         let mut sound_group = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateSoundGroup(self.inner.as_ptr(), name.as_ptr(), &mut sound_group)
+            FMOD_System_CreateSoundGroup(self.inner.as_ptr(), name.as_ptr(), &raw mut sound_group)
                 .to_result()?;
         }
         Ok(sound_group.into())
@@ -204,7 +204,7 @@ impl System {
     pub fn create_reverb_3d(&self) -> Result<Reverb3D> {
         let mut reverb = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateReverb3D(self.inner.as_ptr(), &mut reverb).to_result()?;
+            FMOD_System_CreateReverb3D(self.inner.as_ptr(), &raw mut reverb).to_result()?;
         }
         Ok(reverb.into())
     }
@@ -236,7 +236,7 @@ impl System {
                 sound.into(),
                 channel_group.map_or(std::ptr::null_mut(), ChannelGroup::into),
                 paused.into(),
-                &mut channel,
+                &raw mut channel,
             )
             .to_result()?;
         }
@@ -265,7 +265,7 @@ impl System {
                 dsp.into(),
                 channel_group.map_or(std::ptr::null_mut(), ChannelGroup::into),
                 paused.into(),
-                &mut channel,
+                &raw mut channel,
             )
             .to_result()?;
         }
@@ -279,7 +279,7 @@ impl System {
     pub fn get_channel(&self, channel_id: c_int) -> Result<Channel> {
         let mut channel = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetChannel(self.inner.as_ptr(), channel_id, &mut channel).to_result()?;
+            FMOD_System_GetChannel(self.inner.as_ptr(), channel_id, &raw mut channel).to_result()?;
         }
         Ok(channel.into())
     }
@@ -290,7 +290,7 @@ impl System {
     pub fn get_dsp_info_by_type(&self, dsp_type: DspType) -> Result<*const FMOD_DSP_DESCRIPTION> {
         let mut description = std::ptr::null();
         unsafe {
-            FMOD_System_GetDSPInfoByType(self.inner.as_ptr(), dsp_type.into(), &mut description)
+            FMOD_System_GetDSPInfoByType(self.inner.as_ptr(), dsp_type.into(), &raw mut description)
                 .to_result()?;
         }
         Ok(description)
@@ -304,7 +304,7 @@ impl System {
     pub fn get_master_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetMasterChannelGroup(self.inner.as_ptr(), &mut channel_group)
+            FMOD_System_GetMasterChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
                 .to_result()?;
         }
         Ok(channel_group.into())
@@ -316,7 +316,7 @@ impl System {
     pub fn get_master_sound_group(&self) -> Result<SoundGroup> {
         let mut sound_group = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetMasterSoundGroup(self.inner.as_ptr(), &mut sound_group).to_result()?;
+            FMOD_System_GetMasterSoundGroup(self.inner.as_ptr(), &raw mut sound_group).to_result()?;
         }
         Ok(sound_group.into())
     }

@@ -17,7 +17,7 @@ impl Bank {
     pub fn bus_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetBusCount(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Studio_Bank_GetBusCount(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -39,7 +39,7 @@ impl Bank {
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr().cast::<*mut FMOD_STUDIO_BUS>(),
                 list.capacity() as c_int,
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
 
@@ -56,7 +56,7 @@ impl Bank {
     pub fn event_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetEventCount(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Studio_Bank_GetEventCount(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -76,7 +76,7 @@ impl Bank {
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr(),
                 list.capacity() as c_int,
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
 
@@ -93,7 +93,7 @@ impl Bank {
     pub fn string_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetStringCount(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Studio_Bank_GetStringCount(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -113,7 +113,7 @@ impl Bank {
                 std::ptr::null_mut(),
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -137,7 +137,7 @@ impl Bank {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 
@@ -157,7 +157,7 @@ impl Bank {
     pub fn vca_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetVCACount(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Studio_Bank_GetVCACount(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -179,7 +179,7 @@ impl Bank {
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr().cast::<*mut FMOD_STUDIO_VCA>(),
                 list.capacity() as c_int,
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
 

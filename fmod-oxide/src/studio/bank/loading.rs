@@ -19,7 +19,7 @@ impl Bank {
     pub fn get_loading_state(&self) -> Result<LoadingState> {
         let mut loading_state = 0;
         let error = unsafe {
-            FMOD_Studio_Bank_GetLoadingState(self.inner.as_ptr(), &mut loading_state).to_error()
+            FMOD_Studio_Bank_GetLoadingState(self.inner.as_ptr(), &raw mut loading_state).to_error()
         };
 
         LoadingState::try_from_ffi(loading_state, error)
@@ -47,7 +47,7 @@ impl Bank {
     pub fn get_sample_loading_state(&self) -> Result<LoadingState> {
         let mut loading_state = 0;
         let error = unsafe {
-            FMOD_Studio_Bank_GetSampleLoadingState(self.inner.as_ptr(), &mut loading_state)
+            FMOD_Studio_Bank_GetSampleLoadingState(self.inner.as_ptr(), &raw mut loading_state)
                 .to_error()
         };
         LoadingState::try_from_ffi(loading_state, error)

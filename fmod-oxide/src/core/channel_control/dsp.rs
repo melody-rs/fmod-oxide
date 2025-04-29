@@ -37,7 +37,7 @@ impl ChannelControl {
     pub fn get_dsp_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_ChannelControl_GetNumDSPs(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_ChannelControl_GetNumDSPs(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -46,7 +46,7 @@ impl ChannelControl {
     pub fn get_dsp(&self, index: c_int) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelControl_GetDSP(self.inner.as_ptr(), index, &mut dsp).to_result()?;
+            FMOD_ChannelControl_GetDSP(self.inner.as_ptr(), index, &raw mut dsp).to_result()?;
         }
         Ok(dsp.into())
     }
@@ -65,7 +65,7 @@ impl ChannelControl {
     pub fn get_dsp_index(&self, dsp: Dsp) -> Result<c_int> {
         let mut index = 0;
         unsafe {
-            FMOD_ChannelControl_GetDSPIndex(self.inner.as_ptr(), dsp.inner.as_ptr(), &mut index)
+            FMOD_ChannelControl_GetDSPIndex(self.inner.as_ptr(), dsp.inner.as_ptr(), &raw mut index)
                 .to_result()?;
         }
         Ok(index)

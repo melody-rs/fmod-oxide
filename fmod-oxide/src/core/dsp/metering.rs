@@ -61,8 +61,8 @@ impl Dsp {
         unsafe {
             FMOD_DSP_GetMeteringEnabled(
                 self.inner.as_ptr(),
-                &mut input_enabled,
-                &mut output_enabled,
+                &raw mut input_enabled,
+                &raw mut output_enabled,
             )
             .to_result()?;
         }

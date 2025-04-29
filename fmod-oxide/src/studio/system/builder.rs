@@ -36,10 +36,10 @@ impl SystemBuilder {
     /// All other FMOD Studio API functions are thread safe and may be called freely from any thread unless otherwise documented.
     pub unsafe fn new() -> Result<Self> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_Studio_System_Create(&mut system, FMOD_VERSION).to_result()? };
+        unsafe { FMOD_Studio_System_Create(&raw mut system, FMOD_VERSION).to_result()? };
 
         let mut core_system = std::ptr::null_mut();
-        unsafe { FMOD_Studio_System_GetCoreSystem(system, &mut core_system).to_result()? };
+        unsafe { FMOD_Studio_System_GetCoreSystem(system, &raw mut core_system).to_result()? };
 
         Ok(SystemBuilder {
             system,
@@ -71,7 +71,7 @@ impl SystemBuilder {
     pub fn settings(&mut self, settings: &AdvancedSettings) -> Result<&mut Self> {
         let mut settings = settings.into();
         // this function expects a pointer. maybe this is incorrect?
-        unsafe { FMOD_Studio_System_SetAdvancedSettings(self.system, &mut settings).to_result() }?;
+        unsafe { FMOD_Studio_System_SetAdvancedSettings(self.system, &raw mut settings).to_result() }?;
         Ok(self)
     }
 

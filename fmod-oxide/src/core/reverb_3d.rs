@@ -73,8 +73,8 @@ impl Reverb3D {
             FMOD_Reverb3D_Get3DAttributes(
                 self.inner.as_ptr(),
                 position.as_mut_ptr(),
-                &mut min_distance,
-                &mut max_distance,
+                &raw mut min_distance,
+                &raw mut max_distance,
             )
             .to_result()?;
             let position = position.assume_init().into();
@@ -118,7 +118,7 @@ impl Reverb3D {
     pub fn get_active(&self) -> Result<bool> {
         let mut active = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Reverb3D_GetActive(self.inner.as_ptr(), &mut active).to_result()?;
+            FMOD_Reverb3D_GetActive(self.inner.as_ptr(), &raw mut active).to_result()?;
         }
         Ok(active.into())
     }
@@ -131,7 +131,7 @@ impl Reverb3D {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Reverb3D_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_Reverb3D_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

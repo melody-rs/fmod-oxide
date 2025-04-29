@@ -38,9 +38,9 @@ impl Dsp {
         unsafe {
             FMOD_DSP_GetChannelFormat(
                 self.inner.as_ptr(),
-                &mut channel_mask,
-                &mut channel_count,
-                &mut source_speaker_mode,
+                &raw mut channel_mask,
+                &raw mut channel_count,
+                &raw mut source_speaker_mode,
             )
             .to_result()?;
         }
@@ -64,9 +64,9 @@ impl Dsp {
                 in_mask.into(),
                 in_channels,
                 in_speaker_mode.into(),
-                &mut out_mask,
-                &mut out_channels,
-                &mut out_speaker_mode,
+                &raw mut out_mask,
+                &raw mut out_channels,
+                &raw mut out_speaker_mode,
             )
             .to_result()?;
         }

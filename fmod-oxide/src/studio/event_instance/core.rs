@@ -18,7 +18,7 @@ impl EventInstance {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_EventInstance_GetChannelGroup(self.inner.as_ptr(), &mut channel_group)
+            FMOD_Studio_EventInstance_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
                 .to_result()?;
         }
         Ok(channel_group.into())
@@ -37,7 +37,7 @@ impl EventInstance {
     pub fn get_reverb_level(&self, index: c_int) -> Result<c_float> {
         let mut level = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetReverbLevel(self.inner.as_ptr(), index, &mut level)
+            FMOD_Studio_EventInstance_GetReverbLevel(self.inner.as_ptr(), index, &raw mut level)
                 .to_result()?;
         }
         Ok(level)

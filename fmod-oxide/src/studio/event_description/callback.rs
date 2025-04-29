@@ -24,7 +24,7 @@ impl EventDescription {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_EventDescription_GetUserData(self.inner.as_ptr(), &mut userdata)
+            FMOD_Studio_EventDescription_GetUserData(self.inner.as_ptr(), &raw mut userdata)
                 .to_result()?;
         }
         Ok(userdata)

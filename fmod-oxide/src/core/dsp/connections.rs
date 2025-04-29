@@ -21,7 +21,7 @@ impl Dsp {
             FMOD_DSP_AddInput(
                 self.inner.as_ptr(),
                 input.inner.as_ptr(),
-                &mut connection,
+                &raw mut connection,
                 kind.into(),
             )
             .to_result()?;
@@ -38,7 +38,7 @@ impl Dsp {
         let mut connection = std::ptr::null_mut();
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetInput(self.inner.as_ptr(), index, &mut dsp, &mut connection).to_result()?;
+            FMOD_DSP_GetInput(self.inner.as_ptr(), index, &raw mut dsp, &raw mut connection).to_result()?;
         };
         Ok((dsp.into(), connection.into()))
     }
@@ -52,7 +52,7 @@ impl Dsp {
         let mut connection = std::ptr::null_mut();
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetOutput(self.inner.as_ptr(), index, &mut dsp, &mut connection)
+            FMOD_DSP_GetOutput(self.inner.as_ptr(), index, &raw mut dsp, &raw mut connection)
                 .to_result()?;
         };
         Ok((dsp.into(), connection.into()))
@@ -64,7 +64,7 @@ impl Dsp {
     pub fn get_input_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_DSP_GetNumInputs(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_DSP_GetNumInputs(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -74,7 +74,7 @@ impl Dsp {
     /// This will flush the [`Dsp`] queue (which blocks against the mixer) to ensure the output list is correct, avoid this during time sensitive operations.
     pub fn get_output_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_DSP_GetNumOutputs(self.inner.as_ptr(), &mut count).to_result()? };
+        unsafe { FMOD_DSP_GetNumOutputs(self.inner.as_ptr(), &raw mut count).to_result()? };
         Ok(count)
     }
 

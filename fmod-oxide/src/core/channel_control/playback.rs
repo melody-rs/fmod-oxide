@@ -23,7 +23,7 @@ impl ChannelControl {
         // because we use c exports of the c++ api, we get to use bool! no fmod_bool here :3
         let mut playing = false;
         unsafe {
-            FMOD_ChannelControl_IsPlaying(self.inner.as_ptr(), &mut playing).to_result()?;
+            FMOD_ChannelControl_IsPlaying(self.inner.as_ptr(), &raw mut playing).to_result()?;
         }
         Ok(playing)
     }
@@ -57,7 +57,7 @@ impl ChannelControl {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = false;
         unsafe {
-            FMOD_ChannelControl_GetPaused(self.inner.as_ptr(), &mut paused).to_result()?;
+            FMOD_ChannelControl_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
         }
         Ok(paused)
     }
@@ -105,7 +105,7 @@ impl ChannelControl {
     pub fn get_mode(&self) -> Result<Mode> {
         let mut mode = 0;
         unsafe {
-            FMOD_ChannelControl_GetMode(self.inner.as_ptr(), &mut mode).to_result()?;
+            FMOD_ChannelControl_GetMode(self.inner.as_ptr(), &raw mut mode).to_result()?;
         }
         Ok(mode.into())
     }
@@ -126,7 +126,7 @@ impl ChannelControl {
     pub fn get_pitch(&self) -> Result<c_float> {
         let mut pitch = 0.0;
         unsafe {
-            FMOD_ChannelControl_GetPitch(self.inner.as_ptr(), &mut pitch).to_result()?;
+            FMOD_ChannelControl_GetPitch(self.inner.as_ptr(), &raw mut pitch).to_result()?;
         }
         Ok(pitch)
     }

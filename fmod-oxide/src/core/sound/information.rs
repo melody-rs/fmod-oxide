@@ -37,10 +37,10 @@ impl Sound {
         unsafe {
             FMOD_Sound_GetFormat(
                 self.inner.as_ptr(),
-                &mut kind,
-                &mut format,
-                &mut channels,
-                &mut bits,
+                &raw mut kind,
+                &raw mut format,
+                &raw mut channels,
+                &raw mut bits,
             )
             .to_result()?;
         }
@@ -60,7 +60,7 @@ impl Sound {
     pub fn get_length(&self, unit: TimeUnit) -> Result<c_uint> {
         let mut length = 0;
         unsafe {
-            FMOD_Sound_GetLength(self.inner.as_ptr(), &mut length, unit.into()).to_result()?;
+            FMOD_Sound_GetLength(self.inner.as_ptr(), &raw mut length, unit.into()).to_result()?;
         }
         Ok(length)
     }
@@ -75,7 +75,7 @@ impl Sound {
         let mut tags = 0;
         let mut updated = 0;
         unsafe {
-            FMOD_Sound_GetNumTags(self.inner.as_ptr(), &mut tags, &mut updated).to_result()?;
+            FMOD_Sound_GetNumTags(self.inner.as_ptr(), &raw mut tags, &raw mut updated).to_result()?;
         }
         Ok((tags, updated))
     }

@@ -38,7 +38,7 @@ impl System {
                 self.inner.as_ptr(),
                 filename.as_ptr(),
                 load_flags.bits(),
-                &mut bank,
+                &raw mut bank,
             )
             .to_result()?;
             Ok(Bank::from(bank))
@@ -71,7 +71,7 @@ impl System {
                 buffer.len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY,
                 flags.bits(),
-                &mut bank,
+                &raw mut bank,
             )
             .to_result()?;
             Ok(Bank::from(bank))
@@ -112,7 +112,7 @@ impl System {
                 (*buffer).len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY_POINT,
                 flags.bits(),
-                &mut bank,
+                &raw mut bank,
             )
             .to_result()?;
             Ok(Bank::from(bank))
@@ -132,7 +132,7 @@ impl System {
     pub fn get_bank(&self, path_or_id: &Utf8CStr) -> Result<Bank> {
         let mut bank = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetBank(self.inner.as_ptr(), path_or_id.as_ptr(), &mut bank)
+            FMOD_Studio_System_GetBank(self.inner.as_ptr(), path_or_id.as_ptr(), &raw mut bank)
                 .to_result()?;
             Ok(Bank::from(bank))
         }
@@ -142,7 +142,7 @@ impl System {
     pub fn get_bank_by_id(&self, id: Guid) -> Result<Bank> {
         let mut bank = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetBankByID(self.inner.as_ptr(), &id.into(), &mut bank)
+            FMOD_Studio_System_GetBankByID(self.inner.as_ptr(), &id.into(), &raw mut bank)
                 .to_result()?;
             Ok(Bank::from(bank))
         }
@@ -152,7 +152,7 @@ impl System {
     pub fn bank_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_System_GetBankCount(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Studio_System_GetBankCount(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -169,7 +169,7 @@ impl System {
                 // bank is repr transparent and has the same layout as *mut FMOD_STUDIO_BANK, so this cast is ok
                 list.as_mut_ptr(),
                 list.capacity() as c_int,
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
 

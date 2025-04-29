@@ -74,7 +74,7 @@ impl EventDescription {
         unsafe {
             FMOD_Studio_EventDescription_GetParameterDescriptionCount(
                 self.inner.as_ptr(),
-                &mut count,
+                &raw mut count,
             )
             .to_result()?;
         }
@@ -101,7 +101,7 @@ impl EventDescription {
                 label_index,
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -124,7 +124,7 @@ impl EventDescription {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 
@@ -155,7 +155,7 @@ impl EventDescription {
                 label_index,
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -178,7 +178,7 @@ impl EventDescription {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 
@@ -211,7 +211,7 @@ impl EventDescription {
                 label_index,
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -234,7 +234,7 @@ impl EventDescription {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 

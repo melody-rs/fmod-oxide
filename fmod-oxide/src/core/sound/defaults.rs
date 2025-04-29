@@ -47,9 +47,9 @@ impl Sound {
         unsafe {
             FMOD_Sound_Get3DConeSettings(
                 self.inner.as_ptr(),
-                &mut inside_angle,
-                &mut outside_angle,
-                &mut outside_volume,
+                &raw mut inside_angle,
+                &raw mut outside_angle,
+                &raw mut outside_volume,
             )
             .to_result()?;
         }
@@ -89,7 +89,7 @@ impl Sound {
         let mut points = std::ptr::null_mut();
         let mut num_points = 0;
         unsafe {
-            FMOD_Sound_Get3DCustomRolloff(self.inner.as_ptr(), &mut points, &mut num_points)
+            FMOD_Sound_Get3DCustomRolloff(self.inner.as_ptr(), &raw mut points, &raw mut num_points)
                 .to_result()?;
 
             let points = std::slice::from_raw_parts(points.cast(), num_points as usize).to_vec();
@@ -124,7 +124,7 @@ impl Sound {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_Sound_Get3DMinMaxDistance(self.inner.as_ptr(), &mut min, &mut max).to_result()?;
+            FMOD_Sound_Get3DMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max).to_result()?;
         }
         Ok((min, max))
     }
@@ -141,7 +141,7 @@ impl Sound {
         let mut frequency = 0.0;
         let mut priority = 0;
         unsafe {
-            FMOD_Sound_GetDefaults(self.inner.as_ptr(), &mut frequency, &mut priority)
+            FMOD_Sound_GetDefaults(self.inner.as_ptr(), &raw mut frequency, &raw mut priority)
                 .to_result()?;
         }
         Ok((frequency, priority))
@@ -180,7 +180,7 @@ impl Sound {
     pub fn get_mode(&self) -> Result<Mode> {
         let mut mode = 0;
         unsafe {
-            FMOD_Sound_GetMode(self.inner.as_ptr(), &mut mode).to_result()?;
+            FMOD_Sound_GetMode(self.inner.as_ptr(), &raw mut mode).to_result()?;
         }
         Ok(Mode::from(mode))
     }
@@ -199,7 +199,7 @@ impl Sound {
     pub fn get_loop_count(&self) -> Result<c_int> {
         let mut loop_count = 0;
         unsafe {
-            FMOD_Sound_GetLoopCount(self.inner.as_ptr(), &mut loop_count).to_result()?;
+            FMOD_Sound_GetLoopCount(self.inner.as_ptr(), &raw mut loop_count).to_result()?;
         }
         Ok(loop_count)
     }
@@ -246,9 +246,9 @@ impl Sound {
         unsafe {
             FMOD_Sound_GetLoopPoints(
                 self.inner.as_ptr(),
-                &mut loop_start,
+                &raw mut loop_start,
                 start_type.into(),
-                &mut loop_end,
+                &raw mut loop_end,
                 end_type.into(),
             )
             .to_result()?;

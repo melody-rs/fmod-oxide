@@ -83,7 +83,7 @@ impl System {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_Studio_System_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

@@ -32,7 +32,7 @@ impl EventDescription {
     pub fn get_length(&self) -> Result<c_int> {
         let mut length = 0;
         unsafe {
-            FMOD_Studio_EventDescription_GetLength(self.inner.as_ptr(), &mut length).to_result()?;
+            FMOD_Studio_EventDescription_GetLength(self.inner.as_ptr(), &raw mut length).to_result()?;
         }
         Ok(length)
     }
@@ -51,7 +51,7 @@ impl EventDescription {
                 self.inner.as_ptr(),
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -72,7 +72,7 @@ impl EventDescription {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 

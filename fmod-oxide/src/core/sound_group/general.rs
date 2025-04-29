@@ -37,7 +37,7 @@ impl SoundGroup {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_SoundGroup_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_SoundGroup_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -45,7 +45,7 @@ impl SoundGroup {
     /// Retrieves the parent System object.
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
-        unsafe { FMOD_SoundGroup_GetSystemObject(self.inner.as_ptr(), &mut system).to_result()? };
+        unsafe { FMOD_SoundGroup_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()? };
         Ok(system.into())
     }
 }

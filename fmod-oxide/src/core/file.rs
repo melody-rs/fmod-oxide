@@ -15,7 +15,7 @@ use fmod_sys::*;
 pub fn get_disk_busy() -> Result<bool> {
     let mut busy = 0;
     unsafe {
-        FMOD_File_GetDiskBusy(&mut busy).to_result()?;
+        FMOD_File_GetDiskBusy(&raw mut busy).to_result()?;
     }
     Ok(busy > 0)
 }

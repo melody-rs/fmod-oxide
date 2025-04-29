@@ -29,7 +29,7 @@ impl System {
         let mut version = 0;
         let mut build_number = 0;
         unsafe {
-            FMOD_System_GetVersion(self.inner.as_ptr(), &mut version, &mut build_number)
+            FMOD_System_GetVersion(self.inner.as_ptr(), &raw mut version, &raw mut build_number)
                 .to_result()?;
         }
         Ok((version, build_number))
@@ -58,7 +58,7 @@ impl System {
     pub fn get_output_handle(&self) -> Result<*mut c_void> {
         let mut handle = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetOutputHandle(self.inner.as_ptr(), &mut handle).to_result()?;
+            FMOD_System_GetOutputHandle(self.inner.as_ptr(), &raw mut handle).to_result()?;
         }
         Ok(handle)
     }
@@ -70,7 +70,7 @@ impl System {
         let mut channels = 0;
         let mut real_channels = 0;
         unsafe {
-            FMOD_System_GetChannelsPlaying(self.inner.as_ptr(), &mut channels, &mut real_channels)
+            FMOD_System_GetChannelsPlaying(self.inner.as_ptr(), &raw mut channels, &raw mut real_channels)
                 .to_result()?;
         }
         Ok((channels, real_channels))
@@ -98,9 +98,9 @@ impl System {
         unsafe {
             FMOD_System_GetFileUsage(
                 self.inner.as_ptr(),
-                &mut sample_read,
-                &mut stream_read,
-                &mut other_read,
+                &raw mut sample_read,
+                &raw mut stream_read,
+                &raw mut other_read,
             )
             .to_result()?;
         }
@@ -145,7 +145,7 @@ impl System {
             FMOD_System_GetSpeakerModeChannels(
                 self.inner.as_ptr(),
                 speaker_mode.into(),
-                &mut channels,
+                &raw mut channels,
             )
             .to_result()?;
         }

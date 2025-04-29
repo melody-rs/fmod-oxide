@@ -25,7 +25,7 @@ impl SoundGroup {
     pub fn get_max_audible(&self) -> Result<c_int> {
         let mut max_audible = 0;
         unsafe {
-            FMOD_SoundGroup_GetMaxAudible(self.inner.as_ptr(), &mut max_audible).to_result()?;
+            FMOD_SoundGroup_GetMaxAudible(self.inner.as_ptr(), &raw mut max_audible).to_result()?;
         };
         Ok(max_audible)
     }
@@ -41,7 +41,7 @@ impl SoundGroup {
     pub fn get_max_audible_behavior(&self) -> Result<SoundGroupBehavior> {
         let mut behavior = 0;
         unsafe {
-            FMOD_SoundGroup_GetMaxAudibleBehavior(self.inner.as_ptr(), &mut behavior)
+            FMOD_SoundGroup_GetMaxAudibleBehavior(self.inner.as_ptr(), &raw mut behavior)
                 .to_result()?;
         };
         let behavior = behavior.try_into()?;
@@ -63,7 +63,7 @@ impl SoundGroup {
     /// Retrieves the current mute fade time.
     pub fn get_mute_fade_speed(&self) -> Result<c_float> {
         let mut speed = 0.0;
-        unsafe { FMOD_SoundGroup_GetMuteFadeSpeed(self.inner.as_ptr(), &mut speed).to_result()? };
+        unsafe { FMOD_SoundGroup_GetMuteFadeSpeed(self.inner.as_ptr(), &raw mut speed).to_result()? };
         Ok(speed)
     }
 
@@ -75,7 +75,7 @@ impl SoundGroup {
     /// Retrieves the volume of the sound group.
     pub fn get_volume(&self) -> Result<c_float> {
         let mut volume = 0.0;
-        unsafe { FMOD_SoundGroup_GetVolume(self.inner.as_ptr(), &mut volume).to_result()? };
+        unsafe { FMOD_SoundGroup_GetVolume(self.inner.as_ptr(), &raw mut volume).to_result()? };
         Ok(volume)
     }
 }

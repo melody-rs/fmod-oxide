@@ -29,7 +29,7 @@ impl EventInstance {
         let mut pitch = 0.0;
         let mut final_pitch = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetPitch(self.inner.as_ptr(), &mut pitch, &mut final_pitch)
+            FMOD_Studio_EventInstance_GetPitch(self.inner.as_ptr(), &raw mut pitch, &raw mut final_pitch)
                 .to_result()?;
         }
         Ok((pitch, final_pitch))
@@ -54,7 +54,7 @@ impl EventInstance {
     pub fn get_property(&self, property: EventProperty) -> Result<c_float> {
         let mut value = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetProperty(self.inner.as_ptr(), property.into(), &mut value)
+            FMOD_Studio_EventInstance_GetProperty(self.inner.as_ptr(), property.into(), &raw mut value)
                 .to_result()?;
         }
         Ok(value)
@@ -71,7 +71,7 @@ impl EventInstance {
     pub fn get_timeline_position(&self) -> Result<c_int> {
         let mut position = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetTimelinePosition(self.inner.as_ptr(), &mut position)
+            FMOD_Studio_EventInstance_GetTimelinePosition(self.inner.as_ptr(), &raw mut position)
                 .to_result()?;
         }
         Ok(position)
@@ -94,8 +94,8 @@ impl EventInstance {
         unsafe {
             FMOD_Studio_EventInstance_GetVolume(
                 self.inner.as_ptr(),
-                &mut volume,
-                &mut final_volume,
+                &raw mut volume,
+                &raw mut final_volume,
             )
             .to_result()?;
         }
@@ -108,7 +108,7 @@ impl EventInstance {
     pub fn is_virtual(&self) -> Result<bool> {
         let mut is_virtual = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventInstance_IsVirtual(self.inner.as_ptr(), &mut is_virtual)
+            FMOD_Studio_EventInstance_IsVirtual(self.inner.as_ptr(), &raw mut is_virtual)
                 .to_result()?;
         }
         Ok(is_virtual.into())

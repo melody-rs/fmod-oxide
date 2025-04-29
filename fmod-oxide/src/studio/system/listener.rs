@@ -75,7 +75,7 @@ impl System {
     pub fn get_listener_weight(&self, listener: c_int) -> Result<c_float> {
         let mut weight = 0.0;
         unsafe {
-            FMOD_Studio_System_GetListenerWeight(self.inner.as_ptr(), listener, &mut weight)
+            FMOD_Studio_System_GetListenerWeight(self.inner.as_ptr(), listener, &raw mut weight)
                 .to_result()?;
         }
         Ok(weight)
@@ -94,7 +94,7 @@ impl System {
     pub fn get_listener_count(&self) -> Result<c_int> {
         let mut amount = 0;
         unsafe {
-            FMOD_Studio_System_GetNumListeners(self.inner.as_ptr(), &mut amount).to_result()?;
+            FMOD_Studio_System_GetNumListeners(self.inner.as_ptr(), &raw mut amount).to_result()?;
         }
         Ok(amount)
     }

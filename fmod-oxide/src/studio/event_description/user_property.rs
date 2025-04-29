@@ -49,7 +49,7 @@ impl EventDescription {
     pub fn user_property_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_EventDescription_GetUserPropertyCount(self.inner.as_ptr(), &mut count)
+            FMOD_Studio_EventDescription_GetUserPropertyCount(self.inner.as_ptr(), &raw mut count)
                 .to_result()?;
         }
         Ok(count)

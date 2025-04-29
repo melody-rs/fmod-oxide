@@ -25,7 +25,7 @@ impl System {
                 self.inner.as_ptr(),
                 max_polygons,
                 max_vertices,
-                &mut geometry,
+                &raw mut geometry,
             )
             .to_result()?;
         }
@@ -54,7 +54,7 @@ impl System {
     pub fn get_geometry_settings(&self) -> Result<c_float> {
         let mut max_world_size = 0.0;
         unsafe {
-            FMOD_System_GetGeometrySettings(self.inner.as_ptr(), &mut max_world_size)
+            FMOD_System_GetGeometrySettings(self.inner.as_ptr(), &raw mut max_world_size)
                 .to_result()?;
         }
         Ok(max_world_size)
@@ -70,7 +70,7 @@ impl System {
                 self.inner.as_ptr(),
                 data.as_ptr().cast(),
                 data.len() as c_int,
-                &mut geometry,
+                &raw mut geometry,
             )
             .to_result()?;
         }
@@ -93,8 +93,8 @@ impl System {
                 self.inner.as_ptr(),
                 std::ptr::from_ref(&listener).cast(),
                 std::ptr::from_ref(&source).cast(),
-                &mut direct,
-                &mut reverb,
+                &raw mut direct,
+                &raw mut reverb,
             )
             .to_result()?;
         }

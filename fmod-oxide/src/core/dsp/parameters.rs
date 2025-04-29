@@ -33,7 +33,7 @@ impl ParameterType for bool {
         let dsp = dsp.inner.as_ptr();
         unsafe {
             let mut value = FMOD_BOOL::FALSE;
-            FMOD_DSP_GetParameterBool(dsp, index, &mut value, std::ptr::null_mut(), 0)
+            FMOD_DSP_GetParameterBool(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
                 .to_result()?;
             Ok(value.into())
         }
@@ -69,7 +69,7 @@ impl ParameterType for c_int {
         let dsp = dsp.inner.as_ptr();
         unsafe {
             let mut value = 0;
-            FMOD_DSP_GetParameterInt(dsp, index, &mut value, std::ptr::null_mut(), 0)
+            FMOD_DSP_GetParameterInt(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
                 .to_result()?;
             Ok(value)
         }
@@ -105,7 +105,7 @@ impl ParameterType for c_float {
         let dsp = dsp.inner.as_ptr();
         unsafe {
             let mut value = 0.0;
-            FMOD_DSP_GetParameterFloat(dsp, index, &mut value, std::ptr::null_mut(), 0)
+            FMOD_DSP_GetParameterFloat(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
                 .to_result()?;
             Ok(value)
         }
@@ -184,7 +184,7 @@ impl Dsp {
     pub fn get_data_parameter_index(&self, data_type: DspParameterDataType) -> Result<c_int> {
         let mut index = 0;
         unsafe {
-            FMOD_DSP_GetDataParameterIndex(self.inner.as_ptr(), data_type.into(), &mut index)
+            FMOD_DSP_GetDataParameterIndex(self.inner.as_ptr(), data_type.into(), &raw mut index)
                 .to_result()?;
         }
         Ok(index)
@@ -195,7 +195,7 @@ impl Dsp {
     /// Use this to enumerate all parameters of a [`Dsp`] unit with [`Dsp::get_parameter_info`].
     pub fn get_parameter_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_DSP_GetNumParameters(self.inner.as_ptr(), &mut count).to_result()? };
+        unsafe { FMOD_DSP_GetNumParameters(self.inner.as_ptr(), &raw mut count).to_result()? };
         Ok(count)
     }
 
@@ -203,7 +203,7 @@ impl Dsp {
     pub fn get_parameter_info(&self, index: c_int) -> Result<DspParameterDescription> {
         let mut desc = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetParameterInfo(self.inner.as_ptr(), index, &mut desc).to_result()?;
+            FMOD_DSP_GetParameterInfo(self.inner.as_ptr(), index, &raw mut desc).to_result()?;
             let desc = DspParameterDescription::from_ffi(*desc); // oh god this is *awful*
             Ok(desc)
         }

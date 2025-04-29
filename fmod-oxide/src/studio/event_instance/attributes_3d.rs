@@ -23,7 +23,7 @@ impl EventInstance {
         let mut attributes = attributes.into();
         unsafe {
             // FIXME is this supposed to take an &mut
-            FMOD_Studio_EventInstance_Set3DAttributes(self.inner.as_ptr(), &mut attributes)
+            FMOD_Studio_EventInstance_Set3DAttributes(self.inner.as_ptr(), &raw mut attributes)
                 .to_result()
         }
     }
@@ -54,7 +54,7 @@ impl EventInstance {
     pub fn get_listener_mask(&self) -> Result<c_uint> {
         let mut mask = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetListenerMask(self.inner.as_ptr(), &mut mask)
+            FMOD_Studio_EventInstance_GetListenerMask(self.inner.as_ptr(), &raw mut mask)
                 .to_result()?;
         }
         Ok(mask)
@@ -65,7 +65,7 @@ impl EventInstance {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetMinMaxDistance(self.inner.as_ptr(), &mut min, &mut max)
+            FMOD_Studio_EventInstance_GetMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max)
                 .to_result()?;
         }
         Ok((min, max))

@@ -36,7 +36,7 @@ fn main() {
                 studio_include_dir.unwrap_or_else(|| PathBuf::from("fmod/api/studio/inc"));
             if let Err(e) = coverage::coverage(core_include_dir, studio_include_dir, print, verbose)
             {
-                eprintln!("Error: {:?}", e);
+                eprintln!("Error: {e:?}");
             }
         }
     }

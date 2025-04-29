@@ -18,7 +18,7 @@ impl ChannelControl {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelControl_GetUserData(self.inner.as_ptr(), &mut userdata).to_result()?;
+            FMOD_ChannelControl_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -26,7 +26,7 @@ impl ChannelControl {
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelControl_GetSystemObject(self.inner.as_ptr(), &mut system).to_result()?;
+            FMOD_ChannelControl_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
         }
         Ok(system.into())
     }

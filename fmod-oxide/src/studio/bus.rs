@@ -58,7 +58,7 @@ impl Bus {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_Bus_GetPaused(self.inner.as_ptr(), &mut paused).to_result()?;
+            FMOD_Studio_Bus_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
         }
         Ok(paused.into())
     }
@@ -85,7 +85,7 @@ impl Bus {
         let mut volume = 0.0;
         let mut final_volume = 0.0;
         unsafe {
-            FMOD_Studio_Bus_GetVolume(self.inner.as_ptr(), &mut volume, &mut final_volume)
+            FMOD_Studio_Bus_GetVolume(self.inner.as_ptr(), &raw mut volume, &raw mut final_volume)
                 .to_result()?;
         }
         Ok((volume, final_volume))
@@ -106,7 +106,7 @@ impl Bus {
     pub fn get_mute(&self) -> Result<bool> {
         let mut mute = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_Bus_GetMute(self.inner.as_ptr(), &mut mute).to_result()?;
+            FMOD_Studio_Bus_GetMute(self.inner.as_ptr(), &raw mut mute).to_result()?;
         }
         Ok(mute.into())
     }
@@ -129,7 +129,7 @@ impl Bus {
     pub fn get_port_index(&self) -> Result<FMOD_PORT_INDEX> {
         let mut index = 0;
         unsafe {
-            FMOD_Studio_Bus_GetPortIndex(self.inner.as_ptr(), &mut index).to_result()?;
+            FMOD_Studio_Bus_GetPortIndex(self.inner.as_ptr(), &raw mut index).to_result()?;
         }
         Ok(index)
     }
@@ -143,7 +143,7 @@ impl Bus {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &mut channel_group).to_result()?;
+            FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group).to_result()?;
         }
         Ok(channel_group.into())
     }
@@ -184,7 +184,7 @@ impl Bus {
         let mut exclusive = 0;
         let mut inclusive = 0;
         unsafe {
-            FMOD_Studio_Bus_GetCPUUsage(self.inner.as_ptr(), &mut exclusive, &mut inclusive)
+            FMOD_Studio_Bus_GetCPUUsage(self.inner.as_ptr(), &raw mut exclusive, &raw mut inclusive)
                 .to_result()?;
         }
         Ok((exclusive, inclusive))
@@ -232,7 +232,7 @@ impl Bus {
                 self.inner.as_ptr(),
                 std::ptr::null_mut(),
                 0,
-                &mut string_len,
+                &raw mut string_len,
             )
             .to_error();
 
@@ -253,7 +253,7 @@ impl Bus {
                 // u8 and i8 have the same layout, so this is ok
                 path.as_mut_ptr().cast(),
                 string_len,
-                &mut expected_string_len,
+                &raw mut expected_string_len,
             )
             .to_result()?;
 

@@ -45,7 +45,7 @@ impl Sound {
     pub fn get_sync_point(&self, index: i32) -> Result<SyncPoint> {
         let mut sync_point = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSyncPoint(self.inner.as_ptr(), index, &mut sync_point).to_result()?;
+            FMOD_Sound_GetSyncPoint(self.inner.as_ptr(), index, &raw mut sync_point).to_result()?;
         }
         Ok(sync_point.into())
     }
@@ -65,7 +65,7 @@ impl Sound {
                 point.into(),
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
-                &mut offset,
+                &raw mut offset,
                 offset_type.into(),
             )
         })?;
@@ -78,7 +78,7 @@ impl Sound {
     pub fn get_sync_point_count(&self) -> Result<i32> {
         let mut count = 0;
         unsafe {
-            FMOD_Sound_GetNumSyncPoints(self.inner.as_ptr(), &mut count).to_result()?;
+            FMOD_Sound_GetNumSyncPoints(self.inner.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -99,7 +99,7 @@ impl Sound {
                 offset,
                 offset_type.into(),
                 name.as_ptr(),
-                &mut sync_point,
+                &raw mut sync_point,
             )
             .to_result()?;
         }
