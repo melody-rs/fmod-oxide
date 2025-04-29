@@ -224,7 +224,7 @@
 - [x] FMOD_DSP_GetParameterInfo
 - [x] FMOD_DSP_GetDataParameterIndex
 - [ ] FMOD_DSP_ShowConfigDialog
-- [ ] FMOD_DSP_GetInfo
+- [x] FMOD_DSP_GetInfo
 - [x] FMOD_DSP_GetType
 - [x] FMOD_DSP_GetIdle
 - [x] FMOD_DSP_SetUserData

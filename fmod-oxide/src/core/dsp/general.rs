@@ -5,9 +5,20 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use fmod_sys::*;
-use std::ffi::{c_uint, c_void};
+use lanyard::{Utf8CStr, Utf8CString};
+use std::ffi::{c_int, c_uint, c_void};
 
 use crate::{Dsp, DspType, System};
+
+#[derive(Debug)]
+pub struct DspInfo {
+    // FIXME: this is always 32 byes, it doesn't need to be heap allocated
+    pub name: Utf8CString,
+    pub version: c_uint,
+    pub channels: c_int,
+    pub config_width: c_int,
+    pub config_height: c_int,
+}
 
 impl Dsp {
     // TODO show dialogue config
@@ -36,7 +47,35 @@ impl Dsp {
         Ok(dsp_type)
     }
 
-    // TODO getinfo
+    /// Retrieves information about this DSP unit.
+    pub fn get_info(&self) -> Result<DspInfo> {
+        let mut buffer = [0u8; 32];
+        let mut version = 0;
+        let mut channels = 0;
+        let mut config_width = 0;
+        let mut config_height = 0;
+
+        unsafe {
+            FMOD_DSP_GetInfo(
+                self.inner.as_ptr(),
+                buffer.as_mut_ptr().cast::<i8>(),
+                &raw mut version,
+                &raw mut channels,
+                &raw mut config_width,
+                &raw mut config_height,
+            )
+            .to_result()?;
+        }
+
+        let name = Utf8CStr::from_utf8_with_nul(&buffer).unwrap().to_cstring();
+        Ok(DspInfo {
+            name,
+            version,
+            channels,
+            config_width,
+            config_height,
+        })
+    }
 
     /// Retrieves statistics on the mixer thread CPU usage for this unit.
     ///
