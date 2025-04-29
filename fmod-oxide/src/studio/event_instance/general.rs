@@ -6,7 +6,7 @@
 
 use fmod_sys::*;
 
-use crate::studio::{EventDescription, EventInstance};
+use crate::studio::{EventDescription, EventInstance, System};
 
 #[cfg(doc)]
 use crate::studio::PlaybackState;
@@ -38,5 +38,15 @@ impl EventInstance {
     /// Checks that the [`EventInstance`] reference is valid.
     pub fn is_valid(&self) -> bool {
         unsafe { FMOD_Studio_EventInstance_IsValid(self.inner.as_ptr()).into() }
+    }
+
+    /// Retrieves the FMOD Studio [`System`].
+    pub fn get_system(&self) -> Result<System> {
+        let mut system = std::ptr::null_mut();
+        unsafe {
+            FMOD_Studio_EventInstance_GetSystem(self.inner.as_ptr(), &raw mut system)
+                .to_result()?;
+            Ok(System::from(system))
+        }
     }
 }
