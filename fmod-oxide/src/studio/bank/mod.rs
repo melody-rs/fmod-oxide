@@ -26,10 +26,17 @@ unsafe impl Send for Bank {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Bank {}
 
-impl From<*mut FMOD_STUDIO_BANK> for Bank {
-    fn from(value: *mut FMOD_STUDIO_BANK) -> Self {
+impl Bank {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_BANK) -> Self {
         let inner = NonNull::new(value).unwrap();
-        Self { inner }
+        Bank { inner }
     }
 }
 

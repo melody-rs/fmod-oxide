@@ -86,35 +86,35 @@ impl ErrorCallbackInfo<'_> {
                 FMOD_ERRORCALLBACK_INSTANCETYPE_REVERB3D => {
                     Instance::Reverb3D(Reverb3D::from(value.instance.cast()))
                 }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => {
-                    Instance::StudioSystem(studio::System::from(value.instance.cast()))
-                }
+                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => Instance::StudioSystem(unsafe {
+                    studio::System::from_ffi(value.instance.cast())
+                }),
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTDESCRIPTION => {
-                    Instance::StudioEventDescription(studio::EventDescription::from(
-                        value.instance.cast(),
-                    ))
+                    Instance::StudioEventDescription(unsafe {
+                        studio::EventDescription::from_ffi(value.instance.cast())
+                    })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTINSTANCE => {
-                    Instance::StudioEventInstance(studio::EventInstance::from(
-                        value.instance.cast(),
-                    ))
+                    Instance::StudioEventInstance(unsafe {
+                        studio::EventInstance::from_ffi(value.instance.cast())
+                    })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_PARAMETERINSTANCE => {
                     Instance::StudioParameterInstance
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BUS => {
-                    Instance::StudioBus(studio::Bus::from(value.instance.cast()))
+                    Instance::StudioBus(unsafe { studio::Bus::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_VCA => {
-                    Instance::StudioVCA(studio::Vca::from(value.instance.cast()))
+                    Instance::StudioVCA(unsafe { studio::Vca::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BANK => {
-                    Instance::StudioBank(studio::Bank::from(value.instance.cast()))
+                    Instance::StudioBank(unsafe { studio::Bank::from_ffi(value.instance.cast()) })
                 }
                 FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_COMMANDREPLAY => {
-                    Instance::StudioCommandReplay(studio::CommandReplay::from(
-                        value.instance.cast(),
-                    ))
+                    Instance::StudioCommandReplay(unsafe {
+                        studio::CommandReplay::from_ffi(value.instance.cast())
+                    })
                 }
                 _ => {
                     eprintln!("warning: unknown instance type {}", value.instancetype);

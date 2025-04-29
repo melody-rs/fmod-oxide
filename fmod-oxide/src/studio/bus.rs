@@ -13,7 +13,7 @@ use std::{
 use fmod_sys::*;
 use lanyard::Utf8CString;
 
-use crate::{core::ChannelGroup, Guid};
+use crate::{Guid, core::ChannelGroup};
 
 use super::{MemoryUsage, StopMode};
 
@@ -29,8 +29,15 @@ unsafe impl Send for Bus {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Bus {}
 
-impl From<*mut FMOD_STUDIO_BUS> for Bus {
-    fn from(value: *mut FMOD_STUDIO_BUS) -> Self {
+impl Bus {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_BUS) -> Self {
         let inner = NonNull::new(value).unwrap();
         Bus { inner }
     }
@@ -143,7 +150,8 @@ impl Bus {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group).to_result()?;
+            FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
+                .to_result()?;
         }
         Ok(channel_group.into())
     }
@@ -184,8 +192,12 @@ impl Bus {
         let mut exclusive = 0;
         let mut inclusive = 0;
         unsafe {
-            FMOD_Studio_Bus_GetCPUUsage(self.inner.as_ptr(), &raw mut exclusive, &raw mut inclusive)
-                .to_result()?;
+            FMOD_Studio_Bus_GetCPUUsage(
+                self.inner.as_ptr(),
+                &raw mut exclusive,
+                &raw mut inclusive,
+            )
+            .to_result()?;
         }
         Ok((exclusive, inclusive))
     }

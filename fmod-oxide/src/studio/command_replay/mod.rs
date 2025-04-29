@@ -26,10 +26,17 @@ unsafe impl Send for CommandReplay {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for CommandReplay {}
 
-impl From<*mut FMOD_STUDIO_COMMANDREPLAY> for CommandReplay {
-    fn from(value: *mut FMOD_STUDIO_COMMANDREPLAY) -> Self {
+impl CommandReplay {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_COMMANDREPLAY) -> Self {
         let inner = NonNull::new(value).unwrap();
-        Self { inner }
+        CommandReplay { inner }
     }
 }
 

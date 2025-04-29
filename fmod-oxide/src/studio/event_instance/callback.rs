@@ -9,11 +9,11 @@ use lanyard::Utf8CStr;
 use std::ffi::c_void;
 
 use crate::{
+    Sound,
     studio::{
         EventCallbackMask, EventInstance, PluginInstanceProperties, ProgrammerSoundProperties,
         TimelineBeatProperties, TimelineMarkerProperties, TimelineNestedBeatProperties,
     },
-    Sound,
 };
 
 /// Trait for this particular FMOD callback.
@@ -142,7 +142,7 @@ pub(crate) unsafe extern "C" fn event_callback_impl<C: EventInstanceCallback>(
     parameters: *mut c_void,
 ) -> FMOD_RESULT {
     // FIXME handle panics
-    let event = EventInstance::from(event);
+    let event = unsafe { EventInstance::from_ffi(event) };
     let result = match kind {
         FMOD_STUDIO_EVENT_CALLBACK_CREATED => C::created(event),
         FMOD_STUDIO_EVENT_CALLBACK_DESTROYED => C::destroyed(event),
@@ -204,7 +204,7 @@ pub(crate) unsafe extern "C" fn event_callback_impl<C: EventInstanceCallback>(
         FMOD_STUDIO_EVENT_CALLBACK_REAL_TO_VIRTUAL => C::real_to_virtual(event),
         FMOD_STUDIO_EVENT_CALLBACK_VIRTUAL_TO_REAL => C::virtual_to_real(event),
         FMOD_STUDIO_EVENT_CALLBACK_START_EVENT_COMMAND => {
-            let new_event = EventInstance::from(parameters.cast());
+            let new_event = unsafe { EventInstance::from_ffi(parameters.cast()) };
             C::start_event_command(event, new_event)
         }
         FMOD_STUDIO_EVENT_CALLBACK_NESTED_TIMELINE_BEAT => {

@@ -49,13 +49,13 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
     // FIXME handle panics
-    let system = System::from(system);
+    let system = unsafe { System::from_ffi(system) };
 
     let result = match kind {
         FMOD_STUDIO_SYSTEM_CALLBACK_PREUPDATE => C::preupdate(system, userdata),
         FMOD_STUDIO_SYSTEM_CALLBACK_POSTUPDATE => C::postupdate(system, userdata),
         FMOD_STUDIO_SYSTEM_CALLBACK_BANK_UNLOAD => {
-            let bank = Bank::from(command_data.cast());
+            let bank = unsafe { Bank::from_ffi(command_data.cast()) };
             C::bank_unload(system, bank, userdata)
         }
         FMOD_STUDIO_SYSTEM_CALLBACK_LIVEUPDATE_CONNECTED => {

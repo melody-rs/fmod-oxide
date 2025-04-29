@@ -34,12 +34,17 @@ pub struct System {
     pub(crate) inner: NonNull<FMOD_STUDIO_SYSTEM>,
 }
 
-// TODO tryfrom impls
-
-impl From<*mut FMOD_STUDIO_SYSTEM> for System {
-    fn from(value: *mut FMOD_STUDIO_SYSTEM) -> Self {
+impl System {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_SYSTEM) -> Self {
         let inner = NonNull::new(value).unwrap();
-        Self { inner }
+        System { inner }
     }
 }
 

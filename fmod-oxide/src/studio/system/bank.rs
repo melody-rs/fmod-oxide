@@ -8,8 +8,8 @@ use fmod_sys::*;
 use lanyard::Utf8CStr;
 use std::ffi::c_int;
 
-use crate::studio::{Bank, LoadBankFlags, System};
 use crate::Guid;
+use crate::studio::{Bank, LoadBankFlags, System};
 
 #[cfg(doc)]
 use crate::studio::AdvancedSettings;
@@ -41,7 +41,7 @@ impl System {
                 &raw mut bank,
             )
             .to_result()?;
-            Ok(Bank::from(bank))
+            Ok(Bank::from_ffi(bank))
         }
     }
 
@@ -74,7 +74,7 @@ impl System {
                 &raw mut bank,
             )
             .to_result()?;
-            Ok(Bank::from(bank))
+            Ok(Bank::from_ffi(bank))
         }
     }
 
@@ -115,7 +115,7 @@ impl System {
                 &raw mut bank,
             )
             .to_result()?;
-            Ok(Bank::from(bank))
+            Ok(Bank::from_ffi(bank))
         }
     }
 
@@ -134,7 +134,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetBank(self.inner.as_ptr(), path_or_id.as_ptr(), &raw mut bank)
                 .to_result()?;
-            Ok(Bank::from(bank))
+            Ok(Bank::from_ffi(bank))
         }
     }
 
@@ -144,7 +144,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetBankByID(self.inner.as_ptr(), &id.into(), &raw mut bank)
                 .to_result()?;
-            Ok(Bank::from(bank))
+            Ok(Bank::from_ffi(bank))
         }
     }
 

@@ -23,8 +23,15 @@ unsafe impl Send for Vca {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for Vca {}
 
-impl From<*mut FMOD_STUDIO_VCA> for Vca {
-    fn from(value: *mut FMOD_STUDIO_VCA) -> Self {
+impl Vca {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_VCA) -> Self {
         let inner = NonNull::new(value).unwrap();
         Vca { inner }
     }

@@ -25,8 +25,8 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetBus(self.inner.as_ptr(), path_or_id.as_ptr(), &raw mut bus)
                 .to_result()?;
+            Ok(Bus::from_ffi(bus))
         }
-        Ok(bus.into())
     }
 
     /// Retrieves a loaded [`Bus`].
@@ -35,9 +35,10 @@ impl System {
     pub fn get_bus_by_id(&self, id: Guid) -> Result<Bus> {
         let mut bus = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetBusByID(self.inner.as_ptr(), &id.into(), &raw mut bus).to_result()?;
+            FMOD_Studio_System_GetBusByID(self.inner.as_ptr(), &id.into(), &raw mut bus)
+                .to_result()?;
+            Ok(Bus::from_ffi(bus))
         }
-        Ok(bus.into())
     }
 
     /// Retrieves an [`EventDescription`].
@@ -52,7 +53,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetEvent(self.inner.as_ptr(), path_or_id.as_ptr(), &raw mut event)
                 .to_result()?;
-            Ok(EventDescription::from(event))
+            Ok(EventDescription::from_ffi(event))
         }
     }
 
@@ -64,7 +65,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetEventByID(self.inner.as_ptr(), &id.into(), &raw mut event)
                 .to_result()?;
-            Ok(EventDescription::from(event))
+            Ok(EventDescription::from_ffi(event))
         }
     }
 
@@ -80,8 +81,8 @@ impl System {
         unsafe {
             FMOD_Studio_System_GetVCA(self.inner.as_ptr(), path_or_id.as_ptr(), &raw mut vca)
                 .to_result()?;
+            Ok(Vca::from_ffi(vca))
         }
-        Ok(vca.into())
     }
 
     /// Retrieves a loaded VCA.
@@ -90,9 +91,10 @@ impl System {
     pub fn get_vca_by_id(&self, id: Guid) -> Result<Vca> {
         let mut vca = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetVCAByID(self.inner.as_ptr(), &id.into(), &raw mut vca).to_result()?;
+            FMOD_Studio_System_GetVCAByID(self.inner.as_ptr(), &id.into(), &raw mut vca)
+                .to_result()?;
+            Ok(Vca::from_ffi(vca))
         }
-        Ok(vca.into())
     }
 
     /// Retrieves advanced settings.

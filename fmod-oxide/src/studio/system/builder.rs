@@ -71,7 +71,9 @@ impl SystemBuilder {
     pub fn settings(&mut self, settings: &AdvancedSettings) -> Result<&mut Self> {
         let mut settings = settings.into();
         // this function expects a pointer. maybe this is incorrect?
-        unsafe { FMOD_Studio_System_SetAdvancedSettings(self.system, &raw mut settings).to_result() }?;
+        unsafe {
+            FMOD_Studio_System_SetAdvancedSettings(self.system, &raw mut settings).to_result()
+        }?;
         Ok(self)
     }
 
@@ -127,7 +129,7 @@ impl SystemBuilder {
                 driver_data,
             )
             .to_result()?;
+            Ok(System::from_ffi(self.system))
         }
-        Ok(self.system.into())
     }
 }

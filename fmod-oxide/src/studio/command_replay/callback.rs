@@ -9,8 +9,8 @@ use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_float, c_int, c_uint, c_void};
 
 use crate::{
-    studio::{Bank, CommandReplay, EventDescription, EventInstance, LoadBankFlags},
     Guid,
+    studio::{Bank, CommandReplay, EventDescription, EventInstance, LoadBankFlags},
 };
 
 /// Trait for this particular FMOD callback.
@@ -34,8 +34,8 @@ unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
     unsafe {
-        let replay = CommandReplay::from(replay);
-        let description = EventDescription::from(event_description);
+        let replay = CommandReplay::from_ffi(replay);
+        let description = EventDescription::from_ffi(event_description);
         let result = C::create_instance_callback(replay, command_index, description, userdata);
         match result {
             Ok(Some(instance)) => {
@@ -67,7 +67,7 @@ unsafe extern "C" fn frame_impl<C: FrameCallback>(
     current_time: c_float,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let replay = CommandReplay::from(replay);
+    let replay = unsafe { CommandReplay::from_ffi(replay) };
     C::frame_callback(replay, command_index, current_time, userdata).into()
 }
 
@@ -95,7 +95,7 @@ unsafe extern "C" fn load_bank_impl<C: LoadBankCallback>(
     bank_ptr: *mut *mut FMOD_STUDIO_BANK,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let replay = CommandReplay::from(replay);
+    let replay = unsafe { CommandReplay::from_ffi(replay) };
     let flags = LoadBankFlags::from(flags);
     let guid = if guid.is_null() {
         None

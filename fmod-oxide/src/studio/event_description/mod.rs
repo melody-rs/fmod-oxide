@@ -31,10 +31,17 @@ unsafe impl Send for EventDescription {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for EventDescription {}
 
-impl From<*mut FMOD_STUDIO_EVENTDESCRIPTION> for EventDescription {
-    fn from(value: *mut FMOD_STUDIO_EVENTDESCRIPTION) -> Self {
+impl EventDescription {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_EVENTDESCRIPTION) -> Self {
         let inner = NonNull::new(value).unwrap();
-        Self { inner }
+        EventDescription { inner }
     }
 }
 

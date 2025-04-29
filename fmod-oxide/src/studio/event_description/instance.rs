@@ -25,7 +25,7 @@ impl EventDescription {
         unsafe {
             FMOD_Studio_EventDescription_CreateInstance(self.inner.as_ptr(), &raw mut instance)
                 .to_result()?;
-            Ok(EventInstance::from(instance))
+            Ok(EventInstance::from_ffi(instance))
         }
     }
 

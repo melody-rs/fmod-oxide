@@ -80,7 +80,8 @@ impl CommandReplay {
     pub fn get_length(&self) -> Result<c_float> {
         let mut length = 0.0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetLength(self.inner.as_ptr(), &raw mut length).to_result()?;
+            FMOD_Studio_CommandReplay_GetLength(self.inner.as_ptr(), &raw mut length)
+                .to_result()?;
         }
         Ok(length)
     }
@@ -89,8 +90,9 @@ impl CommandReplay {
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_CommandReplay_GetSystem(self.inner.as_ptr(), &raw mut system).to_result()?;
-            Ok(System::from(system))
+            FMOD_Studio_CommandReplay_GetSystem(self.inner.as_ptr(), &raw mut system)
+                .to_result()?;
+            Ok(System::from_ffi(system))
         }
     }
 

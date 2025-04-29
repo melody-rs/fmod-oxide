@@ -18,7 +18,7 @@ impl EventInstance {
         unsafe {
             FMOD_Studio_EventInstance_GetDescription(self.inner.as_ptr(), &raw mut description)
                 .to_result()?;
-            Ok(EventDescription::from(description))
+            Ok(EventDescription::from_ffi(description))
         }
     }
 
@@ -46,7 +46,7 @@ impl EventInstance {
         unsafe {
             FMOD_Studio_EventInstance_GetSystem(self.inner.as_ptr(), &raw mut system)
                 .to_result()?;
-            Ok(System::from(system))
+            Ok(System::from_ffi(system))
         }
     }
 }

@@ -17,8 +17,8 @@ mod playback;
 mod playback_properties;
 mod profiling;
 
-pub(crate) use callback::event_callback_impl;
 pub use callback::EventInstanceCallback;
+pub(crate) use callback::event_callback_impl;
 
 /// An instance of an FMOD Studio event.
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
@@ -32,10 +32,17 @@ unsafe impl Send for EventInstance {}
 #[cfg(not(feature = "thread-unsafe"))]
 unsafe impl Sync for EventInstance {}
 
-impl From<*mut FMOD_STUDIO_EVENTINSTANCE> for EventInstance {
-    fn from(value: *mut FMOD_STUDIO_EVENTINSTANCE) -> Self {
+impl EventInstance {
+    /// # Safety
+    ///
+    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `value` is null.
+    pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_EVENTINSTANCE) -> Self {
         let inner = NonNull::new(value).unwrap();
-        Self { inner }
+        EventInstance { inner }
     }
 }
 
