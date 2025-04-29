@@ -6,18 +6,105 @@
 
 use fmod_sys::*;
 use lanyard::Utf8CStr;
-use std::ffi::c_int;
+use std::ffi::{c_int, c_void};
+use std::marker::PhantomData;
 
-use crate::Guid;
 use crate::studio::{Bank, LoadBankFlags, System};
+use crate::{
+    FileSystemSync, Guid, filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
+};
 
 #[cfg(doc)]
 use crate::studio::AdvancedSettings;
 
+/// User data to be passed to the file callbacks.
+#[derive(Debug, Clone, Copy)]
+pub struct LoadBankUserdata<'a> {
+    data: *mut c_void,
+    size: c_int,
+    _marker: PhantomData<&'a [u8]>,
+}
+
+impl Default for LoadBankUserdata<'_> {
+    fn default() -> Self {
+        Self {
+            data: std::ptr::null_mut(),
+            size: 0,
+            _marker: PhantomData,
+        }
+    }
+}
+
+impl<'a> LoadBankUserdata<'a> {
+    /// userdata will be copied internally;
+    /// this copy will be kept until the bank has been unloaded and all calls to
+    /// [`FileSystem::open`] have been matched by a call to [`FileSystem::close`].
+    pub fn from_slice(slice: &'a [u8]) -> Self {
+        Self {
+            data: slice.as_ptr().cast::<c_void>().cast_mut(),
+            size: slice.len() as c_int,
+            _marker: PhantomData,
+        }
+    }
+
+    /// # Safety
+    ///
+    /// `userdata` must remain valid until the bank has been unloadedand all calls to
+    /// [`FileSystem::open`] have been matched by a call to [`FileSystem::close`].
+    ///
+    /// This requirement allows playback of shared streaming assets to continue after a bank is unloaded.
+    pub unsafe fn from_pointer(userdata: *mut c_void) -> Self {
+        Self {
+            data: userdata,
+            size: 0,
+            _marker: PhantomData,
+        }
+    }
+}
+
 impl System {
-    /// TODO: load bank with callbacks
-    pub fn load_bank_custom(&self) -> Result<Bank> {
-        todo!()
+    /// Loads the metadata of a bank using custom read callbacks.
+    ///
+    /// Sample data must be loaded separately see Sample Data Loading for details.
+    ///
+    /// By default this function blocks until the load finishes.
+    ///
+    /// Using the [`LoadBankFlags::NONBLOCKING`] flag causes the bank to be loaded asynchronously.
+    /// In that case, this function always returns [`Ok`] and bank contains a valid bank handle.
+    /// Load errors for asynchronous banks can be detected by calling [`Bank::get_loading_state`].
+    /// Failed asynchronous banks should be released by calling [`Bank::unload`].
+    ///
+    /// If a bank is split, separating out sample data and optionally streams from the metadata bank,
+    /// all parts must be loaded before any APIs that use the data are called.
+    /// We recommend you load each part one after another (the order in which they are loaded is not important),
+    /// then proceed with dependent API calls such as [`Bank::load_sample_data`] or [`System::get_event`].
+    pub fn load_bank_custom<F: FileSystemSync>(
+        &self,
+        userdata: LoadBankUserdata<'_>,
+        load_flags: LoadBankFlags,
+    ) -> Result<Bank> {
+        let bank_info = FMOD_STUDIO_BANK_INFO {
+            size: size_of::<FMOD_STUDIO_BANK_INFO>() as c_int,
+            userdata: userdata.data,
+            userdatalength: userdata.size,
+            opencallback: Some(filesystem_open::<F>),
+            closecallback: Some(filesystem_close::<F>),
+            readcallback: Some(filesystem_read::<F>),
+            seekcallback: Some(filesystem_seek::<F>),
+        };
+
+        let mut bank = std::ptr::null_mut();
+        unsafe {
+            FMOD_Studio_System_LoadBankCustom(
+                self.inner.as_ptr(),
+                &raw const bank_info,
+                load_flags.into(),
+                &raw mut bank,
+            )
+            .to_result()?;
+
+            Ok(Bank::from_ffi(bank))
+        }
     }
 
     /// Sample data must be loaded separately.

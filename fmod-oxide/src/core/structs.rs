@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 use std::{
-    ffi::{c_char, c_float, c_int, c_short, c_uchar, c_uint, c_ushort},
+    ffi::{c_char, c_float, c_int, c_short, c_uchar, c_uint, c_ushort, c_void},
     marker::PhantomData,
     mem::MaybeUninit,
 };
@@ -17,7 +17,10 @@ use crate::{
     TimeUnit, string_from_utf16_be, string_from_utf16_le,
 };
 
-use super::{Resampler, Speaker};
+use super::{
+    FileSystemAsync, FileSystemSync, Resampler, Speaker, async_filesystem_cancel,
+    async_filesystem_read, filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 // force this type to have the exact same layout as FMOD_STUDIO_PARAMETER_ID so we can safely transmute between them.
@@ -482,7 +485,7 @@ impl<'a> SoundBuilder<'a> {
         }
     }
 
-    // TODO open_user
+    // TODO openuser
 
     /// # Safety
     ///
@@ -514,6 +517,48 @@ impl<'a> SoundBuilder<'a> {
             name_or_data: data.as_ptr().cast(),
             _phantom: PhantomData,
         }
+    }
+
+    #[must_use]
+    pub const fn with_filesystem<F: FileSystemSync + FileSystemAsync>(
+        mut self,
+        userdata: *mut c_void,
+    ) -> Self {
+        self.create_sound_ex_info.fileuseropen = Some(filesystem_open::<F>);
+        self.create_sound_ex_info.fileuserclose = Some(filesystem_close::<F>);
+        self.create_sound_ex_info.fileuserread = Some(filesystem_read::<F>);
+        self.create_sound_ex_info.fileuserseek = Some(filesystem_seek::<F>);
+        self.create_sound_ex_info.fileuserasyncread = Some(async_filesystem_read::<F>);
+        self.create_sound_ex_info.fileuserasynccancel = Some(async_filesystem_cancel::<F>);
+        self.create_sound_ex_info.fileuserdata = userdata;
+        self
+    }
+
+    #[must_use]
+    pub const fn with_filesystem_sync<F: FileSystemSync>(mut self, userdata: *mut c_void) -> Self {
+        self.create_sound_ex_info.fileuseropen = Some(filesystem_open::<F>);
+        self.create_sound_ex_info.fileuserclose = Some(filesystem_close::<F>);
+        self.create_sound_ex_info.fileuserread = Some(filesystem_read::<F>);
+        self.create_sound_ex_info.fileuserseek = Some(filesystem_seek::<F>);
+        self.create_sound_ex_info.fileuserasyncread = None;
+        self.create_sound_ex_info.fileuserasynccancel = None;
+        self.create_sound_ex_info.fileuserdata = userdata;
+        self
+    }
+
+    #[must_use]
+    pub const fn with_filesystem_async<F: FileSystemAsync>(
+        mut self,
+        userdata: *mut c_void,
+    ) -> Self {
+        self.create_sound_ex_info.fileuseropen = Some(filesystem_open::<F>);
+        self.create_sound_ex_info.fileuserclose = Some(filesystem_close::<F>);
+        self.create_sound_ex_info.fileuserasyncread = Some(async_filesystem_read::<F>);
+        self.create_sound_ex_info.fileuserasynccancel = Some(async_filesystem_cancel::<F>);
+        self.create_sound_ex_info.fileuserread = None;
+        self.create_sound_ex_info.fileuserseek = None;
+        self.create_sound_ex_info.fileuserdata = userdata;
+        self
     }
 
     /// # Safety

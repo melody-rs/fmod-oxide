@@ -23,8 +23,8 @@
 - [x] FMOD_System_GetSoftwareFormat
 - [x] FMOD_System_SetDSPBufferSize
 - [x] FMOD_System_GetDSPBufferSize
-- [ ] FMOD_System_SetFileSystem
-- [ ] FMOD_System_AttachFileSystem
+- [x] FMOD_System_SetFileSystem
+- [x] FMOD_System_AttachFileSystem
 - [x] FMOD_System_SetAdvancedSettings
 - [x] FMOD_System_GetAdvancedSettings
 - [x] FMOD_System_SetCallback
@@ -377,7 +377,7 @@
 - [x] FMOD_Studio_System_SetListenerWeight
 - [x] FMOD_Studio_System_LoadBankFile
 - [x] FMOD_Studio_System_LoadBankMemory
-- [ ] FMOD_Studio_System_LoadBankCustom
+- [x] FMOD_Studio_System_LoadBankCustom
 - [x] FMOD_Studio_System_RegisterPlugin
 - [x] FMOD_Studio_System_UnregisterPlugin
 - [x] FMOD_Studio_System_UnloadAll

@@ -126,9 +126,6 @@ impl Sound {
     /// If FMOD frees the memory pointed to by [`SoundLock`], it's insta UB.
     ///
     /// Don't call [`FMOD_Sound_Unlock`] with the pointers from [`SoundLock`]. [`SoundLock`] will do that for you when dropped.
-    ///
-    /// This function can hand out multiple mutable references to the same data if you aren't careful.
-    /// FMOD doesn't perform any actual locking anymore! (see above!)
     pub unsafe fn lock(&self, offset: c_uint, length: c_uint) -> Result<SoundLock<'_>> {
         unsafe {
             let mut data = std::ptr::null_mut();

@@ -49,5 +49,8 @@ pub mod file;
 pub mod memory;
 pub mod thread;
 
+mod filesystem;
+pub use filesystem::*;
+
 mod helpers;
 pub(crate) use helpers::*;

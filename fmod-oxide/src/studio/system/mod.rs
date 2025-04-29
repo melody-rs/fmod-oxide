@@ -20,6 +20,7 @@ mod parameter;
 mod plugins;
 mod profiling; // things too small to really make their own module
 
+pub use bank::LoadBankUserdata;
 pub use builder::SystemBuilder;
 pub use callback::SystemCallback;
 

@@ -10,6 +10,7 @@ use fmod_sys::*;
 
 use crate::System;
 
+#[derive(Debug)]
 pub struct DspLockGuard(System);
 
 impl Drop for DspLockGuard {
