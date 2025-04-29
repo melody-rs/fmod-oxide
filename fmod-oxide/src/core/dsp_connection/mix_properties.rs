@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use fmod_sys::*;
-use std::ffi::c_float;
+use std::ffi::{c_float, c_int};
 
 use crate::DspConnection;
 
@@ -22,5 +22,58 @@ impl DspConnection {
         Ok(volume)
     }
 
-    // TODO mix matrix
+    pub fn set_mix_matrix<const IN: usize, const OUT: usize>(
+        &self,
+        matrix: [[f32; IN]; OUT],
+    ) -> Result<()> {
+        const {
+            assert!(
+                IN <= FMOD_MAX_CHANNEL_WIDTH as usize,
+                "IN must be <= FMOD_MAX_CHANNEL_WIDTH"
+            );
+            assert!(
+                OUT <= FMOD_MAX_CHANNEL_WIDTH as usize,
+                "OUT must be <= FMOD_MAX_CHANNEL_WIDTH"
+            );
+        }
+        unsafe {
+            FMOD_DSPConnection_SetMixMatrix(
+                self.inner.as_ptr(),
+                matrix.as_ptr().cast::<f32>().cast_mut(),
+                OUT as c_int,
+                IN as c_int,
+                IN as c_int,
+            )
+            .to_result()
+        }
+    }
+
+    pub fn get_mix_matrix<const IN: usize, const OUT: usize>(
+        &self,
+    ) -> Result<([[f32; IN]; OUT], c_int, c_int)> {
+        const {
+            assert!(
+                IN <= FMOD_MAX_CHANNEL_WIDTH as usize,
+                "IN must be <= FMOD_MAX_CHANNEL_WIDTH"
+            );
+            assert!(
+                OUT <= FMOD_MAX_CHANNEL_WIDTH as usize,
+                "OUT must be <= FMOD_MAX_CHANNEL_WIDTH"
+            );
+        }
+        let mut matrix = [[0.0; IN]; OUT];
+        let mut in_channels = IN as c_int;
+        let mut out_channels = OUT as c_int;
+        unsafe {
+            FMOD_DSPConnection_GetMixMatrix(
+                self.inner.as_ptr(),
+                matrix.as_mut_ptr().cast::<f32>(),
+                &raw mut in_channels,
+                &raw mut out_channels,
+                IN as c_int,
+            )
+            .to_result()?;
+        }
+        Ok((matrix, in_channels, out_channels))
+    }
 }

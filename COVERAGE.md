@@ -238,8 +238,8 @@
 - [x] FMOD_DSPConnection_GetOutput
 - [x] FMOD_DSPConnection_SetMix
 - [x] FMOD_DSPConnection_GetMix
-- [ ] FMOD_DSPConnection_SetMixMatrix
-- [ ] FMOD_DSPConnection_GetMixMatrix
+- [x] FMOD_DSPConnection_SetMixMatrix
+- [x] FMOD_DSPConnection_GetMixMatrix
 - [x] FMOD_DSPConnection_GetType
 - [x] FMOD_DSPConnection_SetUserData
 - [x] FMOD_DSPConnection_GetUserData
@@ -299,8 +299,8 @@
 - [x] FMOD_ChannelControl_SetPan
 - [x] FMOD_ChannelControl_SetMixLevelsOutput
 - [x] FMOD_ChannelControl_SetMixLevelsInput
-- [ ] FMOD_ChannelControl_SetMixMatrix
-- [ ] FMOD_ChannelControl_GetMixMatrix
+- [x] FMOD_ChannelControl_SetMixMatrix
+- [x] FMOD_ChannelControl_GetMixMatrix
 - [x] FMOD_ChannelControl_GetDSPClock
 - [x] FMOD_ChannelControl_SetDelay
 - [x] FMOD_ChannelControl_GetDelay
