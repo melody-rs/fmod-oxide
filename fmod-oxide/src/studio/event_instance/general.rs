@@ -6,10 +6,13 @@
 
 use fmod_sys::*;
 
-use crate::studio::{EventDescription, EventInstance, System};
+use crate::studio::{EventDescription, EventInstance};
 
 #[cfg(doc)]
 use crate::studio::PlaybackState;
+
+#[cfg(fmod_2_3)]
+use crate::studio::System;
 
 impl EventInstance {
     /// Retrieves the event description.
@@ -41,6 +44,7 @@ impl EventInstance {
     }
 
     /// Retrieves the FMOD Studio [`System`].
+    #[cfg(fmod_2_3)]
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {

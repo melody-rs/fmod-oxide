@@ -904,6 +904,8 @@ pub struct AdvancedSettings {
     pub max_at9_codecs: c_int,
     pub max_fadpcm_codecs: c_int,
     pub max_opus_codecs: c_int,
+    #[cfg(fmod_lt_2_3)]
+    pub max_pcm_codecs: c_int,
 
     // The docs mention something about this "not being valid before System::init"
     // No idea what that means. I don't think it's anything we need to worry about?
@@ -943,6 +945,8 @@ impl From<&AdvancedSettings> for FMOD_ADVANCEDSETTINGS {
             maxAT9Codecs: value.max_at9_codecs,
             maxFADPCMCodecs: value.max_fadpcm_codecs,
             maxOpusCodecs: value.max_opus_codecs,
+            #[cfg(fmod_lt_2_3)]
+            maxPCMCodecs: value.max_pcm_codecs,
             ASIONumChannels: speaker_count as i32,
             ASIOChannelList: std::ptr::null_mut(),
             // Speaker has the same repr() as i32
@@ -1006,6 +1010,8 @@ impl AdvancedSettings {
             max_at9_codecs: value.maxAT9Codecs,
             max_fadpcm_codecs: value.maxFADPCMCodecs,
             max_opus_codecs: value.maxOpusCodecs,
+            #[cfg(fmod_lt_2_3)]
+            max_pcm_codecs: value.maxPCMCodecs,
 
             asio_channel_list: channels,
             asio_speaker_list: None,
