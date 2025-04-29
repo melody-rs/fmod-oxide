@@ -10,6 +10,17 @@ use fmod_sys::*;
 
 use crate::System;
 
+pub struct DspLockGuard(System);
+
+impl Drop for DspLockGuard {
+    fn drop(&mut self) {
+        let result = unsafe { FMOD_System_UnlockDSP(self.0.inner.as_ptr()).to_result() };
+        if let Err(e) = result {
+            eprintln!("FMOD_System_UnlockDSP errored! {e}");
+        }
+    }
+}
+
 impl System {
     /// Mutual exclusion function to lock the FMOD DSP engine (which runs asynchronously in another thread), so that it will not execute.
     ///
@@ -22,16 +33,9 @@ impl System {
     /// Once the user no longer needs the DSP engine locked, it must be unlocked with [`System::unlock_dsp`].
     ///
     /// Note that the DSP engine should not be locked for a significant amount of time, otherwise inconsistency in the audio output may result. (audio skipping / stuttering).
-    pub fn lock_dsp(&self) -> Result<()> {
-        unsafe { FMOD_System_LockDSP(self.inner.as_ptr()).to_result() }
-    }
-
-    // TODO add guard and investigate safety
-    /// Mutual exclusion function to unlock the FMOD DSP engine (which runs asynchronously in another thread) and let it continue executing.
-    ///
-    /// The DSP engine must be locked with [`System::lock_dsp`] before this function is called.
-    pub fn unlock_dsp(&self) -> Result<()> {
-        unsafe { FMOD_System_UnlockDSP(self.inner.as_ptr()).to_result() }
+    pub fn lock_dsp(&self) -> Result<DspLockGuard> {
+        unsafe { FMOD_System_LockDSP(self.inner.as_ptr()).to_result()? };
+        Ok(DspLockGuard(*self))
     }
 
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
