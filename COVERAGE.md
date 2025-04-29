@@ -105,8 +105,8 @@
 ## Sound
 - [x] FMOD_Sound_Release
 - [x] FMOD_Sound_GetSystemObject
-- [ ] FMOD_Sound_Lock
-- [ ] FMOD_Sound_Unlock
+- [x] FMOD_Sound_Lock
+- [x] FMOD_Sound_Unlock
 - [x] FMOD_Sound_SetDefaults
 - [x] FMOD_Sound_GetDefaults
 - [x] FMOD_Sound_Set3DMinMaxDistance
@@ -124,8 +124,8 @@
 - [x] FMOD_Sound_GetNumTags
 - [x] FMOD_Sound_GetTag
 - [x] FMOD_Sound_GetOpenState
-- [ ] FMOD_Sound_ReadData
-- [ ] FMOD_Sound_SeekData
+- [x] FMOD_Sound_ReadData
+- [x] FMOD_Sound_SeekData
 - [x] FMOD_Sound_SetSoundGroup
 - [x] FMOD_Sound_GetSoundGroup
 - [x] FMOD_Sound_GetNumSyncPoints
