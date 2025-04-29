@@ -1,7 +1,7 @@
 # fmod-oxide
 
 Safe rust bindings to the FMOD sound engine.
-This crate tries to be as rusty and low-cost as possible, without comprimising on any APIs.
+This crate tries to be as rusty and low-cost as possible, without compromising on any APIs.
 Certain APIs, such as loading banks from a pointer, are marked as unsafe, but are still available for use.
 
 #### Currently in BETA.
@@ -22,14 +22,19 @@ After downloading FMOD, you have to tell this crate where FMOD is located.
 **If you're on Windows and used the FMOD installer, you don't have to worry about this.**
 
 The easiest way is to use to create cargo config in your project's root.
-`.cargo/config.toml`:
+
 ```toml
+# `.cargo/config.toml`
+
 [env]
 FMOD_SYS_FMOD_DIRECTORY = { value = "<absolute install path here>" }
 ```
+
 You can also specify a relative install path like so:
-`.cargo/config.toml`:
+
 ```toml
+# `.cargo/config.toml`
+
 [env]
 FMOD_SYS_FMOD_DIRECTORY = { value = "<install path here>", relative = true }
 ```
@@ -41,7 +46,7 @@ Alternatively, you can specify `FMOD_SYS_FMOD_DIRECTORY` when building your proj
 
 This crate supports cross compilation and will look for a target-specific FMOD install. 
 
-The logic is quite basic at the moment, but it'll check if `<fmod intall dir>/<target os>` exists and use that.
+The logic is quite basic at the moment, but it'll check if `<fmod install dir>/<target os>` exists and use that.
 If no target specific directory was found it'll default to `<fmod install dir>`.
 
 ### Using with webassembly
@@ -49,16 +54,21 @@ If no target specific directory was found it'll default to `<fmod install dir>`.
 Currently only `wasm32-unknown-emscripten` I know to work, but I can't verify that `wasm32-unknown-unknown` works.
 Unfortunately `wasm-bindgen` doesn't work right now, so your milage may vary.
 
-The setup is roughly the same, except you'll need to add some arguments `EMCC_FLAGS`. 
-You can do this by editing `.cargo/config.toml`:
+The setup is roughly the same, except you'll need to add some arguments to `EMCC_FLAGS`.
 
+You can do this by editing `.cargo/config.toml`:
 ```toml
+# `.cargo/config.toml`
+
 [env]
 EMCC_CFLAGS="-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue" # FMOD requires this
 ```
 
 If you're using `wasm32-unknown-unknown`, you'll additionally need to add this until [this issue](https://github.com/rust-lang/rust/issues/138762) is closed.
+
 ```toml
+# `.cargo/config.toml`
+
 [build]
 rustflags="-Zwasm-c-abi=spec"
 ```
@@ -99,7 +109,7 @@ When converting from an FFI struct to something like `AdvancedSettings`, the C s
 *This is unsafe* as there are no guarantees that the pointer is valid or that the string is null-terminated and UTF-8.
 Luckily all FMOD functions return UTF-8 strings so this isn't really a problem in practice.
 
-# Undefined Behaviour and unsafe fns
+# Undefined Behavior and unsafe fns
 
 I'm trying to make these bindings as safe as possible, if you find UB please report it!
 There are a couple cases related to thread safety (You can initialize FMOD to be thread unsafe) and panics that I am aware of and actively trying to fix.
@@ -110,7 +120,7 @@ Releasing a system is probably the most unsafe operation of all though, as it in
 
 # Userdata
 
-Userdata is really, really, really hard to make safe bindings for, because any libary that wants to will need to clean up userdata whenever the FMOD object it is attached to is released.
+Userdata is really, really, really hard to make safe bindings for, because any library that wants to will need to clean up userdata whenever the FMOD object it is attached to is released.
 Unfortunately, there's quite a lot of cases where it's not possible to do that. 
 `EventDescription` and `EventInstance` is a pretty good example- you can set a callback when events are released to clean up their userdata. 
 You can also set up a callback when banks are unloaded as well to also clean up their userdata. 
