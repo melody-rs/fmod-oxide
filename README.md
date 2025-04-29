@@ -41,7 +41,7 @@ Alternatively, you can specify `FMOD_SYS_FMOD_DIRECTORY` when building your proj
 
 This crate supports cross compilation and will look for a target-specific FMOD install. 
 
-The logic is quite basic at the moment, but it'll look for `<fmod intall dir>/<target os>/<target arch>` first and then look for `<fmod intall dir>/<target os>`.
+The logic is quite basic at the moment, but it'll check if `<fmod intall dir>/<target os>` exists and use that.
 If no target specific directory was found it'll default to `<fmod install dir>`.
 
 ### Using with webassembly
