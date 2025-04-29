@@ -24,6 +24,17 @@ impl System {
     /// For example a value of 0x00010203 is equal to 1.02.03.
     ///
     /// Compare against [`crate::VERSION`] to make sure crate and runtime library versions match.
+    #[cfg(fmod_eq_2_3)]
+    pub fn get_version(&self) -> Result<(c_uint, c_uint)> {
+        let mut version = 0;
+        let mut build_number = 0;
+        unsafe {
+            FMOD_System_GetVersion(self.inner.as_ptr(), &mut version, &mut build_number)
+                .to_result()?;
+        }
+        Ok((version, build_number))
+    }
+    #[cfg(fmod_eq_2_2)]
     pub fn get_version(&self) -> Result<c_uint> {
         let mut version = 0;
         unsafe {

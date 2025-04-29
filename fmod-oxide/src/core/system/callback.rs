@@ -10,8 +10,8 @@ use fmod_sys::*;
 use lanyard::Utf8CStr;
 
 use crate::{
-    studio, Channel, ChannelControl, ChannelGroup, Dsp, DspConnection, Geometry, OutputType,
-    Reverb3D, Sound, SoundGroup, System,
+    Channel, ChannelControl, ChannelGroup, Dsp, DspConnection, Geometry, OutputType, Reverb3D,
+    Sound, SoundGroup, System, studio,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -138,6 +138,7 @@ bitflags::bitflags! {
       const PREMIX                = FMOD_SYSTEM_CALLBACK_PREMIX;
       const POSTMIX               = FMOD_SYSTEM_CALLBACK_POSTMIX;
       const ERROR                 = FMOD_SYSTEM_CALLBACK_ERROR;
+      #[cfg(fmod_eq_2_2)]
       const MIDMIX                = FMOD_SYSTEM_CALLBACK_MIDMIX;
       const THREADDESTROYED       = FMOD_SYSTEM_CALLBACK_THREADDESTROYED;
       const PREUPDATE             = FMOD_SYSTEM_CALLBACK_PREUPDATE;
@@ -211,6 +212,7 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    #[cfg(fmod_eq_2_2)]
     fn mid_mix(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
@@ -289,6 +291,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
             let error_info = unsafe { ErrorCallbackInfo::from_ffi(*command_data_1.cast()) };
             C::error(system, error_info, userdata).into()
         }
+        #[cfg(fmod_eq_2_2)]
         FMOD_SYSTEM_CALLBACK_MIDMIX => C::mid_mix(system, userdata).into(),
         FMOD_SYSTEM_CALLBACK_THREADDESTROYED => {
             let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };

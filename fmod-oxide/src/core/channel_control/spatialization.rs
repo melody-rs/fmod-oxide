@@ -122,7 +122,7 @@ impl ChannelControl {
     /// vs the angle between the sound and the listener.
     /// - If the relative angle is within the `inside_angle`, the sound will not have any attenuation applied.
     /// - If the relative angle is between the `inside_angle` and `outside_angle`,
-    ///     linear volume attenuation (between 1 and `outside_volume`) is applied between the two angles until it reaches the `outside_angle`.
+    ///   linear volume attenuation (between 1 and `outside_volume`) is applied between the two angles until it reaches the `outside_angle`.
     /// - If the relative angle is outside of the `outside_angle` the volume does not attenuate any further.
     pub fn get_3d_cone_settings(&self) -> Result<(c_float, c_float, c_float)> {
         let mut inside_angle = 0.0;

@@ -166,7 +166,9 @@ pub enum DspType {
     ParamEq = FMOD_DSP_TYPE_PARAMEQ,
     PitchShift = FMOD_DSP_TYPE_PITCHSHIFT,
     Chorus = FMOD_DSP_TYPE_CHORUS,
+    #[cfg(fmod_eq_2_2)]
     VstPlugin = FMOD_DSP_TYPE_VSTPLUGIN,
+    #[cfg(fmod_eq_2_2)]
     WinampPlugin = FMOD_DSP_TYPE_WINAMPPLUGIN,
     ItEcho = FMOD_DSP_TYPE_ITECHO,
     Compressor = FMOD_DSP_TYPE_COMPRESSOR,
@@ -174,6 +176,7 @@ pub enum DspType {
     LowpassSimple = FMOD_DSP_TYPE_LOWPASS_SIMPLE,
     Delay = FMOD_DSP_TYPE_DELAY,
     Tremolo = FMOD_DSP_TYPE_TREMOLO,
+    #[cfg(fmod_eq_2_2)]
     LadspaPlugin = FMOD_DSP_TYPE_LADSPAPLUGIN,
     Send = FMOD_DSP_TYPE_SEND,
     Return = FMOD_DSP_TYPE_RETURN,
@@ -182,6 +185,7 @@ pub enum DspType {
     ThreeEq = FMOD_DSP_TYPE_THREE_EQ,
     Fft = FMOD_DSP_TYPE_FFT,
     LoudnessMeter = FMOD_DSP_TYPE_LOUDNESS_METER,
+    #[cfg(fmod_eq_2_2)]
     EnvelopeFollower = FMOD_DSP_TYPE_ENVELOPEFOLLOWER,
     ConvolutionReverb = FMOD_DSP_TYPE_CONVOLUTIONREVERB,
     ChannelMix = FMOD_DSP_TYPE_CHANNELMIX,

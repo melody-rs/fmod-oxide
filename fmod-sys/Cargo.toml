@@ -12,6 +12,7 @@ readme = "README.md"
 build = "build.rs"
 
 include = ["docs/documentation.rs", "src/*", "build.rs"]
+links = "fmod"
 
 [lib]
 name = "fmod_sys"

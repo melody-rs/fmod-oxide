@@ -74,8 +74,7 @@ fn find_fmod_directory() -> PathBuf {
             return fmod_dir;
         } else {
             panic!(
-                "FMOD_SYS_FMOD_DIRECTORY set to {:?}, but fmod directory not found there",
-                fmod_dir
+                "FMOD_SYS_FMOD_DIRECTORY set to {fmod_dir:?}, but fmod directory not found there",
             );
         }
     }
@@ -258,12 +257,11 @@ fn main() {
     let minor = version_number & 0xFF;
     let major = (version_number >> 8) & 0xFF;
     let product = version_number >> 16;
-    println!("cargo:rustc-cfg=fmod_minor=\"{minor}\"");
-    println!("cargo:rustc-cfg=fmod_major=\"{major}\"");
-    println!("cargo:rustc-cfg=fmod_product=\"{product}\"");
-    println!("cargo:rustc-cfg=fmod_version=\"{version_number}\"");
-    println!("cargo:rustc-cfg=fmod_version_str=\"{product}.{major:0>2}\"");
-    println!("cargo:rustc-cfg=fmod_full_version_str=\"{product}.{major:0>2}.{minor:0>2}\"");
+
+    println!("cargo::metadata=version_number={version_number}");
+    println!("cargo::metadata=minor={minor}");
+    println!("cargo::metadata=minor={major}");
+    println!("cargo::metadata=minor={product}");
 
     let docs_path = docs_dir.join("documentation.rs");
 
