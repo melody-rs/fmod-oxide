@@ -21,7 +21,22 @@ pub struct DspInfo {
 }
 
 impl Dsp {
-    // TODO show dialogue config
+    /// Display or hide a DSP unit configuration dialog box inside the target window.
+    ///
+    /// Some DSP plug-ins (especially VST plug-ins) use dialog boxes to display graphical user interfaces for modifying their parameters,
+    /// rather than using the other method of enumerating their parameters and setting them
+    /// with [`Dsp::set_parameter`].
+    ///
+    /// To find out what size window to create to store the configuration screen, use [`Dsp::get_info`] where you can get the width and height.
+    ///
+    /// # Safety
+    ///
+    /// `hwnd` must be a valid window pointer.
+    /// On Windows, this would be a `HWND`, on X11 a window id, etc.
+    // FIXME Is that right?
+    pub unsafe fn show_config_dialogue(&self, hwnd: *mut c_void, show: bool) -> Result<()> {
+        unsafe { FMOD_DSP_ShowConfigDialog(self.inner.as_ptr(), hwnd, show.into()).to_result() }
+    }
 
     /// Reset a DSPs internal state ready for new input signal.
     ///
