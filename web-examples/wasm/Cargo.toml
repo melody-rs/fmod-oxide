@@ -5,7 +5,9 @@ edition = "2021"
 publish = false
 
 [dependencies]
+console_error_panic_hook = "0.1.7"
 fmod-oxide = { version = "0.1.0", path = "../../fmod-oxide" }
+js-sys = "0.3.77"
 wasm-bindgen = "0.2.100"
 
 [lib]
