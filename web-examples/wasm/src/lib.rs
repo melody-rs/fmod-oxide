@@ -1,7 +1,6 @@
-mod emscripten_stubs;
 use wasm_bindgen::prelude::*;
 
-use fmod::c;
+mod stubs;
 
 #[wasm_bindgen]
 extern "C" {
@@ -24,24 +23,6 @@ pub fn do_thing() {
     log(&format!("{driver_info:?}"));
 
     system.update().unwrap();
-
-    let master = system
-        .load_bank_file(c!("master"), fmod::studio::LoadBankFlags::NORMAL)
-        .unwrap();
-
-    let strings = system
-        .load_bank_file(c!("strings"), fmod::studio::LoadBankFlags::NORMAL)
-        .unwrap();
-
-    for i in 0..strings.string_count().unwrap() {
-        let (_, string) = strings.get_string_info(i).unwrap();
-        log(&string)
-    }
-
-    for event in master.get_event_list().unwrap() {
-        let path = event.get_path().unwrap();
-        log(&path);
-    }
 
     unsafe {
         system.release().unwrap();

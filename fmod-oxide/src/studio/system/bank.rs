@@ -196,7 +196,7 @@ impl System {
             FMOD_Studio_System_LoadBankMemory(
                 self.inner.as_ptr(),
                 buffer.cast::<i8>(),
-                (*buffer).len() as c_int,
+                buffer.len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY_POINT,
                 flags.bits(),
                 &raw mut bank,
