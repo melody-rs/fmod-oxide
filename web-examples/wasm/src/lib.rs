@@ -12,13 +12,9 @@ extern "C" {
 pub fn do_thing() {
     console_error_panic_hook::set_once();
 
-    log("system");
     let system = unsafe { fmod::studio::System::new() }.unwrap();
-    log("core system");
     let core_system = system.get_core_system().unwrap();
-    log("driver");
     let driver = core_system.get_driver().unwrap();
-    log("driver info");
     let driver_info = core_system.get_driver_info(driver).unwrap();
     log(&format!("{driver_info:?}"));
 

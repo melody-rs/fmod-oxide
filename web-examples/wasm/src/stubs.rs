@@ -1,7 +1,5 @@
 use std::ffi::{c_int, c_uint, c_void};
 
-use super::log;
-
 mod emscripten;
 mod math;
 mod stdio;
@@ -21,8 +19,7 @@ mod string;
 // This is supposed to error out.
 #[unsafe(no_mangle)]
 extern "C" fn __cxa_pure_virtual() {
-    log("__cxa_pure_virtual");
-    unreachable!();
+    unimplemented!();
 }
 
 // We don't bother to handle exit conditions.
@@ -32,12 +29,11 @@ extern "C" fn __cxa_atexit(
     _: *mut c_void,
     _: *mut c_void,
 ) -> c_int {
-    // log("__cxa_atexit");
+    // can't debug log in this one?
     0
 }
 
 #[unsafe(no_mangle)]
 extern "C" fn usleep(_: c_uint) -> c_int {
-    log("usleep");
-    0
+    unimplemented!()
 }

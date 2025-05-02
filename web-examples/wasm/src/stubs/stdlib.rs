@@ -3,8 +3,6 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ffi::{c_double, c_int, c_uint, c_ulong, c_void};
 
-use crate::log;
-
 thread_local! {
   static POINTERS: RefCell<HashMap<*mut c_void, Layout>> = RefCell::default();
 }
@@ -42,29 +40,25 @@ extern "C" fn free(pointer: *mut c_void) {
 // (No idea why new isn't in here, though.)
 #[unsafe(no_mangle)]
 extern "C" fn _ZdlPv(ptr: *mut c_void) {
-    log("delete []");
     free(ptr);
 }
 
 #[unsafe(no_mangle)]
 extern "C" fn strtod(_: *mut i8, _: *mut i8) -> c_double {
-    log("strtod");
-    0.0
+    todo!()
 }
 
 #[unsafe(no_mangle)]
 extern "C" fn atoi(_: *mut i8) -> c_int {
-    log("atoi");
-    0
+    todo!()
 }
 
 #[unsafe(no_mangle)]
 extern "C" fn strtoul(_: *mut c_void, _: *mut c_void) -> c_ulong {
-    log("strtoul");
-    0
+    todo!()
 }
 
 #[unsafe(no_mangle)]
 extern "C" fn qsort(_: *mut c_void, _: usize, _: usize, _: unsafe extern "C" fn()) {
-    log("qsort");
+    todo!()
 }

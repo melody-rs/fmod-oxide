@@ -8,12 +8,8 @@ use wasm_bindgen::prelude::*;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
-use crate::log;
-
 #[unsafe(no_mangle)]
 extern "C" fn emscripten_get_now() -> c_double {
-    log("emscripten_get_now");
-
     let window = web_sys::window().unwrap();
     let performance = window.performance().unwrap();
     performance.now()
@@ -28,8 +24,6 @@ extern "C" {
 // however FMOD only uses it to wrap 2 functions. So it's not really worth it
 fn cwrap(ident: JsValue, _: JsValue, _: JsValue, _: JsValue) -> JsValue {
     let ident = ident.as_string().unwrap();
-    log("cwrap");
-    log(&ident);
     match ident.as_str() {
         "FMOD_JS_MixerFastpathFunction" => {
             Closure::<dyn Fn() -> _>::new(|| unsafe { FMOD_JS_MixerFastpathFunction() })
@@ -57,9 +51,6 @@ extern "C" fn emscripten_asm_const_int(
     let code = unsafe { Utf8CStr::from_ptr_unchecked(code) };
     let sigs = unsafe { Utf8CStr::from_ptr_unchecked(sigs) };
 
-    log(code);
-    log(sigs);
-
     assert!(arg_buf.addr() % 16 == 0);
 
     // this function is the only way FMOD calls into JS.
@@ -80,7 +71,6 @@ extern "C" fn emscripten_asm_const_int(
     let function = ASM_FNS.with_borrow_mut(|fns| {
         fns.entry(code.as_ptr())
             .or_insert_with(|| {
-                log(&format!("{:p} has never been seen before", code.as_ptr()));
                 let mut function_args = String::new();
                 for i in 0..sigs.len() {
                     write!(function_args, "${i},").unwrap();
@@ -122,6 +112,5 @@ extern "C" fn emscripten_asm_const_int(
     }
 
     let result = function.apply(&JsValue::undefined(), &args).unwrap();
-    log(&format!("{result:?}"));
     result.unchecked_into_f64() as c_int // is this correct?
 }
