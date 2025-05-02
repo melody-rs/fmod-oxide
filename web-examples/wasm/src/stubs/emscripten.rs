@@ -5,6 +5,9 @@ use fmod::Utf8CStr;
 use js_sys::Reflect;
 use wasm_bindgen::prelude::*;
 
+use std::cell::RefCell;
+use std::collections::HashMap;
+
 use crate::log;
 
 #[unsafe(no_mangle)]
@@ -40,6 +43,10 @@ fn cwrap(ident: JsValue, _: JsValue, _: JsValue, _: JsValue) -> JsValue {
     }
 }
 
+thread_local! {
+    static ASM_FNS: RefCell<HashMap<*const i8, js_sys::Function>> = RefCell::default();
+}
+
 // Mostly based off of the generated fmod emscripten code
 #[unsafe(no_mangle)]
 extern "C" fn emscripten_asm_const_int(
@@ -70,11 +77,18 @@ extern "C" fn emscripten_asm_const_int(
         _ => {}
     }
 
-    let mut function_args = String::new();
-    for i in 0..sigs.len() {
-        write!(function_args, "${i},").unwrap();
-    }
-    let function: js_sys::Function = js_sys::Function::new_with_args(&function_args, code);
+    let function = ASM_FNS.with_borrow_mut(|fns| {
+        fns.entry(code.as_ptr())
+            .or_insert_with(|| {
+                log(&format!("{:p} has never been seen before", code.as_ptr()));
+                let mut function_args = String::new();
+                for i in 0..sigs.len() {
+                    write!(function_args, "${i},").unwrap();
+                }
+                js_sys::Function::new_with_args(&function_args, code)
+            })
+            .clone()
+    });
 
     let args = js_sys::Array::new();
     for char in sigs.chars() {
