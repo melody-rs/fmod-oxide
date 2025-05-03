@@ -142,8 +142,8 @@ fn main() {
     assert!(api_dir.exists(), "fmod api dir does not exist");
 
     let api_dir_display = api_dir.display();
-    println!("cargo:rerun-if-changed=\"{api_dir_display}/core/inc\"");
-    println!("cargo:rerun-if-changed=\"{api_dir_display}/studio/inc\"");
+    println!("cargo:rerun-if-changed={api_dir_display}/core/inc");
+    println!("cargo:rerun-if-changed={api_dir_display}/studio/inc");
 
     let mut bindgen = bindgen::builder()
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
@@ -268,8 +268,8 @@ fn main() {
         .write_to_file(docs_path)
         .expect("failed to write docs");
 
-    println!("cargo:rerun-if-changed=\"src/channel_control.cpp\"");
-    println!("cargo:rerun-if-changed=\"src/channel_control.h\"");
+    println!("cargo:rerun-if-changed=src/channel_control.cpp");
+    println!("cargo:rerun-if-changed=src/channel_control.h");
 
     // wrapper does not use the stdlib
     let mut build = cc::Build::new();
