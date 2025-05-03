@@ -414,3 +414,19 @@ pub enum Resampler {
     Cubic = FMOD_DSP_RESAMPLER_CUBIC,
     Spline = FMOD_DSP_RESAMPLER_SPLINE,
 }
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(
+    num_enum::TryFromPrimitive,
+    num_enum::IntoPrimitive,
+    num_enum::UnsafeFromPrimitive
+)]
+// stupid enum repr hack
+#[cfg_attr(target_env = "msvc", repr(i32))]
+#[cfg_attr(not(target_env = "msvc"), repr(u32))]
+pub enum FloatMappingType {
+    #[default]
+    Linear = FMOD_DSP_PARAMETER_FLOAT_MAPPING_TYPE_LINEAR,
+    Auto = FMOD_DSP_PARAMETER_FLOAT_MAPPING_TYPE_AUTO,
+    PiecewiceLinear = FMOD_DSP_PARAMETER_FLOAT_MAPPING_TYPE_PIECEWISE_LINEAR,
+}

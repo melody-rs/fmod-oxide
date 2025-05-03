@@ -5,7 +5,12 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![warn(missing_docs)]
 
+use fmod_sys::*;
+use std::{ffi::c_char, os::raw::c_int};
+
 mod structs;
+
+use lanyard::Utf8CString;
 pub use structs::*;
 
 mod flags;
@@ -34,3 +39,29 @@ pub use event_instance::*;
 
 mod vca;
 pub use vca::*;
+
+fn get_string_out_size(
+    mut get_fn: impl FnMut(*mut c_char, c_int, *mut c_int) -> fmod_sys::FMOD_RESULT,
+) -> fmod_sys::Result<Utf8CString> {
+    let mut string_len = 0;
+
+    match get_fn(std::ptr::null_mut(), 0, &raw mut string_len).to_error() {
+        Some(err) if err != FMOD_RESULT::FMOD_ERR_TRUNCATED => return Err(err),
+        _ => {}
+    }
+
+    let mut buf = vec![0u8; string_len as usize];
+    let mut expected_string_len = 0;
+
+    get_fn(
+        buf.as_mut_ptr().cast(),
+        string_len,
+        &raw mut expected_string_len,
+    )
+    .to_result()?;
+
+    debug_assert_eq!(string_len, expected_string_len);
+
+    let string = unsafe { Utf8CString::from_utf8_with_nul_unchecked(buf) };
+    Ok(string)
+}

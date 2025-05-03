@@ -19,7 +19,6 @@ impl System {
     /// This function provides no gaurdrails or safe API for registering a plugin.
     /// It can call into non-rust external code.
     /// Dsp descriptions are intended to be retrieved from a plugin's C API, so it's not feasible to provide a safe API for this function.
-    /// TODO
     pub unsafe fn register_plugin(
         &self,
         dsp_description: *const FMOD_DSP_DESCRIPTION,
@@ -35,7 +34,6 @@ impl System {
     ///
     /// This function provides no gaurdrails or safe API for unregistering a plugin.
     /// It can call into non-rust external code.
-    /// TODO
     pub unsafe fn unregister_plugin(&self, name: &Utf8CStr) -> Result<()> {
         unsafe {
             FMOD_Studio_System_UnregisterPlugin(self.inner.as_ptr(), name.as_ptr()).to_result()

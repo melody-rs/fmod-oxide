@@ -479,7 +479,7 @@ pub struct ProgrammerSoundProperties<'prop> {
     /// Name of the programmer instrument (set in FMOD Studio).
     pub name: Utf8CString,
     /// Programmer-created sound.
-    // FIXME use option for both of these
+    // FIXME investigate if these can be null
     pub sound: &'prop mut Sound,
     /// Subsound index.
     pub subsound_index: &'prop mut c_int,

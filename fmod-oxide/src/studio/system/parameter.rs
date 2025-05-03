@@ -11,7 +11,7 @@ use std::{
     mem::MaybeUninit,
 };
 
-use crate::studio::{ParameterDescription, ParameterID, System};
+use crate::studio::{ParameterDescription, ParameterID, System, get_string_out_size};
 
 impl System {
     /// Retrieves a global parameter value by unique identifier.
@@ -251,52 +251,16 @@ impl System {
         name: &Utf8CStr,
         label_index: c_int,
     ) -> Result<Utf8CString> {
-        let mut string_len = 0;
-
-        // retrieve the length of the string.
-        // this includes the null terminator, so we don't need to account for that.
-        unsafe {
-            let error = FMOD_Studio_System_GetParameterLabelByName(
-                self.inner.as_ptr(),
-                name.as_ptr(),
-                label_index,
-                std::ptr::null_mut(),
-                0,
-                &raw mut string_len,
-            )
-            .to_error();
-
-            // we expect the error to be fmod_err_truncated.
-            // if it isn't, we return the error.
-            match error {
-                Some(error) if error != FMOD_RESULT::FMOD_ERR_TRUNCATED => return Err(error),
-                _ => {}
-            }
-        };
-
-        let mut path = vec![0u8; string_len as usize];
-        let mut expected_string_len = 0;
-
-        unsafe {
+        get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_System_GetParameterLabelByName(
                 self.inner.as_ptr(),
                 name.as_ptr(),
                 label_index,
-                // u8 and i8 have the same layout, so this is ok
-                path.as_mut_ptr().cast(),
-                string_len,
-                &raw mut expected_string_len,
+                path,
+                size,
+                ret,
             )
-            .to_result()?;
-
-            debug_assert_eq!(string_len, expected_string_len);
-
-            // all public fmod apis return UTF-8 strings. this should be safe.
-            // if i turn out to be wrong, perhaps we should add extra error types?
-            let path = Utf8CString::from_utf8_with_nul_unchecked(path);
-
-            Ok(path)
-        }
+        })
     }
 
     /// Retrieves a global parameter label by ID.
@@ -305,51 +269,15 @@ impl System {
         id: ParameterID,
         label_index: c_int,
     ) -> Result<Utf8CString> {
-        let mut string_len = 0;
-
-        // retrieve the length of the string.
-        // this includes the null terminator, so we don't need to account for that.
-        unsafe {
-            let error = FMOD_Studio_System_GetParameterLabelByID(
-                self.inner.as_ptr(),
-                id.into(),
-                label_index,
-                std::ptr::null_mut(),
-                0,
-                &raw mut string_len,
-            )
-            .to_error();
-
-            // we expect the error to be fmod_err_truncated.
-            // if it isn't, we return the error.
-            match error {
-                Some(error) if error != FMOD_RESULT::FMOD_ERR_TRUNCATED => return Err(error),
-                _ => {}
-            }
-        };
-
-        let mut path = vec![0u8; string_len as usize];
-        let mut expected_string_len = 0;
-
-        unsafe {
+        get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_System_GetParameterLabelByID(
                 self.inner.as_ptr(),
                 id.into(),
                 label_index,
-                // u8 and i8 have the same layout, so this is ok
-                path.as_mut_ptr().cast(),
-                string_len,
-                &raw mut expected_string_len,
+                path,
+                size,
+                ret,
             )
-            .to_result()?;
-
-            debug_assert_eq!(string_len, expected_string_len);
-
-            // all public fmod apis return UTF-8 strings. this should be safe.
-            // if i turn out to be wrong, perhaps we should add extra error types?
-            let path = Utf8CString::from_utf8_with_nul_unchecked(path);
-
-            Ok(path)
-        }
+        })
     }
 }

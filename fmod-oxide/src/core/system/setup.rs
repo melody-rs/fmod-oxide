@@ -127,8 +127,6 @@ impl System {
         Ok((file_buffer_size, time_unit))
     }
 
-    // TODO advanced settings
-
     /// Sets the position of the specified speaker for the current speaker mode.
     ///
     /// This function allows the user to specify the position of their speaker to account for non standard setups.

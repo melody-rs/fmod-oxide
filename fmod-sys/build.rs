@@ -279,8 +279,11 @@ fn main() {
         .cpp_link_stdlib(None)
         .cpp_set_stdlib(None)
         .include(format!("{api_dir_display}/core/inc"))
-        .flag_if_supported("-Wunused-command-line-argument") // TODO figure out why this warning is raised
         .file("src/channel_control.cpp");
+
+    if build_is_emscripten {
+        build.flag_if_supported("-Wunused-command-line-argument"); // why is this raised?
+    }
 
     if build_is_windows {
         let target = if build_is_x86_64 {

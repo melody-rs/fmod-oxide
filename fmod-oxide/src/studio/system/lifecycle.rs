@@ -18,7 +18,6 @@ impl System {
         unsafe { SystemBuilder::new() }?.build(0, InitFlags::NORMAL, crate::InitFlags::NORMAL)
     }
 
-    // TODO: could we solve this with an "owned" system and a shared system?
     ///This function will free the memory used by the Studio System object and everything created under it.
     ///
     /// # Safety

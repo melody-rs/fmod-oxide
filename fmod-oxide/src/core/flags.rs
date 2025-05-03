@@ -137,7 +137,6 @@ impl From<Mode> for FMOD_MODE {
     }
 }
 
-// FIXME: this is deprecated..?
 bitflags::bitflags! {
   #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
   pub struct ChannelMask: FMOD_CHANNELMASK {

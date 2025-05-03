@@ -136,7 +136,6 @@ fn process_expr(expr: syn::Expr, c_functions: &mut FunctionMap, verbose: bool) {
             }
         }
         syn::Expr::Paren(expr) => process_expr(*expr.expr, c_functions, verbose),
-        // TODO figure out what to do with path
         syn::Expr::Path(path) => {
             for segment in path.path.segments {
                 let ident = segment.ident.to_string();

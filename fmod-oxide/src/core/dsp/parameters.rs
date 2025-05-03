@@ -18,7 +18,7 @@ pub trait ParameterType: sealed::Seal + Sized {
 
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
 
-    // TODO Strings are a max of FMOD_DSP_GETPARAM_VALUESTR_LENGTH so we don't need to heap allocate them
+    // FIXME Strings are a max of FMOD_DSP_GETPARAM_VALUESTR_LENGTH so we don't need to heap allocate them
     fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString>;
 }
 
@@ -133,9 +133,10 @@ impl ParameterType for c_float {
 /// The trait for data types which a DSP can accept as a parameter.
 ///
 /// # Safety
-/// TODO VERY IMPORTANT work out specific semantics (parameter type checking, for example)
+///
 /// Any type that implements this type must have the same layout as the data type the DSP expects.
 /// **This is very important to get right**.
+// TODO VERY IMPORTANT work out specific semantics (parameter type checking, for example)
 pub unsafe trait DataParameterType: Sized {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
 
@@ -200,12 +201,25 @@ impl Dsp {
     }
 
     /// Retrieve information about a specified parameter.
+    // FIXME do we keep this around?
     pub fn get_parameter_info(&self, index: c_int) -> Result<DspParameterDescription> {
         let mut desc = std::ptr::null_mut();
         unsafe {
             FMOD_DSP_GetParameterInfo(self.inner.as_ptr(), index, &raw mut desc).to_result()?;
-            let desc = DspParameterDescription::from_ffi(*desc); // oh god this is *awful*
+            let desc = DspParameterDescription::from_ffi(*desc);
             Ok(desc)
+        }
+    }
+
+    /// Retrieve information about a specified parameter.
+    ///
+    /// Returns the raw struct, useful if you don't want to pay for the expensive pointer copies
+    /// that converting a [`FMOD_DSP_PARAMETER_DESC`] to a [`DspParameterDescription`] would entail.
+    pub fn get_raw_parameter_info(&self, index: c_int) -> Result<FMOD_DSP_PARAMETER_DESC> {
+        let mut desc = std::ptr::null_mut();
+        unsafe {
+            FMOD_DSP_GetParameterInfo(self.inner.as_ptr(), index, &raw mut desc).to_result()?;
+            Ok(*desc)
         }
     }
 

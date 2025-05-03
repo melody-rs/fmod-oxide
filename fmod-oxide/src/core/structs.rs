@@ -18,7 +18,7 @@ use crate::{
 };
 
 use super::{
-    FileSystemAsync, FileSystemSync, Resampler, Speaker, async_filesystem_cancel,
+    FileSystemAsync, FileSystemSync, FloatMappingType, Resampler, Speaker, async_filesystem_cancel,
     async_filesystem_read, filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
 };
 
@@ -241,7 +241,7 @@ pub struct DspParameterDescription {
     pub description: Utf8CString,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum DspParameterType {
     Float {
         min: f32,
@@ -254,20 +254,27 @@ pub enum DspParameterType {
         max: i32,
         default: i32,
         goes_to_infinity: bool,
-        // TODO names
+        names: Option<Vec<Utf8CString>>,
     },
     Bool {
         default: bool,
-        // TODO names
+        names: Option<[Utf8CString; 2]>,
     },
     Data {
         data_type: DspParameterDataType,
     },
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct FloatMapping {
-    // TODO
+    pub kind: FloatMappingType,
+    pub piecewise_linear_mapping: Option<PiecewiseLinearMapping>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct PiecewiseLinearMapping {
+    pub point_param_values: Vec<c_float>,
+    pub point_positions: Vec<c_float>,
 }
 
 impl DspParameterDescription {
@@ -292,26 +299,84 @@ impl DspParameterDescription {
         let kind = match value.type_ {
             FMOD_DSP_PARAMETER_TYPE_FLOAT => {
                 let floatdesc = unsafe { value.__bindgen_anon_1.floatdesc };
+                let kind = floatdesc.mapping.type_.try_into().unwrap();
+
+                let piecewise_linear_mapping = if kind == FloatMappingType::PiecewiceLinear {
+                    let point_param_values = unsafe {
+                        std::slice::from_raw_parts(
+                            floatdesc.mapping.piecewiselinearmapping.pointparamvalues,
+                            floatdesc.mapping.piecewiselinearmapping.numpoints as _,
+                        )
+                        .to_vec()
+                    };
+                    let point_positions = unsafe {
+                        std::slice::from_raw_parts(
+                            floatdesc.mapping.piecewiselinearmapping.pointpositions,
+                            floatdesc.mapping.piecewiselinearmapping.numpoints as _,
+                        )
+                        .to_vec()
+                    };
+                    Some(PiecewiseLinearMapping {
+                        point_param_values,
+                        point_positions,
+                    })
+                } else {
+                    None
+                };
+
                 DspParameterType::Float {
                     min: floatdesc.min,
                     max: floatdesc.max,
                     default: floatdesc.defaultval,
-                    mapping: FloatMapping {},
+                    mapping: FloatMapping {
+                        kind,
+                        piecewise_linear_mapping,
+                    },
                 }
             }
             FMOD_DSP_PARAMETER_TYPE_INT => {
                 let intdesc = unsafe { value.__bindgen_anon_1.intdesc };
+                let names = if intdesc.valuenames.is_null() {
+                    None
+                } else {
+                    let pointers = unsafe {
+                        std::slice::from_raw_parts(
+                            intdesc.valuenames,
+                            intdesc.max as usize - intdesc.min as usize + 1,
+                        )
+                    };
+                    Some(
+                        pointers
+                            .iter()
+                            .map(|p| unsafe { Utf8CStr::from_ptr_unchecked(*p).to_cstring() })
+                            .collect(),
+                    )
+                };
+
                 DspParameterType::Int {
                     min: intdesc.min,
                     max: intdesc.max,
                     default: intdesc.defaultval,
                     goes_to_infinity: intdesc.goestoinf.into(),
+                    names,
                 }
             }
             FMOD_DSP_PARAMETER_TYPE_BOOL => {
                 let booldesc = unsafe { value.__bindgen_anon_1.booldesc };
+                let names = if booldesc.valuenames.is_null() {
+                    None
+                } else {
+                    let [p1, p2] =
+                        unsafe { *std::ptr::from_ref(&booldesc.valuenames).cast::<[_; 2]>() };
+                    Some([
+                        unsafe { Utf8CStr::from_ptr_unchecked(p1).to_cstring() },
+                        unsafe { Utf8CStr::from_ptr_unchecked(p2).to_cstring() },
+                    ])
+                };
+
                 DspParameterType::Bool {
                     default: booldesc.defaultval.into(),
+                    names,
                 }
             }
             FMOD_DSP_PARAMETER_TYPE_DATA => {
@@ -330,7 +395,7 @@ impl DspParameterDescription {
         }
     }
 
-    // TODO ffi conversion (altho is it even needed?)
+    // No FFI conversion is provided because we don't support writing dsps in rust yet
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

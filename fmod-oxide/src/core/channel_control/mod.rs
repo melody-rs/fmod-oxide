@@ -19,8 +19,6 @@ mod spatialization;
 mod volume;
 pub use callback::{ChannelControlCallback, ChannelControlType};
 
-// TODO: Investigate if a trait-based approach is better
-
 // FMOD's C API provides two versions of functions for channels: one that takes a `*mut FMOD_CHANNEL` and one that takes a `*mut FMOD_CHANNELGROUP`.
 // The C++ API provides a base class `ChannelControl` that `Channel` and `ChannelGroup` inherits from.
 // Seeing as we can cast from FMOD_CHANNELCONTROL to Channel* (in c++) we should be able to cast from FMOD_CHANNEL(GROUP) to FMOD_CHANNELCONTROL.
@@ -28,9 +26,6 @@ pub use callback::{ChannelControlCallback, ChannelControlType};
 #[repr(transparent)] // so we can transmute between types
 pub struct ChannelControl {
     pub(crate) inner: NonNull<FMOD_CHANNELCONTROL>,
-    // FIXME: if the above assumption is invalid, could we possibly add a bool to track if this is a Channel or ChannelGroup?
-    // there's no real way to get a ChannelControl from FMOD's C API, this is a pure rust construct specific to this api,
-    // so it would be feasible
 }
 
 #[cfg(not(feature = "thread-unsafe"))]
