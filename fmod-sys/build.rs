@@ -161,7 +161,7 @@ fn main() {
         .prepend_enum_name(false) // fmod already does this
         .header("src/wrapper.h");
 
-    let include_debug = cfg!(any(debug_assertions, feature = "force-debug"));
+    let include_debug = cfg!(any(debug_assertions, feature = "force-debug")) && !build_is_wasm;
     let debug_char = if include_debug { "L" } else { "" };
 
     if build_is_wasm {
@@ -191,11 +191,10 @@ fn main() {
 
     // due to some weird shenanigans I can't figure out how to turn off, the linker searches for lib<library name> instead of just accepting the library name
     if build_is_wasm {
-        fs::copy(
-            api_dir.join("studio/lib/upstream/w32/fmodstudio_wasm.a"),
-            api_dir.join("studio/lib/upstream/w32/libfmodstudio_wasm.a"),
-        )
-        .expect("failed to copy studio lib");
+        let old_lib_path = format!("studio/lib/upstream/w32/fmodstudio{debug_char}_wasm.a");
+        let new_lib_path = format!("studio/lib/upstream/w32/libfmodstudio{debug_char}_wasm.a");
+        fs::copy(api_dir.join(old_lib_path), api_dir.join(new_lib_path))
+            .expect("failed to copy studio lib");
     }
 
     // FIXME: We should be setting this var ourselves.
@@ -233,7 +232,7 @@ fn main() {
 
     if build_is_wasm {
         // studio includes core on this platform, so no need to link against it
-        println!("cargo:rustc-link-lib=fmodstudio_wasm");
+        println!("cargo:rustc-link-lib=fmodstudio{debug_char}_wasm");
     } else if build_is_windows {
         println!("cargo:rustc-link-lib=fmod{debug_char}_vc");
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}_vc");

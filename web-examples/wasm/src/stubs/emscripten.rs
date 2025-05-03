@@ -16,8 +16,8 @@ extern "C" fn emscripten_get_now() -> c_double {
 }
 
 extern "C" {
-    fn FMOD_JS_MixerSlowpathFunction() -> c_int;
-    fn FMOD_JS_MixerFastpathFunction() -> c_int;
+    fn FMOD_JS_MixerSlowpathFunction();
+    fn FMOD_JS_MixerFastpathFunction(_: c_int);
 }
 
 // This is how emscripten lets JS call wasm code. It's actually not too difficult to port over,
@@ -25,12 +25,11 @@ extern "C" {
 fn cwrap(ident: JsValue, _: JsValue, _: JsValue, _: JsValue) -> JsValue {
     let ident = ident.as_string().unwrap();
     match ident.as_str() {
-        "FMOD_JS_MixerFastpathFunction" => {
-            Closure::<dyn Fn() -> _>::new(|| unsafe { FMOD_JS_MixerFastpathFunction() })
-                .into_js_value()
-        }
         "FMOD_JS_MixerSlowpathFunction" => {
-            Closure::<dyn Fn() -> _>::new(|| unsafe { FMOD_JS_MixerSlowpathFunction() })
+            Closure::<dyn Fn()>::new(|| unsafe { FMOD_JS_MixerSlowpathFunction() }).into_js_value()
+        }
+        "FMOD_JS_MixerFastpathFunction" => {
+            Closure::<dyn Fn(_)>::new(|v| unsafe { FMOD_JS_MixerFastpathFunction(v) })
                 .into_js_value()
         }
         _ => unimplemented!(),

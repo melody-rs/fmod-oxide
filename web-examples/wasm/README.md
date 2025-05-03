@@ -6,15 +6,19 @@ Uses some very silly hacks to work properly, and requires patching wasm-bindgen.
 wasm-bindgen patch:
 ```diff
 diff --git a/crates/wasm-interpreter/src/lib.rs b/crates/wasm-interpreter/src/lib.rs
-index a45772ad..9e05bf70 100644
+index a45772ad..85b24cb9 100644
 --- a/crates/wasm-interpreter/src/lib.rs
 +++ b/crates/wasm-interpreter/src/lib.rs
-@@ -219,8 +219,19 @@ impl Interpreter {
+@@ -219,8 +219,23 @@ impl Interpreter {
          let func = module.funcs.get(id);
          log::debug!("starting a call of {:?} {:?}", id, func.name);
          log::debug!("arguments {:?}", args);
 +
-+        if func.name.as_ref().is_some_and(|n| n.starts_with("_ZN4")) {
++        if func
++            .name
++            .as_ref()
++            .is_some_and(|n| n.starts_with("_ZN4") || n.starts_with("_GLOBAL_"))
++        {
 +            log::debug!("nevermind");
 +            self.scratch.push(0);
 +            return None;

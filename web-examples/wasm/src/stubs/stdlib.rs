@@ -3,6 +3,8 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::ffi::{c_double, c_int, c_uint, c_ulong, c_void};
 
+use crate::log;
+
 thread_local! {
   static POINTERS: RefCell<HashMap<*mut c_void, Layout>> = RefCell::default();
 }
@@ -58,7 +60,8 @@ extern "C" fn strtoul(_: *mut c_void, _: *mut c_void) -> c_ulong {
     todo!()
 }
 
+type CmpFn = unsafe extern "C" fn(*mut c_void, *mut c_void) -> c_int;
 #[unsafe(no_mangle)]
-extern "C" fn qsort(_: *mut c_void, _: usize, _: usize, _: unsafe extern "C" fn()) {
-    todo!()
+extern "C" fn qsort(_: *mut c_void, _: usize, _: usize, _: CmpFn) {
+    unimplemented!()
 }

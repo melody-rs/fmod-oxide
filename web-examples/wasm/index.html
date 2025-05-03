@@ -3,19 +3,39 @@
 
 <head>
   <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
-</head>
 
-<body>
   <script type="module">
-    import init, { do_thing } from './pkg/wasm_unknown.js';
+    import init, { do_thing, start_thing } from './pkg/wasm_unknown.js';
 
     export async function run() {
-      await init();
+      let output = await init();
+      window["HEAPF32"] = {
+        cached: null,
+        getCachedMemory() {
+          if (this.cached === null || this.cached.buffer.detached === true || (this.cached.buffer.detached === undefined && this.cached !== output.memory.buffer)) {
+            this.cached = new Float32Array(output.memory);
+          }
+          return this.cached;
+        },
+        subarray(...args) {
+          return this.getCachedMemory().subarray(...args);
+        }
+      };
       do_thing();
     }
 
-    run()
+    run();
+
+    document.querySelector("#the_button").addEventListener("click", (event) => {
+      start_thing();
+    })
   </script>
+</head>
+
+<body>
+
 </body>
+
+<button id="the_button">fsdfafsfasd</button>
 
 </html>

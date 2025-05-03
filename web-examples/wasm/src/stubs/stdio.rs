@@ -22,6 +22,9 @@ extern "C" fn fopen(path: *mut i8, _: *mut c_void) -> *mut c_void {
         "strings" => include_bytes!(
             "../../../../fmod-sys/fmod/linux/api/studio/examples/media/Master.strings.bank"
         ),
+        "vehicles" => include_bytes!(
+            "../../../../fmod-sys/fmod/linux/api/studio/examples/media/Vehicles.bank"
+        ),
         _ => todo!(),
     };
     let boxed = Box::new(File {
