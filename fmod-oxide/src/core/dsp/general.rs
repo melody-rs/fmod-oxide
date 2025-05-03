@@ -50,7 +50,7 @@ impl Dsp {
     ///
     /// If [`Dsp`] is not removed from the network with `ChannelControl::removeDSP` after being added with `ChannelControl::addDSP`,
     /// it will not release and will instead return [`FMOD_RESULT::FMOD_ERR_DSP_INUSE`].
-    pub fn release(self) -> Result<()> {
+    pub fn release(&self) -> Result<()> {
         unsafe { FMOD_DSP_Release(self.inner.as_ptr()).to_result() }
     }
 

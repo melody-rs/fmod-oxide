@@ -10,7 +10,7 @@ use crate::studio::CommandReplay;
 
 impl CommandReplay {
     /// Releases the command replay.
-    pub fn release(self) -> Result<()> {
+    pub fn release(&self) -> Result<()> {
         unsafe { FMOD_Studio_CommandReplay_Release(self.inner.as_ptr()).to_result() }
     }
 }
