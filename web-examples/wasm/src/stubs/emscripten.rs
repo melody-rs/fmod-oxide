@@ -24,14 +24,14 @@ extern "C" {
 // however FMOD only uses it to wrap 2 functions. So it's not really worth it
 fn cwrap(ident: JsValue, _: JsValue, _: JsValue, _: JsValue) -> JsValue {
     let ident = ident.as_string().unwrap();
+
+    thread_local! {
+        static SLOW: JsValue = Closure::<dyn Fn()>::new(|| unsafe { FMOD_JS_MixerSlowpathFunction() }).into_js_value();
+        static FAST: JsValue = Closure::<dyn Fn(_)>::new(|v| unsafe { FMOD_JS_MixerFastpathFunction(v) }).into_js_value();
+    }
     match ident.as_str() {
-        "FMOD_JS_MixerSlowpathFunction" => {
-            Closure::<dyn Fn()>::new(|| unsafe { FMOD_JS_MixerSlowpathFunction() }).into_js_value()
-        }
-        "FMOD_JS_MixerFastpathFunction" => {
-            Closure::<dyn Fn(_)>::new(|v| unsafe { FMOD_JS_MixerFastpathFunction(v) })
-                .into_js_value()
-        }
+        "FMOD_JS_MixerSlowpathFunction" => SLOW.with(JsValue::clone),
+        "FMOD_JS_MixerFastpathFunction" => FAST.with(JsValue::clone),
         _ => unimplemented!(),
     }
 }
