@@ -8,5 +8,4 @@ members = [
   "fmod-examples",
   "xtask",
   "web-examples/emscripten",
-  "web-examples/wasm",
 ]

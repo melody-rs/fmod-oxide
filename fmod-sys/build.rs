@@ -161,7 +161,7 @@ fn main() {
         .prepend_enum_name(false) // fmod already does this
         .header("src/wrapper.h");
 
-    let include_debug = cfg!(any(debug_assertions, feature = "force-debug")) && !build_is_wasm;
+    let include_debug = cfg!(any(debug_assertions, feature = "force-debug"));
     let debug_char = if include_debug { "L" } else { "" };
 
     if build_is_wasm {
