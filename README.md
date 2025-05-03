@@ -51,8 +51,10 @@ If no target specific directory was found it'll default to `<fmod install dir>`.
 
 ### Using with webassembly
 
-Currently only `wasm32-unknown-emscripten` I know to work, but I can't verify that `wasm32-unknown-unknown` works.
-Unfortunately `wasm-bindgen` doesn't work right now, so your milage may vary.
+Currently only `wasm32-unknown-emscripten` works well.
+`wasm32-unknown-unknown` also works in some capacity but you have to essentially reimplement parts of libc and emscripten. 
+FMOD doesn't pull in many functions thankfully but it's still a few days of effort to do.
+Unfortunately `wasm-bindgen` doesn't work without patches right now, so your milage may vary.
 
 The setup is roughly the same, except you'll need to add some arguments to `EMCC_FLAGS`.
 
