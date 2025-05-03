@@ -7,5 +7,5 @@ members = [
   "fmod-studio-examples",
   "fmod-examples",
   "xtask",
-  "web-examples/emscripten",
+  "emscripten-example",
 ]
