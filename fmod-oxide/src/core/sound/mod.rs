@@ -9,6 +9,7 @@ use std::ptr::NonNull;
 use fmod_sys::*;
 
 mod data_reading;
+pub use data_reading::SoundLock;
 mod defaults;
 mod general;
 mod information;
@@ -31,7 +32,7 @@ unsafe impl Sync for Sound {}
 impl Sound {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -39,6 +40,11 @@ impl Sound {
     pub unsafe fn from_ffi(value: *mut FMOD_SOUND) -> Self {
         let inner = NonNull::new(value).unwrap();
         Sound { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_SOUND {
+        self.inner.as_ptr()
     }
 }
 

@@ -35,7 +35,7 @@ unsafe impl Sync for EventInstance {}
 impl EventInstance {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -43,6 +43,11 @@ impl EventInstance {
     pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_EVENTINSTANCE) -> Self {
         let inner = NonNull::new(value).unwrap();
         EventInstance { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_STUDIO_EVENTINSTANCE {
+        self.inner.as_ptr()
     }
 }
 

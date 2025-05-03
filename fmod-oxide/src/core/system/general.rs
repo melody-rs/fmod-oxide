@@ -31,8 +31,6 @@ impl System {
     ///
     /// An example of using this function may be for when the user wants to construct a DSP sub-network, without the DSP engine executing in the background while the sub-network is still under construction.
     ///
-    /// Once the user no longer needs the DSP engine locked, it must be unlocked with [`System::unlock_dsp`].
-    ///
     /// Note that the DSP engine should not be locked for a significant amount of time, otherwise inconsistency in the audio output may result. (audio skipping / stuttering).
     pub fn lock_dsp(&self) -> Result<DspLockGuard> {
         unsafe { FMOD_System_LockDSP(self.inner.as_ptr()).to_result()? };

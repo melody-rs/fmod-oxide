@@ -27,7 +27,7 @@ unsafe impl Sync for ChannelGroup {}
 impl ChannelGroup {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -35,6 +35,11 @@ impl ChannelGroup {
     pub unsafe fn from_ffi(value: *mut FMOD_CHANNELGROUP) -> Self {
         let inner = NonNull::new(value).unwrap();
         ChannelGroup { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_CHANNELGROUP {
+        self.inner.as_ptr()
     }
 }
 

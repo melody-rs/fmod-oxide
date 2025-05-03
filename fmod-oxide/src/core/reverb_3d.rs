@@ -28,7 +28,7 @@ unsafe impl Sync for Reverb3D {}
 impl Reverb3D {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -36,6 +36,11 @@ impl Reverb3D {
     pub unsafe fn from_ffi(value: *mut FMOD_REVERB3D) -> Self {
         let inner = NonNull::new(value).unwrap();
         Reverb3D { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_REVERB3D {
+        self.inner.as_ptr()
     }
 }
 

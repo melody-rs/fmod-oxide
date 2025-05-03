@@ -19,6 +19,7 @@
 extern crate alloc;
 
 mod cstr;
+
 #[cfg(feature = "alloc")]
 mod cstring;
 
@@ -42,7 +43,7 @@ pub use cstring::*;
 ///
 /// ```rust,compile_fail
 /// # use lanyard::{Utf8CStr, c};
-/// const ERROR: &CStr8 = c!("Hello\0, world!");
+/// const ERROR: &Utf8CStr = c!("Hello\0, world!");
 /// ```
 #[macro_export]
 macro_rules! c {

@@ -82,7 +82,8 @@ impl Dsp {
             .to_result()?;
         }
 
-        let name = Utf8CStr::from_utf8_with_nul(&buffer).unwrap().to_cstring();
+        let name =
+            unsafe { Utf8CStr::from_utf8_until_nul(&buffer).unwrap_unchecked() }.to_cstring();
         Ok(DspInfo {
             name,
             version,

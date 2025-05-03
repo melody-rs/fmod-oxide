@@ -26,7 +26,7 @@ unsafe impl Sync for SoundGroup {}
 impl SoundGroup {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -34,6 +34,11 @@ impl SoundGroup {
     pub unsafe fn from_ffi(value: *mut FMOD_SOUNDGROUP) -> Self {
         let inner = NonNull::new(value).unwrap();
         SoundGroup { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_SOUNDGROUP {
+        self.inner.as_ptr()
     }
 }
 

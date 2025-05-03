@@ -100,7 +100,7 @@ impl System {
     /// This means it will then base the buffersize on [`TimeUnit::PCMBytes`], or in other words the number of PCM bytes,
     /// but this will be incorrect for some compressed formats. Use [`TimeUnit::RawBytes`] for these type (infinite / undetermined length) of streams for more accurate read sizes.
     ///
-    /// To determine the actual memory usage of a stream, including sound buffer and other overhead, use [`crate::memory::memory_get_stats`] before and after creating a sound.
+    /// To determine the actual memory usage of a stream, including sound buffer and other overhead, use [`crate::memory::get_stats`] before and after creating a sound.
     ///
     /// Stream may still stutter if the codec uses a large amount of cpu time, which impacts the smaller, internal 'decode' buffer.
     /// The decode buffer size is changeable via `FMOD_CREATESOUNDEXINFO`.

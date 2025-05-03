@@ -25,7 +25,7 @@ unsafe impl Sync for DspConnection {}
 impl DspConnection {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -33,6 +33,11 @@ impl DspConnection {
     pub unsafe fn from_ffi(value: *mut FMOD_DSPCONNECTION) -> Self {
         let inner = NonNull::new(value).unwrap();
         DspConnection { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_DSPCONNECTION {
+        self.inner.as_ptr()
     }
 }
 

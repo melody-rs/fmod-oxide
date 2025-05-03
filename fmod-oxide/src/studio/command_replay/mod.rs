@@ -29,7 +29,7 @@ unsafe impl Sync for CommandReplay {}
 impl CommandReplay {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -37,6 +37,11 @@ impl CommandReplay {
     pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_COMMANDREPLAY) -> Self {
         let inner = NonNull::new(value).unwrap();
         CommandReplay { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_STUDIO_COMMANDREPLAY {
+        self.inner.as_ptr()
     }
 }
 

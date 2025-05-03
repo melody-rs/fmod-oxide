@@ -41,7 +41,7 @@ unsafe impl Sync for ChannelControl {}
 impl ChannelControl {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -49,6 +49,11 @@ impl ChannelControl {
     pub unsafe fn from_ffi(value: *mut FMOD_CHANNELCONTROL) -> Self {
         let inner = NonNull::new(value).unwrap();
         ChannelControl { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_CHANNELCONTROL {
+        self.inner.as_ptr()
     }
 }
 

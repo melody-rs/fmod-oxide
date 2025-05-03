@@ -26,7 +26,7 @@ unsafe impl Sync for Vca {}
 impl Vca {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///
@@ -34,6 +34,11 @@ impl Vca {
     pub unsafe fn from_ffi(value: *mut FMOD_STUDIO_VCA) -> Self {
         let inner = NonNull::new(value).unwrap();
         Vca { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_STUDIO_VCA {
+        self.inner.as_ptr()
     }
 }
 

@@ -17,6 +17,9 @@ pub struct SoundLock<'a> {
     extra: Option<&'a mut [u8]>,
 }
 
+#[cfg(doc)]
+use crate::{Channel, System};
+
 impl SoundLock<'_> {
     /// The first part of the locked data.
     pub fn data(&self) -> &[u8] {
@@ -24,7 +27,7 @@ impl SoundLock<'_> {
     }
 
     /// The first part of the locked data.
-    pub fn data_mut(&self) -> &[u8] {
+    pub fn data_mut(&mut self) -> &mut [u8] {
         self.data
     }
 
@@ -164,7 +167,7 @@ impl Sound {
     }
 
     /// This can be used for decoding data offline in small pieces (or big pieces), rather than playing and capturing it,
-    /// or loading the whole file at once and having to [`Sound::lock`] / [`Sound::unlock`] the data.
+    /// or loading the whole file at once and having to [`Sound::lock`] the data.
     ///
     /// If too much data is read, it is possible [`FMOD_ERR_FILE_EOF`] will be returned, meaning it is out of data.
     /// The 'read' parameter will reflect this by returning a smaller number of bytes read than was requested.
@@ -178,12 +181,12 @@ impl Sound {
     /// For streams, the streaming engine will decode a small chunk of data and this will advance the read cursor.
     /// You need to either use [`FMOD_OPENONLY`] to stop the stream pre-buffering or call [`Sound::seek_data`] to reset the read cursor back to the start of the file,
     /// otherwise it will appear as if the start of the stream is missing.
-    /// [`Channel::setPosition`] will have the same result. These functions will flush the stream buffer and read in a chunk of audio internally.
+    /// [`Channel::set_position`] will have the same result. These functions will flush the stream buffer and read in a chunk of audio internally.
     /// This is why if you want to read from an absolute position you should use [`Sound::seek_data`] and not the previously mentioned functions.
     ///
     /// If you are calling [`Sound::read_data`] and [`Sound::seek_data`] on a stream,
-    /// information functions such as [`Channel::getPosition`] may give misleading results.
-    /// Calling [`Channel::setPosition`] will cause the streaming engine to reset and flush the stream,
+    /// information functions such as [`Channel::get_position`] may give misleading results.
+    /// Calling [`Channel::set_position`] will cause the streaming engine to reset and flush the stream,
     /// leading to the time values returning to their correct position.
     ///
     /// # Safety
@@ -211,7 +214,7 @@ impl Sound {
     /// For streaming sounds, if this function is called, it will advance the internal file pointer but not update the streaming engine.
     /// This can lead to de-synchronization of position information for the stream and audible playback.
     ///
-    /// A stream can reset its stream buffer and position synchronization by calling [`Channel::setPosition`].
+    /// A stream can reset its stream buffer and position synchronization by calling [`Channel::set_position`].
     /// This causes reset and flush of the stream buffer.
     pub fn seek_data(&self, pcm: c_uint) -> Result<()> {
         unsafe { FMOD_Sound_SeekData(self.inner.as_ptr(), pcm).to_result() }

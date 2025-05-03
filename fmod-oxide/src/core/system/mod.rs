@@ -40,7 +40,7 @@ unsafe impl Sync for System {}
 impl System {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::into`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_raw`] or FMOD.
     ///
     /// # Panics
     ///
@@ -48,6 +48,11 @@ impl System {
     pub unsafe fn from_ffi(value: *mut FMOD_SYSTEM) -> Self {
         let inner = NonNull::new(value).unwrap();
         System { inner }
+    }
+
+    /// Converts `self` into its raw representation.
+    pub fn as_ptr(self) -> *mut FMOD_SYSTEM {
+        self.inner.as_ptr()
     }
 }
 
