@@ -82,6 +82,12 @@ See [`web-examples/emscripten`](web-examples/emscripten) for a more detailed exa
 Most documentation is copied directly from the FMOD docs, however some information (such as parameter values) are excluded.
 Please refer to the FMOD documentation for more usage information.
 
+
+### Examples
+
+Examples are pretty much straight ports of their FMOD counterparts, written that way so you can compare them with the official FMOD examples.
+More rusty examples will be provided in the future that showcase how best to use this crate.
+
 # Memory management & Copy types
 
 All FMOD objects are Copy, Clone, Send and Sync because it's possible to have multiple references to the same object. (e.g. loading a bank and then retrieving it by its path)

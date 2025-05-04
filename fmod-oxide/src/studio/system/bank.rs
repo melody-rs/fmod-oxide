@@ -186,16 +186,12 @@ impl System {
     /// When using this function the buffer must be aligned to [`FMOD_STUDIO_LOAD_MEMORY_ALIGNMENT`]
     /// and the memory must persist until the bank has been fully unloaded, which can be some time after calling [`Bank::unload`] to unload the bank.
     /// You can ensure the memory is not being freed prematurely by only freeing it after receiving the [`FMOD_STUDIO_SYSTEM_CALLBACK_BANK_UNLOAD`] callback.
-    pub unsafe fn load_bank_pointer(
-        &self,
-        buffer: *const [u8],
-        flags: LoadBankFlags,
-    ) -> Result<Bank> {
+    pub unsafe fn load_bank_pointer(&self, buffer: &[u8], flags: LoadBankFlags) -> Result<Bank> {
         let mut bank = std::ptr::null_mut();
         unsafe {
             FMOD_Studio_System_LoadBankMemory(
                 self.inner.as_ptr(),
-                buffer.cast::<i8>(),
+                buffer.as_ptr().cast::<i8>(),
                 buffer.len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY_POINT,
                 flags.bits(),

@@ -7,10 +7,7 @@
 use fmod_sys::*;
 
 use lanyard::Utf8CStr;
-use std::{
-    ffi::{c_char, c_int, c_uint},
-    os::raw::c_void,
-};
+use std::ffi::{c_char, c_int, c_uint, c_void};
 
 // I was lost on how to do this for a while, so I took some pointers from https://github.com/CAD97/fmod-rs/blob/main/crates/fmod-rs/src/core/common/file.rs#L181
 // It's not copied verbatim, I made some different design choices (like opting to make handle be a *mut c_void instead)

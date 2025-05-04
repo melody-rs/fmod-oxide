@@ -65,3 +65,8 @@ fn get_string_out_size(
     let string = unsafe { Utf8CString::from_utf8_with_nul_unchecked(buf) };
     Ok(string)
 }
+
+/// The required memory alignment of banks in user memory.
+///
+/// When using [`System::load_bank_pointer`] you must align the past slice to this alignment.
+pub const LOAD_POINT_ALIGNMENT: usize = FMOD_STUDIO_LOAD_MEMORY_ALIGNMENT as _;

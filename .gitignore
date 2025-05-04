@@ -1,3 +1,5 @@
 /fmod-sys/fmod
 /target/
 fmod-sys/docs/documentation.rs
+
+.vscode/*
