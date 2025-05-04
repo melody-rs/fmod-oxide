@@ -77,11 +77,6 @@ rustflags="-Zwasm-c-abi=spec"
 
 See [`web-examples/emscripten`](web-examples/emscripten) for a more detailed example.
 
-### Running Examples
-
-Examples expect FMOD to be installed inside `fmod-sys/fmod`. 
-You may see an error like `Error: Error { code: FMOD_RESULT(18), message: "File not found." }` if you don't do that!
-
 ### Docs
 
 Most documentation is copied directly from the FMOD docs, however some information (such as parameter values) are excluded.

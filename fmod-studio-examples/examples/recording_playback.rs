@@ -11,6 +11,7 @@ use crossterm::{
     terminal::*,
 };
 use fmod::c;
+use fmod_studio_examples::media_path_for;
 use std::io::Write;
 
 enum State {
@@ -74,19 +75,19 @@ fn execute_selection(system: fmod::studio::System) -> Result<State, Box<dyn std:
 
 fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
     let master_bank = system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
+        &media_path_for("Master.bank"),
         fmod::studio::LoadBankFlags::NONBLOCKING,
     )?;
     let strings_bank = system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
+        &media_path_for("Master.strings.bank"),
         fmod::studio::LoadBankFlags::NONBLOCKING,
     )?;
     let vehicles_bank = system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Vehicles.bank"),
+        &media_path_for("Vehicles.bank"),
         fmod::studio::LoadBankFlags::NONBLOCKING,
     )?;
     let sfx_bank = system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/SFX.bank"),
+        &media_path_for("SFX.bank"),
         fmod::studio::LoadBankFlags::NONBLOCKING,
     )?;
 
@@ -95,7 +96,7 @@ fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::er
 
     // Start recording commands - it will also record which banks we have already loaded by now
     system.start_command_capture(
-        c!("fmod-sys/fmod/api/studio/examples/media/playback.cmd.txt"),
+        &media_path_for("playback.cmd.txt"),
         fmod::studio::CommandCaptureFlags::NORMAL,
     )?;
 
@@ -229,7 +230,7 @@ fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::er
 
 fn execute_playback(system: fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
     let replay = system.load_command_replay(
-        c!("fmod-sys/fmod/api/studio/examples/media/playback.cmd.txt"),
+        &media_path_for("playback.cmd.txt"),
         fmod::studio::CommandReplayFlags::NORMAL,
     )?;
 

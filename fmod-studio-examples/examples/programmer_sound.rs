@@ -12,6 +12,7 @@ use crossterm::{
 };
 
 use fmod::{Utf8CStr, c, studio::EventInstanceCallback};
+use fmod_studio_examples::media_path_for;
 use std::{io::Write, sync::Mutex};
 
 pub struct ProgrammerSoundContext {
@@ -48,10 +49,7 @@ impl EventInstanceCallback for Callback {
         _: fmod::studio::EventInstance,
         sound_props: fmod::studio::ProgrammerSoundProperties<'_>,
     ) -> fmod::Result<()> {
-        unsafe {
-            let sound = (*sound_props.sound).into();
-            fmod::ffi::FMOD_Sound_Release(sound).to_result()
-        }
+        sound_props.sound.release()
     }
 }
 
@@ -73,24 +71,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
+        &media_path_for("Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
+        &media_path_for("Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/SFX.bank"),
+        &media_path_for("SFX.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
 
     let mut bank_index = 0;
     const BANKS: [&str; 3] = ["Dialogue_EN.bank", "Dialogue_JP.bank", "Dialogue_CN.bank"];
-
-    let bank_path =
-        "fmod-sys/fmod/api/studio/examples/media/".to_string() + BANKS[bank_index] + "\0";
-    let bank_path = Utf8CStr::from_str_with_nul(&bank_path).unwrap();
+    let bank_path = &media_path_for(BANKS[bank_index]);
 
     let mut localized_bank =
         system.load_bank_file(bank_path, fmod::studio::LoadBankFlags::NORMAL)?;
@@ -139,10 +134,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     localized_bank.unload()?;
 
                     bank_index = if bank_index < 2 { bank_index + 1 } else { 0 };
-                    let bank_path = "fmod-sys/fmod/api/studio/examples/media/".to_string()
-                        + BANKS[bank_index]
-                        + "\0";
-                    let bank_path = Utf8CStr::from_str_with_nul(&bank_path).unwrap();
+                    let bank_path = &media_path_for(BANKS[bank_index]);
 
                     localized_bank =
                         system.load_bank_file(bank_path, fmod::studio::LoadBankFlags::NORMAL)?;

@@ -129,8 +129,8 @@ fn main() {
     assert!(fmod_dir.exists(), "fmod directory not present");
 
     let mut api_dir = None;
-    if cross_compile_api_dir.is_some() && api_dir.is_none() {
-        let maybe_api_dir = fmod_dir.join(cross_compile_api_dir.unwrap()).join("api");
+    if let Some(cross_compile_api_dir) = cross_compile_api_dir {
+        let maybe_api_dir = fmod_dir.join(cross_compile_api_dir).join("api");
         // if it does, target that
         if maybe_api_dir.exists() {
             api_dir = Some(maybe_api_dir);
@@ -261,6 +261,9 @@ fn main() {
     println!("cargo::metadata=minor={minor}");
     println!("cargo::metadata=minor={major}");
     println!("cargo::metadata=minor={product}");
+
+    println!("cargo::rustc-env=FMOD_DIR={}", fmod_dir.display());
+    println!("cargo::rustc-env=FMOD_API_DIR={}", api_dir.display());
 
     let docs_path = docs_dir.join("documentation.rs");
 

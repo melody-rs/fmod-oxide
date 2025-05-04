@@ -12,6 +12,7 @@ use crossterm::{
 };
 use fmod::c;
 use fmod::studio::{EventCallbackMask, EventInstanceCallback};
+use fmod_studio_examples::media_path_for;
 use std::{io::Write, sync::Mutex};
 
 #[derive(Default)]
@@ -96,15 +97,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
+        &media_path_for("Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
+        &media_path_for("Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     let result = system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Music.bank"),
+        &media_path_for("Music.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     );
     if let Err(e) = result {

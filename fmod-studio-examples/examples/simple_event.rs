@@ -11,6 +11,7 @@ use crossterm::{
     terminal::*,
 };
 use fmod::c;
+use fmod_studio_examples::media_path_for;
 use std::io::Write;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -31,15 +32,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
 
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.bank"),
+        &media_path_for("Master.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/Master.strings.bank"),
+        &media_path_for("Master.strings.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
     system.load_bank_file(
-        c!("fmod-sys/fmod/api/studio/examples/media/SFX.bank"),
+        &media_path_for("SFX.bank"),
         fmod::studio::LoadBankFlags::NORMAL,
     )?;
 
