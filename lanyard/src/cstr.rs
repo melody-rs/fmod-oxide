@@ -1,11 +1,11 @@
-// Copyright (c) 2024 Lily Lyons
+// Copyright (c) 2024 Melody Madeline Lyons
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 use core::{
     borrow::Borrow,
-    ffi::{c_char, CStr, FromBytesUntilNulError, FromBytesWithNulError},
+    ffi::{CStr, FromBytesUntilNulError, FromBytesWithNulError, c_char},
     num::NonZeroUsize,
     ops::{Deref, Index},
     slice::SliceIndex,
