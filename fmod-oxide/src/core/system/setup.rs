@@ -8,7 +8,7 @@ use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_uint};
 
 use crate::{
-    AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit, panic_wrapper,
+    AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit, print_panic_msg,
 };
 
 pub trait RolloffCallback {
@@ -18,10 +18,17 @@ unsafe extern "C" fn rolloff_callback_impl<C: RolloffCallback>(
     channel_control: *mut FMOD_CHANNELCONTROL,
     distance: c_float,
 ) -> c_float {
-    panic_wrapper(|| {
+    let result = std::panic::catch_unwind(|| {
         let channel_control = unsafe { ChannelControl::from_ffi(channel_control) };
         C::rolloff(channel_control, distance)
-    })
+    });
+    match result {
+        Ok(f) => f,
+        Err(e) => {
+            print_panic_msg(&e);
+            0.0
+        }
+    }
 }
 
 #[cfg(doc)]

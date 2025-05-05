@@ -63,23 +63,27 @@ pub const MAX_CHANNEL_WIDTH: u32 = fmod_sys::FMOD_MAX_CHANNEL_WIDTH;
 pub const MAX_LISTENERS: u32 = fmod_sys::FMOD_MAX_LISTENERS;
 pub const MAX_SYSTEMS: u32 = fmod_sys::FMOD_MAX_SYSTEMS;
 
-pub(crate) fn panic_wrapper<F, R>(f: F) -> R
+pub(crate) fn panic_wrapper<F>(f: F) -> fmod_sys::FMOD_RESULT
 where
-    F: FnOnce() -> R,
+    F: FnOnce() -> fmod_sys::FMOD_RESULT,
     F: std::panic::UnwindSafe,
 {
     let result = std::panic::catch_unwind(f);
     match result {
         Ok(r) => r,
         Err(e) => {
-            if let Some(str) = e.downcast_ref::<&'static str>() {
-                eprintln!("WARNING: caught {str}");
-            } else if let Some(str) = e.downcast_ref::<String>() {
-                eprintln!("WARNING: caught {str}");
-            } else {
-                eprintln!("WARNING: caught panic!");
-            }
-            std::process::abort()
+            print_panic_msg(&e);
+            fmod_sys::FMOD_RESULT::FMOD_OK
         }
+    }
+}
+
+pub(crate) fn print_panic_msg(msg: &dyn std::any::Any) {
+    if let Some(str) = msg.downcast_ref::<&'static str>() {
+        eprintln!("WARNING: caught {str}");
+    } else if let Some(str) = msg.downcast_ref::<String>() {
+        eprintln!("WARNING: caught {str}");
+    } else {
+        eprintln!("WARNING: caught panic!");
     }
 }
