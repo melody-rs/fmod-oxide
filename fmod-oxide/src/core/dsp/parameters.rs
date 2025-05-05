@@ -11,24 +11,23 @@ use std::ffi::{c_float, c_int};
 use crate::{Dsp, DspParameterDataType, DspParameterDescription};
 
 mod sealed {
-    pub trait Seal {}
-}
-pub trait ParameterType: sealed::Seal + Sized {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
+    pub trait ReadSeal {}
 
+    pub trait WriteSeal {}
+}
+pub trait ReadableParameter: sealed::ReadSeal + Sized {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
 
     // FIXME Strings are a max of FMOD_DSP_GETPARAM_VALUESTR_LENGTH so we don't need to heap allocate them
     fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString>;
 }
 
-impl sealed::Seal for bool {}
-impl ParameterType for bool {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterBool(dsp, index, self.into()).to_result() }
-    }
+pub trait WritableParameter: sealed::WriteSeal + Sized {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
+}
 
+impl sealed::ReadSeal for bool {}
+impl ReadableParameter for bool {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let dsp = dsp.inner.as_ptr();
         unsafe {
@@ -58,13 +57,16 @@ impl ParameterType for bool {
     }
 }
 
-impl sealed::Seal for c_int {}
-impl ParameterType for c_int {
+impl sealed::WriteSeal for bool {}
+impl WritableParameter for bool {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterInt(dsp, index, self).to_result() }
+        unsafe { FMOD_DSP_SetParameterBool(dsp, index, self.into()).to_result() }
     }
+}
 
+impl sealed::ReadSeal for c_int {}
+impl ReadableParameter for c_int {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let dsp = dsp.inner.as_ptr();
         unsafe {
@@ -94,13 +96,16 @@ impl ParameterType for c_int {
     }
 }
 
-impl sealed::Seal for c_float {}
-impl ParameterType for c_float {
+impl sealed::WriteSeal for c_int {}
+impl WritableParameter for c_int {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterFloat(dsp, index, self).to_result() }
+        unsafe { FMOD_DSP_SetParameterInt(dsp, index, self).to_result() }
     }
+}
 
+impl sealed::ReadSeal for c_float {}
+impl ReadableParameter for c_float {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let dsp = dsp.inner.as_ptr();
         unsafe {
@@ -130,30 +135,42 @@ impl ParameterType for c_float {
     }
 }
 
-/// The trait for data types which a DSP can accept as a parameter.
+impl sealed::WriteSeal for c_float {}
+impl WritableParameter for c_float {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
+        let dsp = dsp.inner.as_ptr();
+        unsafe { FMOD_DSP_SetParameterFloat(dsp, index, self).to_result() }
+    }
+}
+
+/// The trait for data types which a can be read from a DSP parameter.
+///
 ///
 /// # Safety
 ///
 /// Any type that implements this type must have the same layout as the data type the DSP expects.
 /// **This is very important to get right**.
 // TODO VERY IMPORTANT work out specific semantics (parameter type checking, for example)
-pub unsafe trait DataParameterType: Sized {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
-
+pub unsafe trait ReadableDataParameter: Sized {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
 }
-impl<T> sealed::Seal for T where T: DataParameterType {}
+/// The trait for data types which a can be written to a DSP parameter.
+///
+/// # Safety
+///
+/// Any type that implements this type must have the same layout as the data type the DSP expects.
+/// **This is very important to get right**.
+pub unsafe trait WritableDataParameter: Sized {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
+}
 
-impl<T> ParameterType for T
+impl<T> sealed::ReadSeal for T where T: ReadableDataParameter {}
+impl<T> ReadableParameter for T
 where
-    T: DataParameterType,
+    T: ReadableDataParameter,
 {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        <Self as DataParameterType>::set_parameter(self, dsp, index)
-    }
-
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        <Self as DataParameterType>::get_parameter(dsp, index)
+        <Self as ReadableDataParameter>::get_parameter(dsp, index)
     }
 
     fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
@@ -173,6 +190,16 @@ where
             let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
             Ok(string)
         }
+    }
+}
+
+impl<T> sealed::WriteSeal for T where T: WritableDataParameter {}
+impl<T> WritableParameter for T
+where
+    T: WritableDataParameter,
+{
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
+        <Self as WritableDataParameter>::set_parameter(self, dsp, index)
     }
 }
 
@@ -223,15 +250,15 @@ impl Dsp {
         }
     }
 
-    pub fn set_parameter<P: ParameterType>(&self, index: c_int, parameter: P) -> Result<()> {
+    pub fn set_parameter<P: WritableParameter>(&self, index: c_int, parameter: P) -> Result<()> {
         parameter.set_parameter(*self, index)
     }
 
-    pub fn get_parameter<P: ParameterType>(&self, index: c_int) -> Result<P> {
+    pub fn get_parameter<P: ReadableParameter>(&self, index: c_int) -> Result<P> {
         P::get_parameter(*self, index)
     }
 
-    pub fn get_parameter_string<P: ParameterType>(&self, index: c_int) -> Result<Utf8CString> {
+    pub fn get_parameter_string<P: ReadableParameter>(&self, index: c_int) -> Result<Utf8CString> {
         P::get_parameter_string(*self, index)
     }
 

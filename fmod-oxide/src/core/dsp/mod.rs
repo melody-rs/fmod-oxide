@@ -18,7 +18,7 @@ mod parameters;
 mod processing;
 
 pub use data_parameters::*;
-pub use parameters::{DataParameterType, ParameterType};
+pub use parameters::{ReadableDataParameter, ReadableParameter};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types

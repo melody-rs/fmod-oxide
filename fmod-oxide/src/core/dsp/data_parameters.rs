@@ -3,11 +3,11 @@ use std::{
     mem::MaybeUninit,
 };
 
-// FIXME some of these are read only?
-
 use fmod_sys::*;
 
-use crate::{Attributes3D, DataParameterType, Dsp, DspParameterDataType};
+use crate::{Attributes3D, Dsp, DspParameterDataType, ReadableDataParameter};
+
+use super::parameters::WritableDataParameter;
 
 fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameterDataType) -> bool {
     if dsp_parameter_desc.type_ != FMOD_DSP_PARAMETER_TYPE_DATA {
@@ -24,16 +24,7 @@ pub struct OverAlign {
 }
 
 // Safety: we validate the data type matches what we expect.
-unsafe impl DataParameterType for OverAlign {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::OverAlign) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&self, index) }
-    }
-
+unsafe impl ReadableDataParameter for OverAlign {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::OverAlign) {
@@ -53,16 +44,7 @@ pub struct DspAttributes3D {
     pub absolute: Attributes3D,
 }
 
-unsafe impl DataParameterType for DspAttributes3D {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&self, index) }
-    }
-
+unsafe impl ReadableDataParameter for DspAttributes3D {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -75,25 +57,24 @@ unsafe impl DataParameterType for DspAttributes3D {
     }
 }
 
+unsafe impl WritableDataParameter for DspAttributes3D {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
+        let desc = dsp.get_raw_parameter_info(index)?;
+        if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
+            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+        }
+        // Safety: we already validated that this is the right data type, so this is safe.
+        unsafe { dsp.set_raw_parameter_data(&self, index) }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
 pub struct Sidechain {
     pub enable: bool,
 }
 
-unsafe impl DataParameterType for Sidechain {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        let raw = FMOD_DSP_PARAMETER_SIDECHAIN {
-            sidechainenable: self.enable.into(),
-        };
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&raw, index) }
-    }
-
+unsafe impl ReadableDataParameter for Sidechain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -109,6 +90,20 @@ unsafe impl DataParameterType for Sidechain {
     }
 }
 
+unsafe impl WritableDataParameter for Sidechain {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
+        let desc = dsp.get_raw_parameter_info(index)?;
+        if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
+            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+        }
+        let raw = FMOD_DSP_PARAMETER_SIDECHAIN {
+            sidechainenable: self.enable.into(),
+        };
+        // Safety: we already validated that this is the right data type, so this is safe.
+        unsafe { dsp.set_raw_parameter_data(&raw, index) }
+    }
+}
+
 // TODO FFT
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -121,16 +116,7 @@ pub struct DspAttributes3DMulti {
     pub absolute: FMOD_3D_ATTRIBUTES,
 }
 
-unsafe impl DataParameterType for DspAttributes3DMulti {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&self, index) }
-    }
-
+unsafe impl ReadableDataParameter for DspAttributes3DMulti {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
@@ -143,6 +129,17 @@ unsafe impl DataParameterType for DspAttributes3DMulti {
     }
 }
 
+unsafe impl WritableDataParameter for DspAttributes3DMulti {
+    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
+        let desc = dsp.get_raw_parameter_info(index)?;
+        if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
+            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+        }
+        // Safety: we already validated that this is the right data type, so this is safe.
+        unsafe { dsp.set_raw_parameter_data(&self, index) }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
 pub struct AttenuationRange {
@@ -150,16 +147,7 @@ pub struct AttenuationRange {
     pub max: c_float,
 }
 
-unsafe impl DataParameterType for AttenuationRange {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::AttenuationRange) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&self, index) }
-    }
-
+unsafe impl ReadableDataParameter for AttenuationRange {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::AttenuationRange) {
@@ -181,16 +169,7 @@ pub struct DynamicResponse {
 }
 
 #[cfg(fmod_2_3)]
-unsafe impl DataParameterType for DynamicResponse {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let desc = dsp.get_raw_parameter_info(index)?;
-        if !parameter_is(&desc, DspParameterDataType::DynamicResponse) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
-        }
-        // Safety: we already validated that this is the right data type, so this is safe.
-        unsafe { dsp.set_raw_parameter_data(&self, index) }
-    }
-
+unsafe impl ReadableDataParameter for DynamicResponse {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::DynamicResponse) {
