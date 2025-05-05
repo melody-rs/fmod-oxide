@@ -215,7 +215,7 @@
 - [x] FMOD_DSP_SetParameterFloat
 - [x] FMOD_DSP_SetParameterInt
 - [x] FMOD_DSP_SetParameterBool
-- [ ] FMOD_DSP_SetParameterData
+- [x] FMOD_DSP_SetParameterData
 - [x] FMOD_DSP_GetParameterFloat
 - [x] FMOD_DSP_GetParameterInt
 - [x] FMOD_DSP_GetParameterBool
