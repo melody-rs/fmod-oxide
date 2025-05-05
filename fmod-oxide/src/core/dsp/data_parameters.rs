@@ -104,16 +104,99 @@ unsafe impl WritableDataParameter for Sidechain {
     }
 }
 
-// TODO FFT
+#[derive(Debug, Clone, PartialEq)]
+pub struct Fft {
+    channels: usize,
+    spectrum_size: usize,
+    data: Box<[c_float]>,
+}
+
+impl Fft {
+    pub fn channels(&self) -> usize {
+        self.channels
+    }
+
+    pub fn spectrum_size(&self) -> usize {
+        self.spectrum_size
+    }
+
+    pub fn spectrum(&self, channel: usize) -> &[c_float] {
+        let offset = self.spectrum_size * channel;
+        &self.data[offset..offset + self.spectrum_size]
+    }
+
+    pub fn data(&self) -> &[c_float] {
+        &self.data
+    }
+}
+
+// So glad this is read only because this would be AWFUL to implement writing for
+unsafe impl ReadableDataParameter for Fft {
+    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
+        let desc = dsp.get_raw_parameter_info(index)?;
+        if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
+            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+        }
+        let mut raw = MaybeUninit::<FMOD_DSP_PARAMETER_FFT>::uninit();
+        // Safety: we already validated that this is the right data type, so this is safe.
+        unsafe { dsp.get_raw_parameter_data(&mut raw, index)? };
+        let raw = unsafe { raw.assume_init() };
+
+        let mut data = Vec::with_capacity(raw.numchannels as _);
+        for i in 0..raw.numchannels as _ {
+            let ptr = raw.spectrum[i];
+            let slice = unsafe { std::slice::from_raw_parts(ptr, raw.length as _) };
+            data.extend_from_slice(slice);
+        }
+        Ok(Self {
+            channels: raw.numchannels as _,
+            spectrum_size: raw.length as _,
+            data: data.into_boxed_slice(),
+        })
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
 pub struct DspAttributes3DMulti {
     // FIXME these should be slices?
-    pub listener_count: c_int,
-    pub relative: [Attributes3D; FMOD_MAX_LISTENERS as usize],
-    pub weight: [c_float; FMOD_MAX_LISTENERS as usize],
+    listener_count: c_int,
+    relative: [Attributes3D; FMOD_MAX_LISTENERS as usize],
+    weight: [c_float; FMOD_MAX_LISTENERS as usize],
     pub absolute: FMOD_3D_ATTRIBUTES,
+}
+
+impl DspAttributes3DMulti {
+    pub fn new(data: &[(Attributes3D, c_float)], absolute: FMOD_3D_ATTRIBUTES) -> Self {
+        let relative = std::array::from_fn(|i| data.get(i).map(|d| d.0).unwrap_or_default());
+        let weight = std::array::from_fn(|i| data.get(i).map(|d| d.1).unwrap_or_default());
+        Self {
+            listener_count: data.len() as _,
+            relative,
+            weight,
+            absolute,
+        }
+    }
+
+    pub fn relative(&self) -> &[Attributes3D] {
+        &self.relative[..self.listener_count as _]
+    }
+
+    pub fn relative_mut(&mut self) -> &mut [Attributes3D] {
+        &mut self.relative[..self.listener_count as _]
+    }
+
+    pub fn weight(&self) -> &[c_float] {
+        &self.weight[..self.listener_count as _]
+    }
+
+    pub fn weight_mut(&mut self) -> &mut [c_float] {
+        &mut self.weight[..self.listener_count as _]
+    }
+
+    pub fn listener_count(&self) -> usize {
+        self.listener_count as _
+    }
 }
 
 unsafe impl ReadableDataParameter for DspAttributes3DMulti {
