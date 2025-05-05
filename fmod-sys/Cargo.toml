@@ -29,13 +29,15 @@ bindgen = "0.71.1"
 cc = "1.0"
 
 [features]
+## Forcefully link to the FMOD debug build.
 force-debug = []
+## Force using the docs.rs generated bindings (NOT RECOMMENDED.)
 force-docs-bindings = []
 
-### Disable if you want to link FMOD yourself
+## Disable if you want to link FMOD yourself
 link-fmod = []
 
-### Generate bindings to FMOD's STudio API
+## Generate bindings to FMOD's STudio API
 studio = []
 default = ["link-fmod", "studio"]
 
