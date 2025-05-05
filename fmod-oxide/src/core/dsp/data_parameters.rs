@@ -159,7 +159,6 @@ unsafe impl ReadableDataParameter for Fft {
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
 pub struct DspAttributes3DMulti {
-    // FIXME these should be slices?
     listener_count: c_int,
     relative: [Attributes3D; FMOD_MAX_LISTENERS as usize],
     weight: [c_float; FMOD_MAX_LISTENERS as usize],

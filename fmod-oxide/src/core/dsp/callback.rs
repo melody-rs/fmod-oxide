@@ -7,6 +7,8 @@
 use fmod_sys::*;
 use std::ffi::c_void;
 
+use crate::panic_wrapper;
+
 use super::Dsp;
 
 pub trait DspCallback {
@@ -19,20 +21,22 @@ unsafe extern "C" fn callback_impl<C: DspCallback>(
     kind: FMOD_DSP_CALLBACK_TYPE,
     data: *mut c_void,
 ) -> FMOD_RESULT {
-    let dsp = unsafe { Dsp::from_ffi(dsp) };
-    // FMOD may add more variants in the future, so keep the match for consistency
-    #[allow(clippy::single_match_else)]
-    let result = match kind {
-        FMOD_DSP_CALLBACK_DATAPARAMETERRELEASE => {
-            let info = unsafe { std::ptr::read(data.cast()) };
-            C::data_parameter_release(dsp, info)
-        }
-        _ => {
-            eprintln!("warning: unknown dsp callback type {kind}");
-            return FMOD_RESULT::FMOD_OK;
-        }
-    };
-    result.into()
+    panic_wrapper(|| {
+        let dsp = unsafe { Dsp::from_ffi(dsp) };
+        // FMOD may add more variants in the future, so keep the match for consistency
+        #[allow(clippy::single_match_else)]
+        let result = match kind {
+            FMOD_DSP_CALLBACK_DATAPARAMETERRELEASE => {
+                let info = unsafe { std::ptr::read(data.cast()) };
+                C::data_parameter_release(dsp, info)
+            }
+            _ => {
+                eprintln!("warning: unknown dsp callback type {kind}");
+                return FMOD_RESULT::FMOD_OK;
+            }
+        };
+        result.into()
+    })
 }
 
 impl Dsp {

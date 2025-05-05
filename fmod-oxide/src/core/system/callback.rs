@@ -11,7 +11,7 @@ use lanyard::Utf8CStr;
 
 use crate::{
     Channel, ChannelControl, ChannelGroup, Dsp, DspConnection, Geometry, OutputType, Reverb3D,
-    Sound, SoundGroup, System, studio,
+    Sound, SoundGroup, System, panic_wrapper, studio,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -274,50 +274,57 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
     command_data_2: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let system = unsafe { System::from_ffi(system) };
-    match callback_type {
-        FMOD_SYSTEM_CALLBACK_DEVICELISTCHANGED => C::device_list_changed(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_DEVICELOST => C::device_lost(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_MEMORYALLOCATIONFAILED => {
-            let file = unsafe { Utf8CStr::from_ptr_unchecked(command_data_1.cast()) };
-            C::memory_allocation_failed(system, file, command_data_2 as c_int, userdata).into()
+    panic_wrapper(|| {
+        let system = unsafe { System::from_ffi(system) };
+        match callback_type {
+            FMOD_SYSTEM_CALLBACK_DEVICELISTCHANGED => {
+                C::device_list_changed(system, userdata).into()
+            }
+            FMOD_SYSTEM_CALLBACK_DEVICELOST => C::device_lost(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_MEMORYALLOCATIONFAILED => {
+                let file = unsafe { Utf8CStr::from_ptr_unchecked(command_data_1.cast()) };
+                C::memory_allocation_failed(system, file, command_data_2 as c_int, userdata).into()
+            }
+            FMOD_SYSTEM_CALLBACK_THREADCREATED => {
+                let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
+                C::thread_created(system, command_data_1, thread_name, userdata).into()
+            }
+            FMOD_SYSTEM_CALLBACK_BADDSPCONNECTION => C::bad_dsp_connection(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_PREMIX => C::premix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_POSTMIX => C::postmix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_ERROR => {
+                let error_info = unsafe { ErrorCallbackInfo::from_ffi(*command_data_1.cast()) };
+                C::error(system, error_info, userdata).into()
+            }
+            #[cfg(fmod_eq_2_2)]
+            FMOD_SYSTEM_CALLBACK_MIDMIX => C::mid_mix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_THREADDESTROYED => {
+                let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
+                C::thread_destroyed(system, command_data_1, thread_name, userdata).into()
+            }
+            FMOD_SYSTEM_CALLBACK_PREUPDATE => C::pre_update(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_POSTUPDATE => C::post_update(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_RECORDLISTCHANGED => {
+                C::record_list_changed(system, userdata).into()
+            }
+            FMOD_SYSTEM_CALLBACK_BUFFEREDNOMIX => C::buffered_no_mix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_DEVICEREINITIALIZE => {
+                let output_type = OutputType::try_from(command_data_1 as FMOD_OUTPUTTYPE)
+                    .expect("invalid output type");
+                C::device_reinitialize(system, output_type, command_data_2 as c_int, userdata)
+                    .into()
+            }
+            FMOD_SYSTEM_CALLBACK_OUTPUTUNDERRUN => C::output_underrun(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_RECORDPOSITIONCHANGED => {
+                let sound = unsafe { Sound::from_ffi(command_data_1.cast()) };
+                C::record_position_changed(system, sound, command_data_2 as c_int, userdata).into()
+            }
+            _ => {
+                eprintln!("warning: unknown callback type {callback_type}");
+                FMOD_RESULT::FMOD_OK
+            }
         }
-        FMOD_SYSTEM_CALLBACK_THREADCREATED => {
-            let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
-            C::thread_created(system, command_data_1, thread_name, userdata).into()
-        }
-        FMOD_SYSTEM_CALLBACK_BADDSPCONNECTION => C::bad_dsp_connection(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_PREMIX => C::premix(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_POSTMIX => C::postmix(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_ERROR => {
-            let error_info = unsafe { ErrorCallbackInfo::from_ffi(*command_data_1.cast()) };
-            C::error(system, error_info, userdata).into()
-        }
-        #[cfg(fmod_eq_2_2)]
-        FMOD_SYSTEM_CALLBACK_MIDMIX => C::mid_mix(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_THREADDESTROYED => {
-            let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
-            C::thread_destroyed(system, command_data_1, thread_name, userdata).into()
-        }
-        FMOD_SYSTEM_CALLBACK_PREUPDATE => C::pre_update(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_POSTUPDATE => C::post_update(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_RECORDLISTCHANGED => C::record_list_changed(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_BUFFEREDNOMIX => C::buffered_no_mix(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_DEVICEREINITIALIZE => {
-            let output_type = OutputType::try_from(command_data_1 as FMOD_OUTPUTTYPE)
-                .expect("invalid output type");
-            C::device_reinitialize(system, output_type, command_data_2 as c_int, userdata).into()
-        }
-        FMOD_SYSTEM_CALLBACK_OUTPUTUNDERRUN => C::output_underrun(system, userdata).into(),
-        FMOD_SYSTEM_CALLBACK_RECORDPOSITIONCHANGED => {
-            let sound = unsafe { Sound::from_ffi(command_data_1.cast()) };
-            C::record_position_changed(system, sound, command_data_2 as c_int, userdata).into()
-        }
-        _ => {
-            eprintln!("warning: unknown callback type {callback_type}");
-            FMOD_RESULT::FMOD_OK
-        }
-    }
+    })
 }
 
 impl System {

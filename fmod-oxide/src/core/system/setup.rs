@@ -7,7 +7,9 @@
 use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_uint};
 
-use crate::{AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit};
+use crate::{
+    AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit, panic_wrapper,
+};
 
 pub trait RolloffCallback {
     fn rolloff(channel_control: ChannelControl, distance: c_float) -> c_float;
@@ -16,8 +18,10 @@ unsafe extern "C" fn rolloff_callback_impl<C: RolloffCallback>(
     channel_control: *mut FMOD_CHANNELCONTROL,
     distance: c_float,
 ) -> c_float {
-    let channel_control = unsafe { ChannelControl::from_ffi(channel_control) };
-    C::rolloff(channel_control, distance)
+    panic_wrapper(|| {
+        let channel_control = unsafe { ChannelControl::from_ffi(channel_control) };
+        C::rolloff(channel_control, distance)
+    })
 }
 
 #[cfg(doc)]

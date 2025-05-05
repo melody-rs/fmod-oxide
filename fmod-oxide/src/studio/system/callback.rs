@@ -7,7 +7,10 @@
 use fmod_sys::*;
 use std::ffi::c_void;
 
-use crate::studio::{Bank, System, SystemCallbackMask};
+use crate::{
+    panic_wrapper,
+    studio::{Bank, System, SystemCallbackMask},
+};
 
 /// Trait for this particular FMOD callback.
 ///
@@ -48,28 +51,29 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
     command_data: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    // FIXME handle panics
-    let system = unsafe { System::from_ffi(system) };
+    panic_wrapper(|| {
+        let system = unsafe { System::from_ffi(system) };
 
-    let result = match kind {
-        FMOD_STUDIO_SYSTEM_CALLBACK_PREUPDATE => C::preupdate(system, userdata),
-        FMOD_STUDIO_SYSTEM_CALLBACK_POSTUPDATE => C::postupdate(system, userdata),
-        FMOD_STUDIO_SYSTEM_CALLBACK_BANK_UNLOAD => {
-            let bank = unsafe { Bank::from_ffi(command_data.cast()) };
-            C::bank_unload(system, bank, userdata)
-        }
-        FMOD_STUDIO_SYSTEM_CALLBACK_LIVEUPDATE_CONNECTED => {
-            C::liveupdate_connected(system, userdata)
-        }
-        FMOD_STUDIO_SYSTEM_CALLBACK_LIVEUPDATE_DISCONNECTED => {
-            C::liveupdate_disconnected(system, userdata)
-        }
-        _ => {
-            eprintln!("warning: unknown event callback type {kind}");
-            return FMOD_RESULT::FMOD_OK;
-        }
-    };
-    result.into()
+        let result = match kind {
+            FMOD_STUDIO_SYSTEM_CALLBACK_PREUPDATE => C::preupdate(system, userdata),
+            FMOD_STUDIO_SYSTEM_CALLBACK_POSTUPDATE => C::postupdate(system, userdata),
+            FMOD_STUDIO_SYSTEM_CALLBACK_BANK_UNLOAD => {
+                let bank = unsafe { Bank::from_ffi(command_data.cast()) };
+                C::bank_unload(system, bank, userdata)
+            }
+            FMOD_STUDIO_SYSTEM_CALLBACK_LIVEUPDATE_CONNECTED => {
+                C::liveupdate_connected(system, userdata)
+            }
+            FMOD_STUDIO_SYSTEM_CALLBACK_LIVEUPDATE_DISCONNECTED => {
+                C::liveupdate_disconnected(system, userdata)
+            }
+            _ => {
+                eprintln!("warning: unknown event callback type {kind}");
+                return FMOD_RESULT::FMOD_OK;
+            }
+        };
+        result.into()
+    })
 }
 
 impl System {

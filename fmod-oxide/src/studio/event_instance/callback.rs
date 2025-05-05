@@ -9,7 +9,7 @@ use lanyard::Utf8CStr;
 use std::ffi::c_void;
 
 use crate::{
-    Sound,
+    Sound, panic_wrapper,
     studio::{
         EventCallbackMask, EventInstance, PluginInstanceProperties, ProgrammerSoundProperties,
         TimelineBeatProperties, TimelineMarkerProperties, TimelineNestedBeatProperties,
@@ -141,86 +141,87 @@ pub(crate) unsafe extern "C" fn event_callback_impl<C: EventInstanceCallback>(
     event: *mut FMOD_STUDIO_EVENTINSTANCE,
     parameters: *mut c_void,
 ) -> FMOD_RESULT {
-    // FIXME handle panics
-    let event = unsafe { EventInstance::from_ffi(event) };
-    let result = match kind {
-        FMOD_STUDIO_EVENT_CALLBACK_CREATED => C::created(event),
-        FMOD_STUDIO_EVENT_CALLBACK_DESTROYED => C::destroyed(event),
-        FMOD_STUDIO_EVENT_CALLBACK_STARTING => C::starting(event),
-        FMOD_STUDIO_EVENT_CALLBACK_STARTED => C::started(event),
-        FMOD_STUDIO_EVENT_CALLBACK_RESTARTED => C::restarted(event),
-        FMOD_STUDIO_EVENT_CALLBACK_STOPPED => C::stopped(event),
-        FMOD_STUDIO_EVENT_CALLBACK_START_FAILED => C::start_failed(event),
-        FMOD_STUDIO_EVENT_CALLBACK_CREATE_PROGRAMMER_SOUND => {
-            let props = unsafe {
-                let props = &mut *parameters.cast::<FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES>();
-                ProgrammerSoundProperties {
-                    name: Utf8CStr::from_ptr_unchecked(props.name).to_cstring(),
-                    sound: &mut *std::ptr::addr_of_mut!(props.sound).cast(),
-                    subsound_index: &mut props.subsoundIndex,
-                }
-            };
-            C::create_programmer_sound(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_DESTROY_PROGRAMMER_SOUND => {
-            let props = unsafe {
-                let props = &mut *parameters.cast::<FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES>();
-                ProgrammerSoundProperties {
-                    name: Utf8CStr::from_ptr_unchecked(props.name).to_cstring(),
-                    sound: &mut *std::ptr::addr_of_mut!(props.sound).cast(),
-                    subsound_index: &mut props.subsoundIndex,
-                }
-            };
-            C::destroy_programmer_sound(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_PLUGIN_CREATED => {
-            let props = unsafe { PluginInstanceProperties::from_ffi(*parameters.cast()) };
-            C::plugin_created(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_PLUGIN_DESTROYED => {
-            let props = unsafe { PluginInstanceProperties::from_ffi(*parameters.cast()) };
-            C::plugin_destroyed(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_TIMELINE_MARKER => {
-            let props = unsafe { TimelineMarkerProperties::from_ffi(*parameters.cast()) };
-            C::timeline_marker(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_TIMELINE_BEAT => {
-            let props = unsafe {
-                TimelineBeatProperties::from(
-                    *parameters.cast::<FMOD_STUDIO_TIMELINE_BEAT_PROPERTIES>(),
-                )
-            };
-            C::timeline_beat(event, props)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_SOUND_PLAYED => {
-            let sound = unsafe { Sound::from_ffi(parameters.cast()) };
-            C::sound_played(event, sound)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_SOUND_STOPPED => {
-            let sound = unsafe { Sound::from_ffi(parameters.cast()) };
-            C::sound_stopped(event, sound)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_REAL_TO_VIRTUAL => C::real_to_virtual(event),
-        FMOD_STUDIO_EVENT_CALLBACK_VIRTUAL_TO_REAL => C::virtual_to_real(event),
-        FMOD_STUDIO_EVENT_CALLBACK_START_EVENT_COMMAND => {
-            let new_event = unsafe { EventInstance::from_ffi(parameters.cast()) };
-            C::start_event_command(event, new_event)
-        }
-        FMOD_STUDIO_EVENT_CALLBACK_NESTED_TIMELINE_BEAT => {
-            let props = unsafe {
-                TimelineNestedBeatProperties::from(
-                    *parameters.cast::<FMOD_STUDIO_TIMELINE_NESTED_BEAT_PROPERTIES>(),
-                )
-            };
-            C::nested_timeline_beat(event, props)
-        }
-        _ => {
-            eprintln!("warning: unknown event callback type {kind}");
-            return FMOD_RESULT::FMOD_OK;
-        }
-    };
-    result.into()
+    panic_wrapper(|| {
+        let event = unsafe { EventInstance::from_ffi(event) };
+        let result = match kind {
+            FMOD_STUDIO_EVENT_CALLBACK_CREATED => C::created(event),
+            FMOD_STUDIO_EVENT_CALLBACK_DESTROYED => C::destroyed(event),
+            FMOD_STUDIO_EVENT_CALLBACK_STARTING => C::starting(event),
+            FMOD_STUDIO_EVENT_CALLBACK_STARTED => C::started(event),
+            FMOD_STUDIO_EVENT_CALLBACK_RESTARTED => C::restarted(event),
+            FMOD_STUDIO_EVENT_CALLBACK_STOPPED => C::stopped(event),
+            FMOD_STUDIO_EVENT_CALLBACK_START_FAILED => C::start_failed(event),
+            FMOD_STUDIO_EVENT_CALLBACK_CREATE_PROGRAMMER_SOUND => {
+                let props = unsafe {
+                    let props = &mut *parameters.cast::<FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES>();
+                    ProgrammerSoundProperties {
+                        name: Utf8CStr::from_ptr_unchecked(props.name).to_cstring(),
+                        sound: &mut *std::ptr::addr_of_mut!(props.sound).cast(),
+                        subsound_index: &mut props.subsoundIndex,
+                    }
+                };
+                C::create_programmer_sound(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_DESTROY_PROGRAMMER_SOUND => {
+                let props = unsafe {
+                    let props = &mut *parameters.cast::<FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES>();
+                    ProgrammerSoundProperties {
+                        name: Utf8CStr::from_ptr_unchecked(props.name).to_cstring(),
+                        sound: &mut *std::ptr::addr_of_mut!(props.sound).cast(),
+                        subsound_index: &mut props.subsoundIndex,
+                    }
+                };
+                C::destroy_programmer_sound(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_PLUGIN_CREATED => {
+                let props = unsafe { PluginInstanceProperties::from_ffi(*parameters.cast()) };
+                C::plugin_created(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_PLUGIN_DESTROYED => {
+                let props = unsafe { PluginInstanceProperties::from_ffi(*parameters.cast()) };
+                C::plugin_destroyed(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_TIMELINE_MARKER => {
+                let props = unsafe { TimelineMarkerProperties::from_ffi(*parameters.cast()) };
+                C::timeline_marker(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_TIMELINE_BEAT => {
+                let props = unsafe {
+                    TimelineBeatProperties::from(
+                        *parameters.cast::<FMOD_STUDIO_TIMELINE_BEAT_PROPERTIES>(),
+                    )
+                };
+                C::timeline_beat(event, props)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_SOUND_PLAYED => {
+                let sound = unsafe { Sound::from_ffi(parameters.cast()) };
+                C::sound_played(event, sound)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_SOUND_STOPPED => {
+                let sound = unsafe { Sound::from_ffi(parameters.cast()) };
+                C::sound_stopped(event, sound)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_REAL_TO_VIRTUAL => C::real_to_virtual(event),
+            FMOD_STUDIO_EVENT_CALLBACK_VIRTUAL_TO_REAL => C::virtual_to_real(event),
+            FMOD_STUDIO_EVENT_CALLBACK_START_EVENT_COMMAND => {
+                let new_event = unsafe { EventInstance::from_ffi(parameters.cast()) };
+                C::start_event_command(event, new_event)
+            }
+            FMOD_STUDIO_EVENT_CALLBACK_NESTED_TIMELINE_BEAT => {
+                let props = unsafe {
+                    TimelineNestedBeatProperties::from(
+                        *parameters.cast::<FMOD_STUDIO_TIMELINE_NESTED_BEAT_PROPERTIES>(),
+                    )
+                };
+                C::nested_timeline_beat(event, props)
+            }
+            _ => {
+                eprintln!("warning: unknown event callback type {kind}");
+                return FMOD_RESULT::FMOD_OK;
+            }
+        };
+        result.into()
+    })
 }
 
 impl EventInstance {

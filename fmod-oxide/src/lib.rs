@@ -62,3 +62,24 @@ pub const VERSION: u32 = fmod_sys::FMOD_VERSION;
 pub const MAX_CHANNEL_WIDTH: u32 = fmod_sys::FMOD_MAX_CHANNEL_WIDTH;
 pub const MAX_LISTENERS: u32 = fmod_sys::FMOD_MAX_LISTENERS;
 pub const MAX_SYSTEMS: u32 = fmod_sys::FMOD_MAX_SYSTEMS;
+
+pub(crate) fn panic_wrapper<F, R>(f: F) -> R
+where
+    F: FnOnce() -> R,
+    F: std::panic::UnwindSafe,
+{
+    let result = std::panic::catch_unwind(f);
+    match result {
+        Ok(r) => r,
+        Err(e) => {
+            if let Some(str) = e.downcast_ref::<&'static str>() {
+                eprintln!("WARNING: caught {str}");
+            } else if let Some(str) = e.downcast_ref::<String>() {
+                eprintln!("WARNING: caught {str}");
+            } else {
+                eprintln!("WARNING: caught panic!");
+            }
+            std::process::abort()
+        }
+    }
+}

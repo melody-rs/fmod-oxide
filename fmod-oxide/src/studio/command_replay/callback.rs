@@ -9,7 +9,7 @@ use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_float, c_int, c_uint, c_void};
 
 use crate::{
-    Guid,
+    Guid, panic_wrapper,
     studio::{Bank, CommandReplay, EventDescription, EventInstance, LoadBankFlags},
 };
 
@@ -33,7 +33,7 @@ unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
     event_instance: *mut *mut FMOD_STUDIO_EVENTINSTANCE,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    unsafe {
+    panic_wrapper(|| unsafe {
         let replay = CommandReplay::from_ffi(replay);
         let description = EventDescription::from_ffi(event_description);
         let result = C::create_instance_callback(replay, command_index, description, userdata);
@@ -45,7 +45,7 @@ unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
             Ok(None) => FMOD_RESULT::FMOD_OK,
             Err(e) => e.into(),
         }
-    }
+    })
 }
 
 /// Trait for this particular FMOD callback.
@@ -67,8 +67,10 @@ unsafe extern "C" fn frame_impl<C: FrameCallback>(
     current_time: c_float,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let replay = unsafe { CommandReplay::from_ffi(replay) };
-    C::frame_callback(replay, command_index, current_time, userdata).into()
+    panic_wrapper(|| {
+        let replay = unsafe { CommandReplay::from_ffi(replay) };
+        C::frame_callback(replay, command_index, current_time, userdata).into()
+    })
 }
 
 /// Trait for this particular FMOD callback.
@@ -95,29 +97,31 @@ unsafe extern "C" fn load_bank_impl<C: LoadBankCallback>(
     bank_ptr: *mut *mut FMOD_STUDIO_BANK,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    let replay = unsafe { CommandReplay::from_ffi(replay) };
-    let flags = LoadBankFlags::from(flags);
-    let guid = if guid.is_null() {
-        None
-    } else {
-        Some(unsafe { std::ptr::read(guid.cast()) })
-    };
-    let filename = if filename.is_null() {
-        None
-    } else {
-        Some(unsafe { Utf8CStr::from_ptr_unchecked(filename) })
-    };
-    let result = C::load_bank_callback(replay, command_index, guid, filename, flags, userdata);
-    match result {
-        Ok(Some(bank)) => {
-            unsafe {
-                std::ptr::write(bank_ptr, bank.into());
+    panic_wrapper(|| {
+        let replay = unsafe { CommandReplay::from_ffi(replay) };
+        let flags = LoadBankFlags::from(flags);
+        let guid = if guid.is_null() {
+            None
+        } else {
+            Some(unsafe { std::ptr::read(guid.cast()) })
+        };
+        let filename = if filename.is_null() {
+            None
+        } else {
+            Some(unsafe { Utf8CStr::from_ptr_unchecked(filename) })
+        };
+        let result = C::load_bank_callback(replay, command_index, guid, filename, flags, userdata);
+        match result {
+            Ok(Some(bank)) => {
+                unsafe {
+                    std::ptr::write(bank_ptr, bank.into());
+                }
+                FMOD_RESULT::FMOD_OK
             }
-            FMOD_RESULT::FMOD_OK
+            Ok(None) => FMOD_RESULT::FMOD_OK,
+            Err(e) => e.into(),
         }
-        Ok(None) => FMOD_RESULT::FMOD_OK,
-        Err(e) => e.into(),
-    }
+    })
 }
 
 impl CommandReplay {
