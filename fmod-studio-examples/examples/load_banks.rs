@@ -58,7 +58,7 @@ impl fmod::FileSystem for CustomFilesystem {
         Ok(fmod::FileInfo { handle, file_size })
     }
 
-    fn close(handle: fmod::Handle, _: *mut c_void) -> fmod::Result<()> {
+    fn close(handle: *mut c_void, _: *mut c_void) -> fmod::Result<()> {
         let boxed_file: Box<std::fs::File> = unsafe { Box::from_raw(handle.cast()) };
         drop(boxed_file);
         Ok(())
@@ -67,7 +67,7 @@ impl fmod::FileSystem for CustomFilesystem {
 
 impl fmod::FileSystemSync for CustomFilesystem {
     fn read(
-        handle: fmod::Handle,
+        handle: *mut c_void,
         _: *mut c_void,
         mut buffer: fmod::FileBuffer<'_>,
     ) -> fmod::Result<()> {
@@ -79,7 +79,7 @@ impl fmod::FileSystemSync for CustomFilesystem {
         }
     }
 
-    fn seek(handle: fmod::Handle, _: *mut c_void, position: c_uint) -> fmod::Result<()> {
+    fn seek(handle: *mut c_void, _: *mut c_void, position: c_uint) -> fmod::Result<()> {
         let file: &mut std::fs::File = unsafe { &mut *handle.cast() };
         match file.seek(std::io::SeekFrom::Start(position as _)) {
             Ok(_) => Ok(()),
@@ -271,7 +271,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         stdout.write_all(b"Bank Load Example.\n")?;
         stdout.write_all(b"Adapted from the official FMOD example\n")?;
         stdout.write_all(b"==================================================")?;
-        stdout.write_all(b"Name            Handle  Bank-State  Sample-State\n")?;
+        stdout.write_all(b"Name            *mut c_void  Bank-State  Sample-State\n")?;
 
         for i in 0..BANKS.len() {
             writeln!(

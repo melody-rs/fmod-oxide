@@ -16,18 +16,16 @@ use std::ffi::{c_char, c_int, c_uint, c_void};
 
 // TODO test and validate my assumptions are correct
 
-pub type Handle = *mut c_void;
-
 #[derive(Debug)]
 pub struct FileInfo {
-    pub handle: Handle,
+    pub handle: *mut c_void,
     pub file_size: c_uint,
 }
 
 pub trait FileSystem {
     fn open(name: &Utf8CStr, userdata: *mut c_void) -> Result<FileInfo>;
 
-    fn close(handle: Handle, userdata: *mut c_void) -> Result<()>;
+    fn close(handle: *mut c_void, userdata: *mut c_void) -> Result<()>;
 }
 
 #[derive(Debug)]
@@ -66,9 +64,9 @@ impl std::io::Write for FileBuffer<'_> {
 }
 
 pub trait FileSystemSync: FileSystem {
-    fn read(handle: Handle, userdata: *mut c_void, buffer: FileBuffer<'_>) -> Result<()>;
+    fn read(handle: *mut c_void, userdata: *mut c_void, buffer: FileBuffer<'_>) -> Result<()>;
 
-    fn seek(handle: Handle, userdata: *mut c_void, position: c_uint) -> Result<()>;
+    fn seek(handle: *mut c_void, userdata: *mut c_void, position: c_uint) -> Result<()>;
 }
 
 #[derive(Debug)]
@@ -77,7 +75,7 @@ pub struct AsyncReadInfo {
 }
 
 impl AsyncReadInfo {
-    pub fn handle(&self) -> Handle {
+    pub fn handle(&self) -> *mut c_void {
         unsafe { *self.raw }.handle
     }
 
@@ -137,7 +135,7 @@ pub struct AsyncCancelInfo {
 }
 
 impl AsyncCancelInfo {
-    pub fn handle(&self) -> Handle {
+    pub fn handle(&self) -> *mut c_void {
         unsafe { *self.raw }.handle
     }
 
@@ -175,7 +173,7 @@ pub unsafe trait FileSystemAsync: FileSystem {
 pub(crate) unsafe extern "C" fn filesystem_open<F: FileSystem>(
     name: *const c_char,
     raw_filesize: *mut c_uint,
-    raw_handle: *mut Handle,
+    raw_handle: *mut *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
     let name = unsafe { Utf8CStr::from_ptr_unchecked(name) };
@@ -191,14 +189,14 @@ pub(crate) unsafe extern "C" fn filesystem_open<F: FileSystem>(
 }
 
 pub(crate) unsafe extern "C" fn filesystem_close<F: FileSystem>(
-    handle: Handle,
+    handle: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
     F::close(handle, userdata).into()
 }
 
 pub(crate) unsafe extern "C" fn filesystem_read<F: FileSystemSync>(
-    handle: Handle,
+    handle: *mut c_void,
     buffer: *mut c_void,
     size_bytes: c_uint,
     bytes_read: *mut c_uint,
@@ -222,7 +220,7 @@ pub(crate) unsafe extern "C" fn filesystem_read<F: FileSystemSync>(
 }
 
 pub(crate) unsafe extern "C" fn filesystem_seek<F: FileSystemSync>(
-    handle: Handle,
+    handle: *mut c_void,
     pos: c_uint,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
