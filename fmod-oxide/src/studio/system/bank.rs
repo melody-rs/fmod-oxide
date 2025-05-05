@@ -6,7 +6,7 @@
 
 use fmod_sys::*;
 use lanyard::Utf8CStr;
-use std::ffi::{c_int, c_void};
+use std::ffi::{c_char, c_int, c_void};
 use std::marker::PhantomData;
 
 use crate::studio::{Bank, LoadBankFlags, System};
@@ -154,7 +154,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_LoadBankMemory(
                 self.inner.as_ptr(),
-                buffer.as_ptr().cast::<i8>(),
+                buffer.as_ptr().cast::<c_char>(),
                 buffer.len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY,
                 flags.bits(),
@@ -191,7 +191,7 @@ impl System {
         unsafe {
             FMOD_Studio_System_LoadBankMemory(
                 self.inner.as_ptr(),
-                buffer.as_ptr().cast::<i8>(),
+                buffer.as_ptr().cast::<c_char>(),
                 buffer.len() as c_int,
                 FMOD_STUDIO_LOAD_MEMORY_POINT,
                 flags.bits(),

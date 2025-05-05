@@ -7,7 +7,7 @@
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 use std::{
-    ffi::{c_float, c_int},
+    ffi::{c_char, c_float, c_int},
     mem::MaybeUninit,
 };
 
@@ -68,7 +68,7 @@ impl CommandReplay {
             FMOD_Studio_CommandReplay_GetCommandString(
                 self.inner.as_ptr(),
                 index,
-                buffer.as_mut_ptr().cast::<i8>(),
+                buffer.as_mut_ptr().cast::<c_char>(),
                 buffer.len() as c_int,
             )
         })?;

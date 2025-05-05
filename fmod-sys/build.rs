@@ -125,6 +125,8 @@ fn main() {
 
     let build_is_x86 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86");
     let build_is_x86_64 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "x86_64");
+    let build_is_arm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "arm");
+    let build_is_arm64 = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "aarch64");
     let fmod_dir = find_fmod_directory();
     assert!(fmod_dir.exists(), "fmod directory not present");
 
@@ -223,6 +225,10 @@ fn main() {
             "x64"
         } else if build_is_x86 {
             "x86"
+        } else if build_is_arm64 {
+            "arm64"
+        } else if build_is_arm {
+            "arm"
         } else {
             todo!()
         };

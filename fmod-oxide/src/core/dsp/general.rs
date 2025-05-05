@@ -6,7 +6,7 @@
 
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
-use std::ffi::{c_int, c_uint, c_void};
+use std::ffi::{c_char, c_int, c_uint, c_void};
 
 use crate::{Dsp, DspType, System};
 
@@ -73,7 +73,7 @@ impl Dsp {
         unsafe {
             FMOD_DSP_GetInfo(
                 self.inner.as_ptr(),
-                buffer.as_mut_ptr().cast::<i8>(),
+                buffer.as_mut_ptr().cast::<c_char>(),
                 &raw mut version,
                 &raw mut channels,
                 &raw mut config_width,
