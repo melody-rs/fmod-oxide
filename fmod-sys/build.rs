@@ -151,7 +151,6 @@ fn main() {
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .parse_callbacks(Box::new(VersionCallbacks))
         .clang_arg(format!("-I{api_dir_display}/core/inc"))
-        .clang_arg(format!("-I{api_dir_display}/studio/inc"))
         .newtype_enum("FMOD_RESULT")
         .must_use_type("FMOD_RESULT")
         .new_type_alias("FMOD_BOOL")
@@ -163,6 +162,12 @@ fn main() {
         .prepend_enum_name(false) // fmod already does this
         .header("src/wrapper.h");
 
+    #[cfg(feature = "studio")]
+    {
+        bindgen = bindgen
+            .clang_arg(format!("-I{api_dir_display}/studio/inc"))
+            .clang_arg("-DFMOD_STUDIO_ENABLED");
+    }
     let include_debug = cfg!(any(debug_assertions, feature = "force-debug"));
     let debug_char = if include_debug { "L" } else { "" };
 
@@ -242,13 +247,19 @@ fn main() {
 
     #[cfg(feature = "link-fmod")]
     if build_is_wasm {
+        #[cfg(not(feature = "studio"))]
+        // studio includes core on this platform, so no need to link against it
+        println!("cargo:rustc-link-lib=fmod{debug_char}_wasm");
+        #[cfg(feature = "studio")]
         // studio includes core on this platform, so no need to link against it
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}_wasm");
     } else if build_is_windows {
         println!("cargo:rustc-link-lib=fmod{debug_char}_vc");
+        #[cfg(feature = "studio")]
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}_vc");
     } else {
         println!("cargo:rustc-link-lib=fmod{debug_char}");
+        #[cfg(feature = "studio")]
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}");
     }
 

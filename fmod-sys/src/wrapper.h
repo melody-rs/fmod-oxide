@@ -19,5 +19,7 @@
 #include "channel_control.h"
 
 // Studio
+#ifdef FMOD_STUDIO_ENABLED
 #include <fmod_studio.h>
 #include <fmod_studio_common.h>
+#endif

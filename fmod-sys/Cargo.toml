@@ -33,7 +33,9 @@ force-docs-bindings = []
 # Disable if you want to link FMOD yourself.
 link-fmod = []
 
-default = ["link-fmod"]
+# Should this be enabled by default?
+studio = []
+default = ["link-fmod", "studio"]
 
 [package.metadata.docs.rs]
 default-target = "x86_64-unknown-linux-gnu" # crate is published from this platform

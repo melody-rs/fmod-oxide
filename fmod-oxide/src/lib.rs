@@ -56,6 +56,7 @@ pub use core::*;
 /// The FMOD Studio API.
 ///
 /// The Studio API is a more high-level library which is tightly integrated with *FMOD Studio*, FMOD's production tool.
+#[cfg(feature = "studio")]
 pub mod studio;
 
 pub const VERSION: u32 = fmod_sys::FMOD_VERSION;

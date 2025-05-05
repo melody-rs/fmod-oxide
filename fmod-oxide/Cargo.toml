@@ -27,6 +27,8 @@ document-features = "0.2"
 [features]
 ## Disable Send + Sync impls for FMOD's types, making FMOD's thread-unsafe API safer
 thread-unsafe = []
+studio = ["fmod-audio-sys/studio"]
+default = ["studio"]
 
 [dev-dependencies]
 once_cell = "1.19"

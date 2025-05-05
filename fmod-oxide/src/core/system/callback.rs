@@ -4,14 +4,16 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use std::ffi::{c_int, c_void};
+use std::ffi::{c_int, c_uint, c_void};
 
 use fmod_sys::*;
 use lanyard::Utf8CStr;
 
+#[cfg(feature = "studio")]
+use crate::studio;
 use crate::{
     Channel, ChannelControl, ChannelGroup, Dsp, DspConnection, Geometry, OutputType, Reverb3D,
-    Sound, SoundGroup, System, panic_wrapper, studio,
+    Sound, SoundGroup, System, panic_wrapper,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -35,14 +37,136 @@ pub enum Instance {
     DspConnection(DspConnection),
     Geometry(Geometry),
     Reverb3D(Reverb3D),
-    StudioSystem(studio::System),
-    StudioEventDescription(studio::EventDescription),
-    StudioEventInstance(studio::EventInstance),
     StudioParameterInstance,
+
+    #[cfg(feature = "studio")]
+    StudioSystem(studio::System),
+    #[cfg(feature = "studio")]
+    StudioEventDescription(studio::EventDescription),
+    #[cfg(feature = "studio")]
+    StudioEventInstance(studio::EventInstance),
+    #[cfg(feature = "studio")]
     StudioBus(studio::Bus),
+    #[cfg(feature = "studio")]
     StudioVCA(studio::Vca),
+    #[cfg(feature = "studio")]
     StudioBank(studio::Bank),
+    #[cfg(feature = "studio")]
     StudioCommandReplay(studio::CommandReplay),
+
+    #[cfg(not(feature = "studio"))]
+    StudioSystem(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioEventDescription(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioEventInstance(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioBus(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioVCA(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioBank(*mut c_void),
+    #[cfg(not(feature = "studio"))]
+    StudioCommandReplay(*mut c_void),
+}
+
+impl Instance {
+    fn from_raw(kind: c_uint, pointer: *mut c_void) -> Self {
+        match kind {
+            FMOD_ERRORCALLBACK_INSTANCETYPE_NONE => Instance::None,
+            FMOD_ERRORCALLBACK_INSTANCETYPE_SYSTEM => {
+                Instance::System(unsafe { System::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNEL => {
+                Instance::Channel(unsafe { Channel::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELGROUP => {
+                Instance::ChannelGroup(unsafe { ChannelGroup::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELCONTROL => {
+                Instance::ChannelControl(unsafe { ChannelControl::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_SOUND => {
+                Instance::Sound(unsafe { Sound::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_SOUNDGROUP => {
+                Instance::SoundGroup(unsafe { SoundGroup::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_DSP => {
+                Instance::Dsp(unsafe { Dsp::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_DSPCONNECTION => {
+                Instance::DspConnection(unsafe { DspConnection::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_GEOMETRY => {
+                Instance::Geometry(unsafe { Geometry::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_REVERB3D => {
+                Instance::Reverb3D(unsafe { Reverb3D::from_ffi(pointer.cast()) })
+            }
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_PARAMETERINSTANCE => {
+                Instance::StudioParameterInstance
+            }
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => Instance::StudioSystem(pointer),
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTDESCRIPTION => {
+                Instance::StudioEventDescription(pointer)
+            }
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTINSTANCE => {
+                Instance::StudioEventInstance(pointer)
+            }
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BUS => Instance::StudioBus(pointer),
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_VCA => Instance::StudioVCA(pointer),
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BANK => Instance::StudioBank(pointer),
+            #[cfg(not(feature = "studio"))]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_COMMANDREPLAY => {
+                Instance::StudioCommandReplay(pointer)
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => {
+                Instance::StudioSystem(unsafe { studio::System::from_ffi(pointer.cast()) })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTDESCRIPTION => {
+                Instance::StudioEventDescription(unsafe {
+                    studio::EventDescription::from_ffi(pointer.cast())
+                })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTINSTANCE => {
+                Instance::StudioEventInstance(unsafe {
+                    studio::EventInstance::from_ffi(pointer.cast())
+                })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BUS => {
+                Instance::StudioBus(unsafe { studio::Bus::from_ffi(pointer.cast()) })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_VCA => {
+                Instance::StudioVCA(unsafe { studio::Vca::from_ffi(pointer.cast()) })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BANK => {
+                Instance::StudioBank(unsafe { studio::Bank::from_ffi(pointer.cast()) })
+            }
+            #[cfg(feature = "studio")]
+            FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_COMMANDREPLAY => {
+                Instance::StudioCommandReplay(unsafe {
+                    studio::CommandReplay::from_ffi(pointer.cast())
+                })
+            }
+            _ => {
+                eprintln!("warning: unknown instance type {kind}");
+                Instance::None
+            }
+        }
+    }
 }
 
 impl ErrorCallbackInfo<'_> {
@@ -54,75 +178,7 @@ impl ErrorCallbackInfo<'_> {
     pub unsafe fn from_ffi(value: FMOD_ERRORCALLBACK_INFO) -> Self {
         Self {
             error: value.result.into(),
-            instance: match value.instancetype {
-                FMOD_ERRORCALLBACK_INSTANCETYPE_NONE => Instance::None,
-                FMOD_ERRORCALLBACK_INSTANCETYPE_SYSTEM => {
-                    Instance::System(unsafe { System::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNEL => {
-                    Instance::Channel(unsafe { Channel::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELGROUP => {
-                    Instance::ChannelGroup(unsafe { ChannelGroup::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_CHANNELCONTROL => {
-                    Instance::ChannelControl(unsafe {
-                        ChannelControl::from_ffi(value.instance.cast())
-                    })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_SOUND => {
-                    Instance::Sound(unsafe { Sound::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_SOUNDGROUP => {
-                    Instance::SoundGroup(unsafe { SoundGroup::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_DSP => {
-                    Instance::Dsp(unsafe { Dsp::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_DSPCONNECTION => Instance::DspConnection(unsafe {
-                    DspConnection::from_ffi(value.instance.cast())
-                }),
-                FMOD_ERRORCALLBACK_INSTANCETYPE_GEOMETRY => {
-                    Instance::Geometry(unsafe { Geometry::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_REVERB3D => {
-                    Instance::Reverb3D(unsafe { Reverb3D::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_SYSTEM => Instance::StudioSystem(unsafe {
-                    studio::System::from_ffi(value.instance.cast())
-                }),
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTDESCRIPTION => {
-                    Instance::StudioEventDescription(unsafe {
-                        studio::EventDescription::from_ffi(value.instance.cast())
-                    })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_EVENTINSTANCE => {
-                    Instance::StudioEventInstance(unsafe {
-                        studio::EventInstance::from_ffi(value.instance.cast())
-                    })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_PARAMETERINSTANCE => {
-                    Instance::StudioParameterInstance
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BUS => {
-                    Instance::StudioBus(unsafe { studio::Bus::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_VCA => {
-                    Instance::StudioVCA(unsafe { studio::Vca::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_BANK => {
-                    Instance::StudioBank(unsafe { studio::Bank::from_ffi(value.instance.cast()) })
-                }
-                FMOD_ERRORCALLBACK_INSTANCETYPE_STUDIO_COMMANDREPLAY => {
-                    Instance::StudioCommandReplay(unsafe {
-                        studio::CommandReplay::from_ffi(value.instance.cast())
-                    })
-                }
-                _ => {
-                    eprintln!("warning: unknown instance type {}", value.instancetype);
-                    Instance::None
-                }
-            },
+            instance: Instance::from_raw(value.instancetype, value.instance),
             function_name: unsafe { Utf8CStr::from_ptr_unchecked(value.functionname) },
             function_params: unsafe { Utf8CStr::from_ptr_unchecked(value.functionparams) },
         }

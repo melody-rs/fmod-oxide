@@ -33,6 +33,7 @@ pub struct Guid {
 }
 
 impl Guid {
+    #[cfg(feature = "studio")]
     pub fn parse(string: &Utf8CStr) -> Result<Self> {
         let mut guid = MaybeUninit::uninit();
         unsafe {
