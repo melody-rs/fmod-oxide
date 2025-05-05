@@ -175,6 +175,7 @@ fn main() {
     // Therefore, as workaround, copy the libraries to OUT_DIR before the build.
     // Note: you will probably have to run `xattr -d com.apple.quarantine` on all the `.dylib`s
     // in the fmod installation folder.
+    #[cfg(feature = "link-fmod")]
     if build_is_macos {
         let corelib = format!("libfmod{debug_char}.dylib");
         fs::copy(
@@ -192,6 +193,7 @@ fn main() {
     }
 
     // due to some weird shenanigans I can't figure out how to turn off, the linker searches for lib<library name> instead of just accepting the library name
+    #[cfg(feature = "link-fmod")]
     if build_is_wasm {
         let old_lib_path = format!("studio/lib/upstream/w32/fmodstudio{debug_char}_wasm.a");
         let new_lib_path = format!("studio/lib/upstream/w32/libfmodstudio{debug_char}_wasm.a");
@@ -201,6 +203,7 @@ fn main() {
 
     // FIXME: We should be setting this var ourselves.
     // Using std::env::set_var doesn't work, nor does doing it through cargo:rustc-env.
+    #[cfg(feature = "link-fmod")]
     if build_is_emscripten {
         let needed_emcc_flags = "-s EXPORTED_RUNTIME_METHODS=ccall,cwrap,setValue,getValue";
         let has_needed_args = match std::env::var("EMCC_CFLAGS") {
@@ -212,6 +215,7 @@ fn main() {
         }
     }
 
+    #[cfg(feature = "link-fmod")]
     if build_is_wasm {
         // studio includes core on this platform, so no need to link against it
         println!("cargo:rustc-link-search={api_dir_display}/studio/lib/upstream/w32");
@@ -236,6 +240,7 @@ fn main() {
         println!("cargo:rustc-link-search={api_dir_display}/studio/lib/{target_arch}");
     }
 
+    #[cfg(feature = "link-fmod")]
     if build_is_wasm {
         // studio includes core on this platform, so no need to link against it
         println!("cargo:rustc-link-lib=fmodstudio{debug_char}_wasm");

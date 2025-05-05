@@ -30,6 +30,11 @@ cc = "1.0"
 force-debug = []
 force-docs-bindings = []
 
+# Disable if you want to link FMOD yourself.
+link-fmod = []
+
+default = ["link-fmod"]
+
 [package.metadata.docs.rs]
 default-target = "x86_64-unknown-linux-gnu" # crate is published from this platform
 targets = []
