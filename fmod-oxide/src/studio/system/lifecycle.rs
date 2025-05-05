@@ -30,7 +30,7 @@ impl System {
     /// The FMOD Studio API attempts to protect against stale handles and pointers being used with a different Studio System object but this protection cannot be guaranteed and attempting to use stale handles or pointers may cause undefined behavior.
     ///
     /// This function is not safe to be called at the same time across multiple threads.
-    pub unsafe fn release(self) -> Result<()> {
+    pub unsafe fn release(&self) -> Result<()> {
         unsafe { FMOD_Studio_System_Release(self.inner.as_ptr()).to_result() }
     }
 
