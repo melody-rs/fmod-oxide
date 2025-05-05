@@ -374,6 +374,7 @@ version = "0.1.0"
 dependencies = [
  "bindgen",
  "cc",
+ "document-features",
  "num_enum",
 ]
 

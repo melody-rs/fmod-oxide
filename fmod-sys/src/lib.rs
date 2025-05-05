@@ -5,34 +5,10 @@
 //!
 //! Currently, this crate provides both core and studio bindings (no fsbank bindings).
 //!
-//! # Configuration
-//! In debug builds this crate will link against the logging version of the FMOD library.
-//! In release builds this crate will link against the release version of the FMOD library.
-//! You can force the debug version of the library by enabling the `force-debug` feature.
+//! See [`fmod-oxide`](https://github.com/melody-rs/fmod-oxide/blob/main/README.md)'s README.md for more information on how this crate links to FMOD.
 //!
-//! By default, this crate will search for an FMOD installation directory in the following places:
-//!
-//! (On windows)
-//! - `C:/Program Files (x86)/FMOD SoundSystem/FMOD Studio API Windows`
-//! - `D:/Program Files (x86)/FMOD SoundSystem/FMOD Studio API Windows`
-//! - `$OUT_DIR/FMOD Studio API Windows`
-//! - `$OUT_DIR/FMOD SoundSystem`
-//!
-//! (On all platforms)
-//! - `$CARGO_MANIFEST_DIR/fmod`
-//! - `$OUT_DIR/fmod`
-//! - `$FMOD_SYS_FMOD_DIRECTORY`
-//!
-//! This installation is expected to follow the standard FMOD directory structure.
-//!
-//! fmod:
-//!  - api:
-//!    - core:
-//!      - inc
-//!      - lib (contains architecture specific directories)
-//!    - studio:
-//!      - inc
-//!      - lib (contains architecture specific directories)
+//! # Feature flags
+#![doc = document_features::document_features!()]
 #![allow(non_upper_case_globals)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]

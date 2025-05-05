@@ -22,6 +22,8 @@ name = "fmod_sys"
 [dependencies]
 num_enum = "0.7.2"
 
+document-features = "0.2"
+
 [build-dependencies]
 bindgen = "0.71.1"
 cc = "1.0"
@@ -30,10 +32,10 @@ cc = "1.0"
 force-debug = []
 force-docs-bindings = []
 
-# Disable if you want to link FMOD yourself.
+### Disable if you want to link FMOD yourself
 link-fmod = []
 
-# Should this be enabled by default?
+### Generate bindings to FMOD's STudio API
 studio = []
 default = ["link-fmod", "studio"]
 
