@@ -11,11 +11,13 @@ use fmod_sys::*;
 mod callback;
 mod channel_format;
 mod connections;
+mod data_parameters;
 mod general;
 mod metering;
 mod parameters;
 mod processing;
 
+pub use data_parameters::*;
 pub use parameters::{DataParameterType, ParameterType};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

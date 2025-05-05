@@ -234,4 +234,40 @@ impl Dsp {
     pub fn get_parameter_string<P: ParameterType>(&self, index: c_int) -> Result<Utf8CString> {
         P::get_parameter_string(*self, index)
     }
+
+    /// # Safety
+    ///
+    /// You must ensure that the provided T matches the size and layout as the specified DSP parameter.
+    pub unsafe fn set_raw_parameter_data<T>(&self, data: &T, index: c_int) -> Result<()> {
+        unsafe {
+            FMOD_DSP_SetParameterData(
+                self.inner.as_ptr(),
+                index,
+                std::ptr::from_ref(data).cast_mut().cast(),
+                size_of_val(data) as _,
+            )
+            .to_result()
+        }
+    }
+
+    /// # Safety
+    ///
+    /// You must ensure that the provided T matches the size and layout as the specified DSP parameter.
+    pub unsafe fn get_raw_parameter_data<T>(
+        &self,
+        data: &mut std::mem::MaybeUninit<T>,
+        index: c_int,
+    ) -> Result<()> {
+        unsafe {
+            FMOD_DSP_GetParameterData(
+                self.inner.as_ptr(),
+                index,
+                std::ptr::from_mut(data).cast(),
+                size_of_val(data) as _,
+                std::ptr::null_mut(),
+                0,
+            )
+            .to_result()
+        }
+    }
 }

@@ -260,6 +260,8 @@ pub enum DspParameterDataType {
     FFT = FMOD_DSP_PARAMETER_DATA_TYPE_FFT,
     Attributes3DMulti = FMOD_DSP_PARAMETER_DATA_TYPE_3DATTRIBUTES_MULTI,
     AttenuationRange = FMOD_DSP_PARAMETER_DATA_TYPE_ATTENUATION_RANGE,
+    #[cfg(fmod_2_3)]
+    DynamicResponse = FMOD_DSP_PARAMETER_DATA_TYPE_DYNAMIC_RESPONSE,
     #[num_enum(catch_all)]
     User(i32) = FMOD_DSP_PARAMETER_DATA_TYPE_USER, // unsure if this is correct
 }
