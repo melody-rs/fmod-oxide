@@ -65,6 +65,29 @@ impl EventDescription {
         }
     }
 
+    /// Retrieves a list of the instances.
+    ///
+    /// Fills in the provided slice instead of allocating a [`Vec`], like [`EventDescription::get_instance_list`] does.
+    /// Any instances not filled in are left as [`None`].
+    ///
+    /// Returns how many instances were fetched.
+    pub fn get_instance_list_into(&self, slice: &mut [Option<EventInstance>]) -> Result<c_int> {
+        let mut count = 0;
+
+        unsafe {
+            FMOD_Studio_EventDescription_GetInstanceList(
+                self.inner.as_ptr(),
+                // Because we use NonNull, Option<EventInstance> has the same layout as *mut FMOD_STUDIO_EVENTINSTANCE, so this is ok!
+                slice.as_mut_ptr().cast(),
+                slice.len() as c_int,
+                &raw mut count,
+            )
+            .to_result()?;
+
+            Ok(count)
+        }
+    }
+
     /// Releases all instances.
     ///
     /// This function immediately stops and releases all instances of the event.

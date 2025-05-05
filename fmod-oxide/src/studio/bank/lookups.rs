@@ -49,6 +49,29 @@ impl Bank {
         }
     }
 
+    /// Retrieves a list of the instances.
+    ///
+    /// Fills in the provided slice instead of allocating a [`Vec`], like [`Bank::get_bus_list`] does.
+    /// Any instances not filled in are left as [`None`].
+    ///
+    /// Returns how many buses were fetched.
+    pub fn get_bus_list_into(&self, slice: &mut [Option<Bus>]) -> Result<c_int> {
+        let mut count = 0;
+
+        unsafe {
+            FMOD_Studio_Bank_GetBusList(
+                self.inner.as_ptr(),
+                // Because we use NonNull, Option<Bus> has the same layout as *mut FMOD_STUDIO_BUS, so this is ok!
+                slice.as_mut_ptr().cast(),
+                slice.len() as c_int,
+                &raw mut count,
+            )
+            .to_result()?;
+
+            Ok(count)
+        }
+    }
+
     /// Retrives the number of event descriptions in the bank.
     ///
     /// This function counts the events which were added to the bank by the sound designer.
@@ -86,6 +109,29 @@ impl Bank {
                 Vec<*mut fmod_sys::FMOD_STUDIO_EVENTDESCRIPTION>,
                 Vec<EventDescription>,
             >(list))
+        }
+    }
+
+    /// Retrieves a list of the instances.
+    ///
+    /// Fills in the provided slice instead of allocating a [`Vec`], like [`Bank::get_event_list`] does.
+    /// Any instances not filled in are left as [`None`].
+    ///
+    /// Returns how many events were fetched.
+    pub fn get_event_list_into(&self, slice: &mut [Option<EventDescription>]) -> Result<c_int> {
+        let mut count = 0;
+
+        unsafe {
+            FMOD_Studio_Bank_GetEventList(
+                self.inner.as_ptr(),
+                // Because we use NonNull, Option<EventDescription> has the same layout as *mut FMOD_STUDIO_EVENTDESCRIPTION, so this is ok!
+                slice.as_mut_ptr().cast(),
+                slice.len() as c_int,
+                &raw mut count,
+            )
+            .to_result()?;
+
+            Ok(count)
         }
     }
 
@@ -150,6 +196,29 @@ impl Bank {
             debug_assert_eq!(count, expected_count);
 
             Ok(list)
+        }
+    }
+
+    /// Retrieves a list of the instances.
+    ///
+    /// Fills in the provided slice instead of allocating a [`Vec`], like [`Bank::get_vca_list`] does.
+    /// Any instances not filled in are left as [`None`].
+    ///
+    /// Returns how many VCAs were fetched.
+    pub fn get_vca_list_into(&self, slice: &mut [Option<Vca>]) -> Result<c_int> {
+        let mut count = 0;
+
+        unsafe {
+            FMOD_Studio_Bank_GetVCAList(
+                self.inner.as_ptr(),
+                // Because we use NonNull, Option<Vca> has the same layout as *mut FMOD_STUDIO_VCA, so this is ok!
+                slice.as_mut_ptr().cast(),
+                slice.len() as c_int,
+                &raw mut count,
+            )
+            .to_result()?;
+
+            Ok(count)
         }
     }
 }

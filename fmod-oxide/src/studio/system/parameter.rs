@@ -213,8 +213,6 @@ impl System {
     pub fn get_parameter_description_list(&self) -> Result<Vec<ParameterDescription>> {
         let expected_count = self.parameter_description_count()?;
         let mut count = 0;
-        // FIXME: is the use of MaybeUninit necessary?
-        // it does imply intention though, which is ok.
         let mut list = vec![MaybeUninit::zeroed(); expected_count as usize];
 
         unsafe {

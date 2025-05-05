@@ -89,8 +89,12 @@ impl Sound {
         let mut points = std::ptr::null_mut();
         let mut num_points = 0;
         unsafe {
-            FMOD_Sound_Get3DCustomRolloff(self.inner.as_ptr(), &raw mut points, &raw mut num_points)
-                .to_result()?;
+            FMOD_Sound_Get3DCustomRolloff(
+                self.inner.as_ptr(),
+                &raw mut points,
+                &raw mut num_points,
+            )
+            .to_result()?;
 
             let points = std::slice::from_raw_parts(points.cast(), num_points as usize).to_vec();
 
@@ -124,7 +128,8 @@ impl Sound {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_Sound_Get3DMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max).to_result()?;
+            FMOD_Sound_Get3DMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max)
+                .to_result()?;
         }
         Ok((min, max))
     }

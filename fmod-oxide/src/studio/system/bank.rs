@@ -264,4 +264,27 @@ impl System {
             >(list))
         }
     }
+
+    /// Retrieves a list of the currently-loaded banks.
+    ///
+    /// Fills in the provided slice instead of allocating a [`Vec`], like [`System::get_bank_list`] does.
+    /// Any banks not filled in are left as [`None`].
+    ///
+    /// Returns how many banks were fetched.
+    pub fn get_bank_list_into(&self, slice: &mut [Option<Bank>]) -> Result<c_int> {
+        let mut count = 0;
+
+        unsafe {
+            FMOD_Studio_System_GetBankList(
+                self.inner.as_ptr(),
+                // Because we use NonNull, Option<Bank> has the same layout as *mut FMOD_BANK, so this is ok!
+                slice.as_mut_ptr().cast(),
+                slice.len() as c_int,
+                &raw mut count,
+            )
+            .to_result()?;
+
+            Ok(count)
+        }
+    }
 }

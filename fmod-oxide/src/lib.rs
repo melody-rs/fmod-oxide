@@ -40,8 +40,9 @@
 #![doc(html_favicon_url = "https://www.fmod.com/assets/fmod-logo.svg")]
 #![doc(html_logo_url = "https://www.fmod.com/assets/fmod-logo.svg")]
 
-// FIXME fetching things (like from a bank) could have an alternative that doesn't allocate and instead fills out a slice
-// maybe no_std?
+// Not really practical to go no_std.
+// FMOD requires libc on pretty much every platform (even webassembly!)
+// If you're using libc you probably can use std too.
 
 pub use lanyard::*;
 

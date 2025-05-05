@@ -14,12 +14,13 @@ use lanyard::{Utf8CStr, Utf8CString};
 
 use crate::{
     ChannelOrder, DspParameterDataType, Mode, SoundFormat, SoundGroup, SoundType, TagType,
-    TimeUnit, string_from_utf16_be, string_from_utf16_le,
+    TimeUnit, panic_wrapper, string_from_utf16_be, string_from_utf16_le,
 };
 
 use super::{
-    FileSystemAsync, FileSystemSync, FloatMappingType, Resampler, Speaker, async_filesystem_cancel,
-    async_filesystem_read, filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
+    FileSystemAsync, FileSystemSync, FloatMappingType, Resampler, Sound, Speaker,
+    async_filesystem_cancel, async_filesystem_read, filesystem_close, filesystem_open,
+    filesystem_read, filesystem_seek,
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
@@ -540,6 +541,35 @@ const EMPTY_EXINFO: FMOD_CREATESOUNDEXINFO = unsafe {
     }
 };
 
+pub trait PcmCallback {
+    fn read(sound: Sound, data: &mut [u8]) -> Result<()>;
+
+    fn set_position(
+        sound: Sound,
+        subsound: c_int,
+        position: c_uint,
+        position_type: TimeUnit,
+    ) -> Result<()>;
+}
+
+/// Callback to be called when a sound has finished loading, or a non blocking seek is occuring.
+///
+/// Return code currently ignored.
+///
+/// Note that for non blocking streams a seek could occur when restarting the sound after the first playthrough.
+/// This will result in a callback being triggered again.
+///
+/// # Safety
+///
+/// Since this callback can occur from the async thread, there are restrictions about what functions can be called during the callback.
+/// All [`Sound`] functions are safe to call, except for [`Sound::set_sound_group`] and [`Sound::release`].
+/// It is also safe to call [`System::get_user_data`].
+/// The rest of the Core API and the Studio API is not allowed. Calling a non-allowed function will return [`FMOD_ERR_INVALID_THREAD`].
+pub unsafe trait NonBlockCallback {
+    // "return code is ignored". so do we want to allow returning a result?
+    fn call(sound: Sound, result: Result<()>) -> Result<()>;
+}
+
 // setters
 impl<'a> SoundBuilder<'a> {
     pub const fn open(filename: &'a Utf8CStr) -> Self {
@@ -551,7 +581,25 @@ impl<'a> SoundBuilder<'a> {
         }
     }
 
-    // TODO openuser
+    pub const fn open_user(
+        length: c_uint,
+        channel_count: c_int,
+        default_frequency: c_int,
+        format: SoundFormat,
+    ) -> Self {
+        Self {
+            mode: FMOD_OPENUSER,
+            create_sound_ex_info: FMOD_CREATESOUNDEXINFO {
+                length,
+                numchannels: channel_count,
+                defaultfrequency: default_frequency,
+                format: format as _,
+                ..EMPTY_EXINFO
+            },
+            name_or_data: std::ptr::null(),
+            _phantom: PhantomData,
+        }
+    }
 
     /// # Safety
     ///
@@ -768,6 +816,57 @@ impl<'a> SoundBuilder<'a> {
     #[must_use]
     pub const fn with_fsb_guid(mut self, guid: &'a Guid) -> Self {
         self.create_sound_ex_info.fsbguid = std::ptr::from_ref(guid).cast_mut().cast();
+        self
+    }
+
+    #[must_use]
+    pub const fn with_pcm_callback<C: PcmCallback>(mut self) -> Self {
+        unsafe extern "C" fn pcm_read<C: PcmCallback>(
+            sound: *mut FMOD_SOUND,
+            data: *mut c_void,
+            data_len: c_uint,
+        ) -> FMOD_RESULT {
+            panic_wrapper(|| {
+                C::read(unsafe { Sound::from_ffi(sound) }, unsafe {
+                    std::slice::from_raw_parts_mut(data.cast(), data_len as _)
+                })
+                .into()
+            })
+        }
+        unsafe extern "C" fn pcm_set_pos<C: PcmCallback>(
+            sound: *mut FMOD_SOUND,
+            subsound: c_int,
+            position: c_uint,
+            postype: FMOD_TIMEUNIT,
+        ) -> FMOD_RESULT {
+            panic_wrapper(|| {
+                C::set_position(
+                    unsafe { Sound::from_ffi(sound) },
+                    subsound,
+                    position,
+                    postype.try_into().unwrap(),
+                )
+                .into()
+            })
+        }
+
+        self.create_sound_ex_info.pcmreadcallback = Some(pcm_read::<C>);
+        self.create_sound_ex_info.pcmsetposcallback = Some(pcm_set_pos::<C>);
+
+        self
+    }
+
+    #[must_use]
+    pub fn with_nonblock_callback<C: NonBlockCallback>(mut self) -> Self {
+        unsafe extern "C" fn nonblock_callback<C: NonBlockCallback>(
+            sound: *mut FMOD_SOUND,
+            result: FMOD_RESULT,
+        ) -> FMOD_RESULT {
+            panic_wrapper(|| C::call(unsafe { Sound::from_ffi(sound) }, result.into()).into())
+        }
+
+        self.create_sound_ex_info.nonblockcallback = Some(nonblock_callback::<C>);
+
         self
     }
 
