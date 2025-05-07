@@ -18,7 +18,7 @@ use crate::{
 };
 
 use super::{
-    FileSystemAsync, FileSystemSync, FloatMappingType, Resampler, Sound, Speaker,
+    FileSystemAsync, FileSystemSync, FloatMappingType, Resampler, Sound, Speaker, System,
     async_filesystem_cancel, async_filesystem_read, filesystem_close, filesystem_open,
     filesystem_read, filesystem_seek,
 };
@@ -872,6 +872,11 @@ impl<'a> SoundBuilder<'a> {
 
     pub(crate) fn ex_info_is_empty(&self) -> bool {
         self.create_sound_ex_info == EMPTY_EXINFO
+    }
+
+    /// Helper method that forwards to [`System::create_sound`].
+    pub fn build(&self, system: System) -> Result<Sound> {
+        system.create_sound(self)
     }
 }
 

@@ -24,13 +24,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Increase the file buffer size a little bit to account for Internet lag.
     system.set_stream_buffer_size(64 * 1024, fmod::TimeUnit::RawBytes)?;
 
-    let builder = fmod::SoundBuilder::open(fmod::c!(
+    let mut sound = fmod::SoundBuilder::open(fmod::c!(
         "http://live-radio01.mediahubaustralia.com/2TJW/mp3/"
     ))
     .with_mode(fmod::Mode::CREATE_STREAM | fmod::Mode::NONBLOCKING)
-    .with_file_buffer_size(1024 * 16);
-
-    let mut sound = system.create_sound(&builder)?;
+    .with_file_buffer_size(1024 * 16)
+    .build(system)?;
 
     // use alternate screen
     let mut stdout = std::io::stdout();
@@ -81,11 +80,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     sound.release()?;
 
                     let url = fmod::Utf8CString::new(text)?;
-                    let builder = fmod::SoundBuilder::open(&url)
+                    sound = fmod::SoundBuilder::open(&url)
                         .with_mode(fmod::Mode::CREATE_SAMPLE | fmod::Mode::NONBLOCKING)
-                        .with_file_buffer_size(1024 * 16);
-
-                    sound = system.create_sound(&builder)?;
+                        .with_file_buffer_size(1024 * 16)
+                        .build(system)?;
                 }
             } else if matches!(tag.kind, fmod::TagType::Fmod) {
                 // When a song changes, the sample rate may also change, so compensate here.

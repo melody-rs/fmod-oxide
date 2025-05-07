@@ -15,7 +15,7 @@ impl ChannelGroup {
         &self,
         group: ChannelGroup,
         propgate_dsp_clock: bool,
-    ) -> Result<DspConnection> {
+    ) -> Result<Option<DspConnection>> {
         let mut dsp_connection = std::ptr::null_mut();
         unsafe {
             FMOD_ChannelGroup_AddGroup(
@@ -25,7 +25,11 @@ impl ChannelGroup {
                 &raw mut dsp_connection,
             )
             .to_result()?;
-            Ok(DspConnection::from_ffi(dsp_connection))
+            Ok(if dsp_connection.is_null() {
+                None
+            } else {
+                Some(DspConnection::from_ffi(dsp_connection))
+            })
         }
     }
 

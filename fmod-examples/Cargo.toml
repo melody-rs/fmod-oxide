@@ -7,3 +7,4 @@ publish = true
 [dependencies]
 crossterm = "0.29.0"
 fmod-oxide = { version = "0.1.0", path = "../fmod-oxide/" }
+bytemuck = "1.23.0"

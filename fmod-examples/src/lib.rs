@@ -1,14 +1,10 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+use std::path::PathBuf;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use fmod::Utf8CString;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub fn media_path_for(item: &str) -> Utf8CString {
+    let api_dir = PathBuf::from(fmod::ffi::API_DIR);
+    let media_path = api_dir.join("core/examples/media").join(item);
+    let media_path = media_path.to_str().unwrap();
+    Utf8CString::new(media_path).unwrap()
 }

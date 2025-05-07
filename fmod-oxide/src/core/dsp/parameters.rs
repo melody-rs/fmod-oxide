@@ -265,7 +265,7 @@ impl Dsp {
     /// # Safety
     ///
     /// You must ensure that the provided T matches the size and layout as the specified DSP parameter.
-    pub unsafe fn set_raw_parameter_data<T>(&self, data: &T, index: c_int) -> Result<()> {
+    pub unsafe fn set_raw_parameter_data<T: ?Sized>(&self, data: &T, index: c_int) -> Result<()> {
         unsafe {
             FMOD_DSP_SetParameterData(
                 self.inner.as_ptr(),
