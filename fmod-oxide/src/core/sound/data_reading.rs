@@ -192,7 +192,7 @@ impl Sound {
     /// # Safety
     ///
     /// If you call this from another stream callback, or any other thread besides the main thread,
-    /// make sure to syncrhonize the callback with [`Sound::release`] in case the sound is still being read from while releasing.
+    /// make sure to synchronize the callback with [`Sound::release`] in case the sound is still being read from while releasing.
     ///
     /// This function is thread safe to call from a stream callback or different thread as long as it doesnt conflict with a call to [`Sound::release`].
     pub unsafe fn read_data(&self, buffer: &mut [u8]) -> Result<c_uint> {
