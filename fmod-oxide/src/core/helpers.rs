@@ -23,7 +23,7 @@ pub(crate) fn get_string(
             return Ok(string);
         }
         // Didn't fit. Try using Vec
-        Some(Error::Fmod(FMOD_RESULT::FMOD_ERR_TRUNCATED)) => {}
+        Some(Error::Truncated) => {}
         Some(e) => return Err(e),
     }
 

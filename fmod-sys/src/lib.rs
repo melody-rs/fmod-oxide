@@ -72,7 +72,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
             "DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system."
         }
         FMOD_RESULT::FMOD_ERR_DSP_SILENCE => {
-            "DSP  code from a DSP process query callback.  Tells mixer silence would be produced from read, so go idle and not consume CPU.  Use this to optimize the DSP graph."
+            "DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system."
         }
         FMOD_RESULT::FMOD_ERR_DSP_TYPE => {
             "DSP operation cannot be performed on a DSP of this type."
@@ -107,7 +107,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
         FMOD_RESULT::FMOD_ERR_INITIALIZATION => {
             "FMOD was not initialized correctly to support this function."
         }
-        FMOD_RESULT::FMOD_ERR_INITIALIZED => "Cannot call this command after System=>=>init.",
+        FMOD_RESULT::FMOD_ERR_INITIALIZED => "Cannot call this command after System::init.",
         FMOD_RESULT::FMOD_ERR_INTERNAL => {
             "An error occured in the FMOD system. Use the logging version of FMOD for more information."
         }

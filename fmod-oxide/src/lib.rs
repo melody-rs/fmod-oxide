@@ -52,7 +52,7 @@ pub use lanyard::*;
 
 #[doc(inline)]
 pub use fmod_sys as ffi;
-pub use fmod_sys::{FMOD_RESULT, error_code_to_str};
+pub use fmod_sys::FMOD_RESULT;
 
 pub mod core;
 #[doc(inline)]

@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![warn(missing_docs)]
 
-use crate::{FmodResultExt, Result};
+use crate::{Error, FmodResultExt, Result};
 use fmod_sys::*;
 use std::{ffi::c_char, os::raw::c_int};
 
@@ -47,7 +47,8 @@ fn get_string_out_size(
     let mut string_len = 0;
 
     match get_fn(std::ptr::null_mut(), 0, &raw mut string_len).to_error() {
-        Some(err) if err != FMOD_RESULT::FMOD_ERR_TRUNCATED => return Err(err),
+        Some(Error::Truncated) => {}
+        Some(err) => return Err(err),
         _ => {}
     }
 

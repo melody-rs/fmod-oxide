@@ -141,9 +141,9 @@ fn loading_state_as_str(state: &fmod::studio::LoadingState) -> &'static str {
         fmod::studio::LoadingState::Loading => "loading    ",
         fmod::studio::LoadingState::Loaded => "loaded     ",
         fmod::studio::LoadingState::Error(error) => match error {
-            fmod::Error::Fmod(fmod::FMOD_RESULT::FMOD_ERR_NOTREADY) => "error (rdy)",
-            fmod::Error::Fmod(fmod::FMOD_RESULT::FMOD_ERR_FILE_BAD) => "error (bad)",
-            fmod::Error::Fmod(fmod::FMOD_RESULT::FMOD_ERR_FILE_NOTFOUND) => "error (mis)",
+            fmod::Error::NotReady => "error (rdy)",
+            fmod::Error::FileBad => "error (bad)",
+            fmod::Error::FileNotFound => "error (mis)",
             _ => "error      ",
         },
     }

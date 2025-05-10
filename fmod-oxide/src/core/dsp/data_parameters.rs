@@ -27,7 +27,7 @@ impl ReadableParameter for OverallGain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::OverAlign) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut this = MaybeUninit::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -51,7 +51,7 @@ impl ReadableParameter for DspAttributes3D {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut this = MaybeUninit::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -68,7 +68,7 @@ impl WritableParameter for DspAttributes3D {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         // Safety: we already validated that this is the right data type, so this is safe.
         unsafe { dsp.set_raw_parameter_data(&self, index) }
@@ -85,7 +85,7 @@ impl ReadableParameter for Sidechain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut raw = MaybeUninit::<FMOD_DSP_PARAMETER_SIDECHAIN>::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -105,7 +105,7 @@ impl WritableParameter for Sidechain {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let raw = FMOD_DSP_PARAMETER_SIDECHAIN {
             sidechainenable: self.enable.into(),
@@ -146,7 +146,7 @@ impl ReadableParameter for Fft {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut raw = MaybeUninit::<FMOD_DSP_PARAMETER_FFT>::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -217,7 +217,7 @@ impl ReadableParameter for Attributes3DMulti {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut raw = MaybeUninit::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -234,7 +234,7 @@ impl WritableParameter for Attributes3DMulti {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         // Safety: we already validated that this is the right data type, so this is safe.
         unsafe { dsp.set_raw_parameter_data(&self, index) }
@@ -252,7 +252,7 @@ impl ReadableParameter for AttenuationRange {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::AttenuationRange) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut raw = MaybeUninit::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.
@@ -278,7 +278,7 @@ impl ReadableParameter for DynamicResponse {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::DynamicResponse) {
-            return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+            return Err(Error::InvalidParam);
         }
         let mut raw = MaybeUninit::uninit();
         // Safety: we already validated that this is the right data type, so this is safe.

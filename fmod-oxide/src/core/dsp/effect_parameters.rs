@@ -186,7 +186,7 @@ pub mod convolution_reverb {
         pub unsafe fn from_sound(sound: Sound) -> Result<Self> {
             let (_, format, channels, _) = sound.get_format()?;
             if format != crate::SoundFormat::PCM16 {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_FORMAT));
+                return Err(Error::InvalidParam);
             }
 
             let data_length = sound.get_length(crate::TimeUnit::PCM)?;
@@ -206,7 +206,7 @@ pub mod convolution_reverb {
             if dsp.get_type()? != DspType::ConvolutionReverb
                 || index != FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as i32
             {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+                return Err(Error::InvalidParam);
             }
             unsafe { dsp.set_raw_parameter_data::<[std::ffi::c_short]>(&self.data, index) }
         }
@@ -217,7 +217,7 @@ pub mod convolution_reverb {
             if dsp.get_type()? != DspType::ConvolutionReverb
                 || index != FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as i32
             {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+                return Err(Error::InvalidParam);
             }
 
             let raw_data = unsafe { dsp.get_raw_parameter_data_slice(index) }?.to_vec();
@@ -436,7 +436,7 @@ pub mod loudness_meter {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_INFO as i32
             {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+                return Err(Error::InvalidParam);
             }
             let mut this = MaybeUninit::uninit();
             // Safety: we already validated that this is the right data type, so this is safe.
@@ -459,7 +459,7 @@ pub mod loudness_meter {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_WEIGHTING as i32
             {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+                return Err(Error::InvalidParam);
             }
             let mut this = MaybeUninit::uninit();
             // Safety: we already validated that this is the right data type, so this is safe.
@@ -477,7 +477,7 @@ pub mod loudness_meter {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_WEIGHTING as i32
             {
-                return Err(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM));
+                return Err(Error::InvalidParam);
             }
             unsafe { dsp.set_raw_parameter_data(&self, index) }
         }

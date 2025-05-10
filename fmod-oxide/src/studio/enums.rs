@@ -35,9 +35,9 @@ impl LoadingState {
             FMOD_STUDIO_LOADING_STATE_UNLOADED => Ok(LoadingState::Unloaded),
             FMOD_STUDIO_LOADING_STATE_LOADING => Ok(LoadingState::Loading),
             FMOD_STUDIO_LOADING_STATE_LOADED => Ok(LoadingState::Loaded),
-            FMOD_STUDIO_LOADING_STATE_ERROR => error
-                .map(LoadingState::Error)
-                .ok_or(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM)),
+            FMOD_STUDIO_LOADING_STATE_ERROR => {
+                error.map(LoadingState::Error).ok_or(Error::InvalidParam)
+            }
             _ => Err(Error::EnumFromPrivitive {
                 name: "LoadingState",
                 primitive: i64::from(value),

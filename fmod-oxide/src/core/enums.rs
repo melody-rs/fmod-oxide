@@ -366,9 +366,7 @@ impl OpenState {
         match value {
             FMOD_OPENSTATE_READY => Ok(OpenState::Ready),
             FMOD_OPENSTATE_LOADING => Ok(OpenState::Loading),
-            FMOD_OPENSTATE_ERROR => error
-                .map(OpenState::Error)
-                .ok_or(Error::Fmod(FMOD_RESULT::FMOD_ERR_INVALID_PARAM)),
+            FMOD_OPENSTATE_ERROR => error.map(OpenState::Error).ok_or(Error::InvalidParam),
             FMOD_OPENSTATE_CONNECTING => Ok(OpenState::Connecting),
             FMOD_OPENSTATE_BUFFERING => Ok(OpenState::Buffering),
             FMOD_OPENSTATE_SEEKING => Ok(OpenState::Seeking),
