@@ -7,6 +7,7 @@
 use fmod_sys::*;
 
 use crate::studio::{InitFlags, System, SystemBuilder};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// A convenience function over [`SystemBuilder`] with sane defaults.

@@ -13,6 +13,7 @@ use std::{
 use fmod_sys::*;
 use lanyard::Utf8CString;
 
+use crate::{FmodResultExt, Result};
 use crate::{Guid, core::ChannelGroup};
 
 use super::{MemoryUsage, StopMode, get_string_out_size};

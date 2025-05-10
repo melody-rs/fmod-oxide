@@ -10,6 +10,7 @@ use std::{
     mem::MaybeUninit,
 };
 
+use crate::{FmodResultExt, Result};
 use crate::{Geometry, Vector};
 
 impl Geometry {

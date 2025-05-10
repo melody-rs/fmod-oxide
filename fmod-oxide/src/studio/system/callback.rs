@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use std::ffi::c_void;
 
+use crate::{FmodResultExt, Result};
 use crate::{
     panic_wrapper,
     studio::{Bank, System, SystemCallbackMask},
@@ -72,7 +73,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
                 return FMOD_RESULT::FMOD_OK;
             }
         };
-        result.into()
+        FMOD_RESULT::from_result(result)
     })
 }
 

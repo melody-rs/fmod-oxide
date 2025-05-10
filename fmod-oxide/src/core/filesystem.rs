@@ -6,6 +6,7 @@
 
 use fmod_sys::*;
 
+use crate::{FmodResultExt, Result};
 use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_int, c_uint, c_void};
 
@@ -120,7 +121,7 @@ impl AsyncReadInfo {
     /// If you have a [`AsyncCancelInfo`] with the same raw pointer, it is immediately invalid after calling this function.
     // I *really* don't like taking a result like this, but I can't think of another way...
     pub unsafe fn finish(self, result: Result<()>) {
-        let mut fmod_result = result.into();
+        let mut fmod_result = FMOD_RESULT::from_result(result);
         if fmod_result == FMOD_RESULT::FMOD_OK && self.written() < self.size() {
             fmod_result = FMOD_RESULT::FMOD_ERR_FILE_EOF;
         }
@@ -192,7 +193,8 @@ pub(crate) unsafe extern "C" fn filesystem_close<F: FileSystem>(
     handle: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    F::close(handle, userdata).into()
+    let result = F::close(handle, userdata);
+    FMOD_RESULT::from_result(result)
 }
 
 pub(crate) unsafe extern "C" fn filesystem_read<F: FileSystemSync>(
@@ -224,19 +226,22 @@ pub(crate) unsafe extern "C" fn filesystem_seek<F: FileSystemSync>(
     pos: c_uint,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    F::seek(handle, userdata, pos).into()
+    let result = F::seek(handle, userdata, pos);
+    FMOD_RESULT::from_result(result)
 }
 
 pub(crate) unsafe extern "C" fn async_filesystem_read<F: FileSystemAsync>(
     raw: *mut FMOD_ASYNCREADINFO,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    F::read(AsyncReadInfo { raw }, userdata).into()
+    let result = F::read(AsyncReadInfo { raw }, userdata);
+    FMOD_RESULT::from_result(result)
 }
 
 pub(crate) unsafe extern "C" fn async_filesystem_cancel<F: FileSystemAsync>(
     raw: *mut FMOD_ASYNCREADINFO,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
-    F::cancel(AsyncCancelInfo { raw }, userdata).into()
+    let result = F::cancel(AsyncCancelInfo { raw }, userdata);
+    FMOD_RESULT::from_result(result)
 }

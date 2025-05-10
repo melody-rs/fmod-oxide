@@ -13,6 +13,7 @@ use crate::studio::{Bank, LoadBankFlags, System};
 use crate::{
     FileSystemSync, Guid, filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
 };
+use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
 use crate::studio::AdvancedSettings;

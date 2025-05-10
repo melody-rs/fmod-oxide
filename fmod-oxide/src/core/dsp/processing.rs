@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_float;
 
 use crate::Dsp;
+use crate::{FmodResultExt, Result};
 
 impl Dsp {
     /// Sets the processing active state.
@@ -60,8 +61,13 @@ impl Dsp {
         let mut post_wet = 0.0;
         let mut dry = 0.0;
         unsafe {
-            FMOD_DSP_GetWetDryMix(self.inner.as_ptr(), &raw mut pre_wet, &raw mut post_wet, &raw mut dry)
-                .to_result()?;
+            FMOD_DSP_GetWetDryMix(
+                self.inner.as_ptr(),
+                &raw mut pre_wet,
+                &raw mut post_wet,
+                &raw mut dry,
+            )
+            .to_result()?;
         }
         Ok((pre_wet, post_wet, dry))
     }

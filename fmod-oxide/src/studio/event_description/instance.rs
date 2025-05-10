@@ -11,6 +11,7 @@ use crate::studio::{EventDescription, EventInstance};
 
 #[cfg(doc)]
 use crate::studio::Bank;
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Creates a playable instance.

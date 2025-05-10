@@ -7,6 +7,7 @@
 use fmod_sys::*;
 
 use crate::studio::{EventDescription, LoadingState};
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Loads non-streaming sample data used by the event.

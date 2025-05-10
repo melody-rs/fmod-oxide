@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_int;
 
 use crate::{Channel, ChannelGroup};
+use crate::{FmodResultExt, Result};
 
 impl ChannelGroup {
     /// Retrieves the number of Channels that feed into to this group.

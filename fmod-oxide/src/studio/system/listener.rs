@@ -10,6 +10,7 @@ use std::mem::MaybeUninit;
 
 use crate::studio::System;
 use crate::{Attributes3D, Vector};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Sets the 3D attributes of the listener.

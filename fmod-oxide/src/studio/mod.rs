@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #![warn(missing_docs)]
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use std::{ffi::c_char, os::raw::c_int};
 
@@ -42,7 +43,7 @@ pub use vca::*;
 
 fn get_string_out_size(
     mut get_fn: impl FnMut(*mut c_char, c_int, *mut c_int) -> fmod_sys::FMOD_RESULT,
-) -> fmod_sys::Result<Utf8CString> {
+) -> Result<Utf8CString> {
     let mut string_len = 0;
 
     match get_fn(std::ptr::null_mut(), 0, &raw mut string_len).to_error() {

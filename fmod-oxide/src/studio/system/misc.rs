@@ -11,6 +11,7 @@ use std::mem::MaybeUninit;
 use crate::Guid;
 
 use crate::studio::{AdvancedSettings, Bus, EventDescription, SoundInfo, System, Vca};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Retrieves a loaded [`Bus`].

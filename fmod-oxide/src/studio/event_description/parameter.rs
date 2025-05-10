@@ -9,6 +9,7 @@ use lanyard::{Utf8CStr, Utf8CString};
 use std::{ffi::c_int, mem::MaybeUninit};
 
 use crate::studio::{EventDescription, ParameterDescription, ParameterID, get_string_out_size};
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Retrieves an event parameter description by name.

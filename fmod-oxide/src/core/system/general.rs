@@ -9,6 +9,7 @@ use std::ffi::c_void;
 use fmod_sys::*;
 
 use crate::System;
+use crate::{FmodResultExt, Result};
 
 #[derive(Debug)]
 pub struct DspLockGuard(System);

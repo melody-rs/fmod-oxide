@@ -9,6 +9,7 @@ use std::ffi::{c_int, c_void};
 use fmod_sys::*;
 
 use crate::studio::{AdvancedSettings, InitFlags, System};
+use crate::{FmodResultExt, Result};
 
 /// A builder for creating and initializing a [`System`].
 ///

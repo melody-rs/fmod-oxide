@@ -9,6 +9,7 @@ use std::ffi::{c_float, c_int};
 use fmod_sys::*;
 
 use crate::ChannelControl;
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     /// Sets the wet / send level for a particular reverb instance.

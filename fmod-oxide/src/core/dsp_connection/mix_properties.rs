@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::{c_float, c_int};
 
 use crate::DspConnection;
+use crate::{FmodResultExt, Result};
 
 impl DspConnection {
     /// Sets the connection's volume scale.

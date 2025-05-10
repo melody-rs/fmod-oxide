@@ -7,6 +7,7 @@
 use fmod_sys::*;
 
 use crate::studio::{EventInstance, PlaybackState, StopMode};
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Starts playback.
@@ -52,7 +53,8 @@ impl EventInstance {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventInstance_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
+            FMOD_Studio_EventInstance_GetPaused(self.inner.as_ptr(), &raw mut paused)
+                .to_result()?;
         }
         Ok(paused.into())
     }

@@ -6,6 +6,7 @@ use std::{
 use fmod_sys::*;
 
 use crate::{Attributes3D, Dsp, DspParameterDataType, ReadableParameter, WritableParameter};
+use crate::{Error, Result};
 
 fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameterDataType) -> bool {
     if dsp_parameter_desc.type_ != FMOD_DSP_PARAMETER_TYPE_DATA {

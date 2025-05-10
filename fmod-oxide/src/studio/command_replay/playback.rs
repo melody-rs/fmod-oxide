@@ -11,6 +11,7 @@ use crate::studio::{CommandReplay, PlaybackState};
 
 #[cfg(doc)]
 use crate::studio::CommandReplayFlags;
+use crate::{FmodResultExt, Result};
 
 impl CommandReplay {
     /// Begins playback.
@@ -68,7 +69,8 @@ impl CommandReplay {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_CommandReplay_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
+            FMOD_Studio_CommandReplay_GetPaused(self.inner.as_ptr(), &raw mut paused)
+                .to_result()?;
         }
         Ok(paused.into())
     }

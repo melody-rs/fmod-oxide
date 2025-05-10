@@ -12,6 +12,7 @@ use std::{
 };
 
 use crate::{Channel, ChannelControl, ChannelGroup, panic_wrapper};
+use crate::{FmodResultExt, Result};
 
 #[derive(Debug, Clone, Copy)]
 pub enum ChannelControlType {
@@ -74,26 +75,27 @@ unsafe extern "C" fn callback_impl<C: ChannelControlCallback>(
             _ => return FMOD_RESULT::FMOD_ERR_INVALID_PARAM, // this should never happen
         };
 
-        match callback_type {
-            FMOD_CHANNELCONTROL_CALLBACK_END => C::end(channel_control).into(),
+        let result = match callback_type {
+            FMOD_CHANNELCONTROL_CALLBACK_END => C::end(channel_control),
             FMOD_CHANNELCONTROL_CALLBACK_VIRTUALVOICE => {
                 let is_virtual = unsafe { *commanddata1.cast::<i32>() } != 0;
-                C::virtual_voice(channel_control, is_virtual).into()
+                C::virtual_voice(channel_control, is_virtual)
             }
             FMOD_CHANNELCONTROL_CALLBACK_SYNCPOINT => {
                 let sync_point = unsafe { *commanddata1.cast::<c_int>() };
-                C::sync_point(channel_control, sync_point).into()
+                C::sync_point(channel_control, sync_point)
             }
             FMOD_CHANNELCONTROL_CALLBACK_OCCLUSION => {
                 let direct = unsafe { &mut *commanddata1.cast::<c_float>() };
                 let reverb = unsafe { &mut *commanddata2.cast::<c_float>() };
-                C::occlusion(channel_control, &mut *direct, &mut *reverb).into()
+                C::occlusion(channel_control, &mut *direct, &mut *reverb)
             }
             _ => {
                 eprintln!("warning: unknown callback type {callback_type}");
-                FMOD_RESULT::FMOD_OK
+                return FMOD_RESULT::FMOD_OK;
             }
-        }
+        };
+        FMOD_RESULT::from_result(result)
     })
 }
 

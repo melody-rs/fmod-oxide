@@ -9,6 +9,7 @@ use lanyard::Utf8CStr;
 use std::{ffi::c_int, mem::MaybeUninit};
 
 use crate::studio::{EventDescription, UserProperty};
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Retrieves a user property by name.

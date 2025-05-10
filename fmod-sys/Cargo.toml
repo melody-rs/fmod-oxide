@@ -20,8 +20,6 @@ name = "fmod_sys"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-num_enum = "0.7.2"
-
 document-features = "0.2"
 
 [build-dependencies]

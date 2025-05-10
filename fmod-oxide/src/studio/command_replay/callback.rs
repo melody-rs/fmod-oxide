@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_float, c_int, c_uint, c_void};
@@ -69,7 +70,8 @@ unsafe extern "C" fn frame_impl<C: FrameCallback>(
 ) -> FMOD_RESULT {
     panic_wrapper(|| {
         let replay = unsafe { CommandReplay::from_ffi(replay) };
-        C::frame_callback(replay, command_index, current_time, userdata).into()
+        let result = C::frame_callback(replay, command_index, current_time, userdata);
+        FMOD_RESULT::from_result(result)
     })
 }
 

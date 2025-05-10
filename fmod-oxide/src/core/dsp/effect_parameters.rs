@@ -4,6 +4,7 @@ use crate::{
     SpeakerMode as SpeakerModeType, WritableParameter, WritableParameterIndex,
 };
 
+use crate::{Error, Result};
 use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_short};
 use std::mem::MaybeUninit;

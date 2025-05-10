@@ -12,6 +12,7 @@ use crate::{ChannelControl, Vector};
 
 #[cfg(doc)]
 use crate::{Channel, ChannelGroup, Mode};
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     /// Sets the 3D position and velocity used to apply panning, attenuation and doppler.
@@ -245,7 +246,8 @@ impl ChannelControl {
     pub fn get_3d_doppler_level(&self) -> Result<c_float> {
         let mut level = 0.0;
         unsafe {
-            FMOD_ChannelControl_Get3DDopplerLevel(self.inner.as_ptr(), &raw mut level).to_result()?;
+            FMOD_ChannelControl_Get3DDopplerLevel(self.inner.as_ptr(), &raw mut level)
+                .to_result()?;
         }
         Ok(level)
     }
@@ -318,8 +320,12 @@ impl ChannelControl {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_ChannelControl_Get3DMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max)
-                .to_result()?;
+            FMOD_ChannelControl_Get3DMinMaxDistance(
+                self.inner.as_ptr(),
+                &raw mut min,
+                &raw mut max,
+            )
+            .to_result()?;
         }
         Ok((min, max))
     }
@@ -341,8 +347,12 @@ impl ChannelControl {
         let mut direct = 0.0;
         let mut reverb = 0.0;
         unsafe {
-            FMOD_ChannelControl_Get3DOcclusion(self.inner.as_ptr(), &raw mut direct, &raw mut reverb)
-                .to_result()?;
+            FMOD_ChannelControl_Get3DOcclusion(
+                self.inner.as_ptr(),
+                &raw mut direct,
+                &raw mut reverb,
+            )
+            .to_result()?;
         }
         Ok((direct, reverb))
     }

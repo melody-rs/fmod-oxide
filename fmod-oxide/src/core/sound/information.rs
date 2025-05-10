@@ -9,10 +9,11 @@ use std::{
     mem::MaybeUninit,
 };
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 
-use crate::{get_string, Sound, SoundFormat, SoundType, Tag, TimeUnit};
+use crate::{Sound, SoundFormat, SoundType, Tag, TimeUnit, get_string};
 
 impl Sound {
     /// Retrieves the name of a sound.
@@ -75,7 +76,8 @@ impl Sound {
         let mut tags = 0;
         let mut updated = 0;
         unsafe {
-            FMOD_Sound_GetNumTags(self.inner.as_ptr(), &raw mut tags, &raw mut updated).to_result()?;
+            FMOD_Sound_GetNumTags(self.inner.as_ptr(), &raw mut tags, &raw mut updated)
+                .to_result()?;
         }
         Ok((tags, updated))
     }

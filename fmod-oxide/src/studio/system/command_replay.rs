@@ -8,6 +8,7 @@ use fmod_sys::*;
 use lanyard::Utf8CStr;
 
 use crate::studio::{CommandCaptureFlags, CommandReplay, CommandReplayFlags, System};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Recording Studio commands to a file.

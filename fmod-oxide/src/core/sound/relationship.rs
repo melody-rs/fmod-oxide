@@ -6,6 +6,7 @@
 
 use std::ffi::c_int;
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 
 use crate::{Sound, SoundGroup};

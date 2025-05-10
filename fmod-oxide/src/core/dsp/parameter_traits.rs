@@ -3,6 +3,7 @@ use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::{c_float, c_int};
 
 use crate::{Dsp, DspType};
+use crate::{FmodResultExt, Result};
 
 // FIXME don't want sealed so users can impl their own types, what do?
 

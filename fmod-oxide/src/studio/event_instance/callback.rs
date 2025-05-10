@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::Utf8CStr;
 use std::ffi::c_void;
@@ -220,7 +221,7 @@ pub(crate) unsafe extern "C" fn event_callback_impl<C: EventInstanceCallback>(
                 return FMOD_RESULT::FMOD_OK;
             }
         };
-        result.into()
+        FMOD_RESULT::from_result(result)
     })
 }
 

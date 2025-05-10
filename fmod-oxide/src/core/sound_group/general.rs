@@ -8,6 +8,7 @@ use fmod_sys::*;
 use lanyard::Utf8CString;
 use std::ffi::{c_int, c_void};
 
+use crate::{FmodResultExt, Result};
 use crate::{SoundGroup, System, get_string};
 
 impl SoundGroup {

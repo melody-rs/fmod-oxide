@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::mem::MaybeUninit;
 
 use crate::{Dsp, DspMeteringInfo};
+use crate::{FmodResultExt, Result};
 
 impl Dsp {
     /// Retrieve the signal metering information.

@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use lanyard::Utf8CString;
 
+use crate::{FmodResultExt, Result};
 use std::ffi::{c_char, c_int};
 
 #[derive(PartialEq, Eq, Debug)]

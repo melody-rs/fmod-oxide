@@ -11,6 +11,7 @@ use crate::{ChannelGroup, PortType, ReverbProperties, System, Vector};
 
 #[cfg(doc)]
 use crate::{Dsp, OutputType};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Sets the position, velocity and orientation of the specified 3D sound listener.

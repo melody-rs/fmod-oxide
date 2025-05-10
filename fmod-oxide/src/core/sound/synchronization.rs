@@ -9,6 +9,7 @@ use std::{
     ptr::NonNull,
 };
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 

@@ -8,6 +8,7 @@ use std::ffi::c_uint;
 
 use fmod_sys::*;
 
+use crate::{FmodResultExt, Result};
 use crate::{OpenState, Sound};
 
 #[derive(Debug)]

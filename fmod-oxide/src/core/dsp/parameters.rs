@@ -10,10 +10,9 @@ use std::ffi::c_int;
 
 use crate::{
     Dsp, DspParameterDataType, DspParameterDescription, ReadableParameter, ReadableParameterIndex,
-    WritableParameter,
+    WritableParameter, WritableParameterIndex,
 };
-
-use super::WritableParameterIndex;
+use crate::{FmodResultExt, Result};
 
 impl Dsp {
     /// Retrieve the index of the first data parameter of a particular data type.

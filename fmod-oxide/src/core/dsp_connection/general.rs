@@ -9,6 +9,7 @@ use std::ffi::c_void;
 use fmod_sys::*;
 
 use crate::{Dsp, DspConnection, DspConnectionType};
+use crate::{FmodResultExt, Result};
 
 impl DspConnection {
     /// Retrieves the connection's input [`Dsp`] unit.

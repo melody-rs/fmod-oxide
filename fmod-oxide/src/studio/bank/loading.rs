@@ -10,6 +10,7 @@ use crate::studio::{Bank, LoadingState};
 
 #[cfg(doc)]
 use crate::studio::{EventDescription, LoadBankFlags, System};
+use crate::{FmodResultExt, Result};
 
 impl Bank {
     /// This function may be used to check the loading state of a bank which has been loaded asynchronously using the [`LoadBankFlags::NONBLOCKING`] flag,

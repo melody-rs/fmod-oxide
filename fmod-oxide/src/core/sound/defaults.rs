@@ -11,6 +11,7 @@ use crate::{Mode, Sound, TimeUnit, Vector};
 
 #[cfg(doc)]
 use crate::{Channel, ChannelGroup};
+use crate::{FmodResultExt, Result};
 
 impl Sound {
     /// Sets the angles and attenuation levels of a 3D cone shape, for simulated occlusion which is based on direction.

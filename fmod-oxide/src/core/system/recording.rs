@@ -9,10 +9,11 @@ use std::{
     mem::MaybeUninit,
 };
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::Utf8CString;
 
-use crate::{get_string, DriverState, Guid, Sound, SpeakerMode, System};
+use crate::{DriverState, Guid, Sound, SpeakerMode, System, get_string};
 
 #[cfg(doc)]
 use crate::Mode;
@@ -24,8 +25,12 @@ impl System {
         let mut drivers = 0;
         let mut connected = 0;
         unsafe {
-            FMOD_System_GetRecordNumDrivers(self.inner.as_ptr(), &raw mut drivers, &raw mut connected)
-                .to_result()?;
+            FMOD_System_GetRecordNumDrivers(
+                self.inner.as_ptr(),
+                &raw mut drivers,
+                &raw mut connected,
+            )
+            .to_result()?;
         }
         Ok((drivers, connected))
     }
@@ -79,7 +84,8 @@ impl System {
     pub fn get_record_position(&self, id: c_int) -> Result<c_uint> {
         let mut position = 0;
         unsafe {
-            FMOD_System_GetRecordPosition(self.inner.as_ptr(), id, &raw mut position).to_result()?;
+            FMOD_System_GetRecordPosition(self.inner.as_ptr(), id, &raw mut position)
+                .to_result()?;
         }
         Ok(position)
     }

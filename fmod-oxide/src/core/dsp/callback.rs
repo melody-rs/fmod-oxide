@@ -10,6 +10,7 @@ use std::ffi::c_void;
 use crate::panic_wrapper;
 
 use super::Dsp;
+use crate::{FmodResultExt, Result};
 
 pub trait DspCallback {
     // I'm not sure how FMOD_DSP_DATA_PARAMETER_INFO works we'll just pass the raw value
@@ -35,7 +36,7 @@ unsafe extern "C" fn callback_impl<C: DspCallback>(
                 return FMOD_RESULT::FMOD_OK;
             }
         };
-        result.into()
+        FMOD_RESULT::from_result(result)
     })
 }
 

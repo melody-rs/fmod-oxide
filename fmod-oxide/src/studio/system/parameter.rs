@@ -12,6 +12,7 @@ use std::{
 };
 
 use crate::studio::{ParameterDescription, ParameterID, System, get_string_out_size};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Retrieves a global parameter value by unique identifier.

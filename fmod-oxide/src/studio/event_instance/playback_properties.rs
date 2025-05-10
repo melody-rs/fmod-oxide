@@ -11,6 +11,7 @@ use crate::studio::{EventInstance, EventProperty};
 
 #[cfg(doc)]
 use crate::studio::EventDescription;
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Sets the pitch multiplier.
@@ -29,8 +30,12 @@ impl EventInstance {
         let mut pitch = 0.0;
         let mut final_pitch = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetPitch(self.inner.as_ptr(), &raw mut pitch, &raw mut final_pitch)
-                .to_result()?;
+            FMOD_Studio_EventInstance_GetPitch(
+                self.inner.as_ptr(),
+                &raw mut pitch,
+                &raw mut final_pitch,
+            )
+            .to_result()?;
         }
         Ok((pitch, final_pitch))
     }
@@ -54,8 +59,12 @@ impl EventInstance {
     pub fn get_property(&self, property: EventProperty) -> Result<c_float> {
         let mut value = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetProperty(self.inner.as_ptr(), property.into(), &raw mut value)
-                .to_result()?;
+            FMOD_Studio_EventInstance_GetProperty(
+                self.inner.as_ptr(),
+                property.into(),
+                &raw mut value,
+            )
+            .to_result()?;
         }
         Ok(value)
     }

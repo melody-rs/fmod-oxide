@@ -12,6 +12,7 @@ use std::{
 
 use fmod_sys::*;
 
+use crate::{FmodResultExt, Result};
 use crate::{ReverbProperties, Vector};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

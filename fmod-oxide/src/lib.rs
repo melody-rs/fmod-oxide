@@ -40,6 +40,10 @@
 #![doc(html_favicon_url = "https://www.fmod.com/assets/fmod-logo.svg")]
 #![doc(html_logo_url = "https://www.fmod.com/assets/fmod-logo.svg")]
 
+mod result;
+pub(crate) use result::FmodResultExt;
+pub use result::{Error, Result};
+
 // Not really practical to go no_std.
 // FMOD requires libc on pretty much every platform (even webassembly!)
 // If you're using libc you probably can use std too.
@@ -48,7 +52,7 @@ pub use lanyard::*;
 
 #[doc(inline)]
 pub use fmod_sys as ffi;
-pub use fmod_sys::{Error, FMOD_RESULT, Result, error_code_to_str};
+pub use fmod_sys::{FMOD_RESULT, error_code_to_str};
 
 pub mod core;
 #[doc(inline)]

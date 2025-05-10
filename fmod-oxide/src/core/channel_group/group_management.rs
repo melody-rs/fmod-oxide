@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_int;
 
 use crate::{ChannelGroup, DspConnection};
+use crate::{FmodResultExt, Result};
 
 impl ChannelGroup {
     /// Adds a [`ChannelGroup`] as an input to this group.

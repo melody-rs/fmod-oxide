@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_void;
 
 use crate::{ChannelControl, System};
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway

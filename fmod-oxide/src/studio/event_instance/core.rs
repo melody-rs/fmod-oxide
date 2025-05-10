@@ -10,6 +10,7 @@ use fmod_sys::*;
 
 use crate::ChannelGroup;
 use crate::studio::EventInstance;
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Retrieves the core [`ChannelGroup`].

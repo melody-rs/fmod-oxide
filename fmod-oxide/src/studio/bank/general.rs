@@ -11,6 +11,7 @@ use std::mem::MaybeUninit;
 
 use crate::Guid;
 use crate::studio::{Bank, get_string_out_size};
+use crate::{FmodResultExt, Result};
 
 impl Bank {
     /// Retrieves the GUID.

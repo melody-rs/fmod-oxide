@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::mem::MaybeUninit;
 
 use crate::studio::{BufferUsage, CpuUsage, MemoryUsage, System};
+use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
 use crate::studio::SystemBuilder;

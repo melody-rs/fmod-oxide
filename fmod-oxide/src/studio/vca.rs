@@ -10,6 +10,7 @@ use fmod_sys::*;
 use lanyard::Utf8CString;
 
 use crate::Guid;
+use crate::{FmodResultExt, Result};
 
 use super::get_string_out_size;
 

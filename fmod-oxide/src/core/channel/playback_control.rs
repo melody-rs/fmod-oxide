@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_uint};
 
 use crate::{Channel, ChannelGroup, TimeUnit};
+use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
 use crate::{ChannelControl, Mode, System};

@@ -11,8 +11,9 @@ use std::{
 
 use fmod_sys::*;
 
-use crate::studio::EventInstance;
 use crate::Attributes3D;
+use crate::studio::EventInstance;
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Sets the 3D attributes.
@@ -65,8 +66,12 @@ impl EventInstance {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_Studio_EventInstance_GetMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max)
-                .to_result()?;
+            FMOD_Studio_EventInstance_GetMinMaxDistance(
+                self.inner.as_ptr(),
+                &raw mut min,
+                &raw mut max,
+            )
+            .to_result()?;
         }
         Ok((min, max))
     }

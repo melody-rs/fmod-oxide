@@ -9,6 +9,7 @@ use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::{c_int, c_uint};
 
 use crate::{Dsp, PluginType, System, get_string};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Specify a base search path for plugins so they can be placed somewhere else than the directory of the main executable.

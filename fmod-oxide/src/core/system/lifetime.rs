@@ -10,6 +10,7 @@ use crate::{InitFlags, System, SystemBuilder};
 
 #[cfg(doc)]
 use crate::{Channel, OutputType, Sound};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// A convenience function over [`SystemBuilder`] with sane defaults.

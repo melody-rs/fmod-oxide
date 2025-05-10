@@ -13,6 +13,7 @@ use crate::studio::{EventInstance, ParameterID};
 
 #[cfg(doc)]
 use crate::studio::{ParameterKind, PlaybackState};
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Sets a parameter value by name.

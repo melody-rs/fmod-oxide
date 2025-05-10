@@ -11,6 +11,7 @@ use crate::ChannelControl;
 
 #[cfg(doc)]
 use crate::Channel;
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     /// Retrieves an estimation of the output volume.
@@ -25,7 +26,8 @@ impl ChannelControl {
     pub fn get_audibility(&self) -> Result<c_float> {
         let mut audibility = 0.0;
         unsafe {
-            FMOD_ChannelControl_GetAudibility(self.inner.as_ptr(), &raw mut audibility).to_result()?;
+            FMOD_ChannelControl_GetAudibility(self.inner.as_ptr(), &raw mut audibility)
+                .to_result()?;
         }
         Ok(audibility)
     }

@@ -7,6 +7,7 @@
 use fmod_sys::*;
 
 use crate::studio::CommandReplay;
+use crate::{FmodResultExt, Result};
 
 impl CommandReplay {
     /// Releases the command replay.

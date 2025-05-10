@@ -11,6 +11,7 @@ use std::{
     mem::MaybeUninit,
 };
 
+use crate::{FmodResultExt, Result};
 use crate::{
     get_string,
     studio::{CommandInfo, CommandReplay, System},

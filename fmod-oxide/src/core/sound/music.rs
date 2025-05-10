@@ -6,6 +6,7 @@
 
 use std::ffi::{c_float, c_int};
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 
 use crate::Sound;
@@ -15,7 +16,8 @@ impl Sound {
     pub fn get_music_channel_count(&self) -> Result<i32> {
         let mut num_channels = 0;
         unsafe {
-            FMOD_Sound_GetMusicNumChannels(self.inner.as_ptr(), &raw mut num_channels).to_result()?;
+            FMOD_Sound_GetMusicNumChannels(self.inner.as_ptr(), &raw mut num_channels)
+                .to_result()?;
         }
         Ok(num_channels)
     }

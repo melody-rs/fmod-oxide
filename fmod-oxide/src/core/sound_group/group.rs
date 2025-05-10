@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use std::ffi::{c_float, c_int};
 
+use crate::{FmodResultExt, Result};
 use crate::{SoundGroup, SoundGroupBehavior};
 
 impl SoundGroup {
@@ -63,7 +64,9 @@ impl SoundGroup {
     /// Retrieves the current mute fade time.
     pub fn get_mute_fade_speed(&self) -> Result<c_float> {
         let mut speed = 0.0;
-        unsafe { FMOD_SoundGroup_GetMuteFadeSpeed(self.inner.as_ptr(), &raw mut speed).to_result()? };
+        unsafe {
+            FMOD_SoundGroup_GetMuteFadeSpeed(self.inner.as_ptr(), &raw mut speed).to_result()?;
+        }
         Ok(speed)
     }
 

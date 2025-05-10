@@ -10,6 +10,7 @@ use std::ffi::{c_float, c_int, c_uint};
 use crate::{
     AdvancedSettings, ChannelControl, Speaker, SpeakerMode, System, TimeUnit, print_panic_msg,
 };
+use crate::{FmodResultExt, Result};
 
 pub trait RolloffCallback {
     fn rolloff(channel_control: ChannelControl, distance: c_float) -> c_float;

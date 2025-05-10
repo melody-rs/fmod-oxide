@@ -8,7 +8,8 @@ use fmod_sys::*;
 use lanyard::Utf8CString;
 use std::{ffi::c_int, mem::MaybeUninit};
 
-use crate::{get_string, Guid, OutputType, SpeakerMode, System};
+use crate::{FmodResultExt, Result};
+use crate::{Guid, OutputType, SpeakerMode, System, get_string};
 
 #[cfg(doc)]
 use crate::SystemBuilder;

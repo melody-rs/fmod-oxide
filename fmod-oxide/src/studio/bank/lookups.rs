@@ -9,6 +9,7 @@ use std::{ffi::c_int, mem::MaybeUninit};
 
 use crate::Guid;
 use crate::studio::{Bank, Bus, EventDescription, Vca, get_string_out_size};
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::Utf8CString;
 

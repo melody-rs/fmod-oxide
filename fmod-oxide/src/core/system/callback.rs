@@ -4,6 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+use crate::{Error, FmodResultExt, Result};
 use std::ffi::{c_int, c_uint, c_void};
 
 use fmod_sys::*;
@@ -332,54 +333,50 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
 ) -> FMOD_RESULT {
     panic_wrapper(|| {
         let system = unsafe { System::from_ffi(system) };
-        match callback_type {
-            FMOD_SYSTEM_CALLBACK_DEVICELISTCHANGED => {
-                C::device_list_changed(system, userdata).into()
-            }
-            FMOD_SYSTEM_CALLBACK_DEVICELOST => C::device_lost(system, userdata).into(),
+        let result = match callback_type {
+            FMOD_SYSTEM_CALLBACK_DEVICELISTCHANGED => C::device_list_changed(system, userdata),
+            FMOD_SYSTEM_CALLBACK_DEVICELOST => C::device_lost(system, userdata),
             FMOD_SYSTEM_CALLBACK_MEMORYALLOCATIONFAILED => {
                 let file = unsafe { Utf8CStr::from_ptr_unchecked(command_data_1.cast()) };
-                C::memory_allocation_failed(system, file, command_data_2 as c_int, userdata).into()
+                C::memory_allocation_failed(system, file, command_data_2 as c_int, userdata)
             }
             FMOD_SYSTEM_CALLBACK_THREADCREATED => {
                 let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
-                C::thread_created(system, command_data_1, thread_name, userdata).into()
+                C::thread_created(system, command_data_1, thread_name, userdata)
             }
-            FMOD_SYSTEM_CALLBACK_BADDSPCONNECTION => C::bad_dsp_connection(system, userdata).into(),
-            FMOD_SYSTEM_CALLBACK_PREMIX => C::premix(system, userdata).into(),
-            FMOD_SYSTEM_CALLBACK_POSTMIX => C::postmix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_BADDSPCONNECTION => C::bad_dsp_connection(system, userdata),
+            FMOD_SYSTEM_CALLBACK_PREMIX => C::premix(system, userdata),
+            FMOD_SYSTEM_CALLBACK_POSTMIX => C::postmix(system, userdata),
             FMOD_SYSTEM_CALLBACK_ERROR => {
                 let error_info = unsafe { ErrorCallbackInfo::from_ffi(*command_data_1.cast()) };
-                C::error(system, error_info, userdata).into()
+                C::error(system, error_info, userdata)
             }
             #[cfg(fmod_eq_2_2)]
-            FMOD_SYSTEM_CALLBACK_MIDMIX => C::mid_mix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_MIDMIX => C::mid_mix(system, userdata),
             FMOD_SYSTEM_CALLBACK_THREADDESTROYED => {
                 let thread_name = unsafe { Utf8CStr::from_ptr_unchecked(command_data_2.cast()) };
-                C::thread_destroyed(system, command_data_1, thread_name, userdata).into()
+                C::thread_destroyed(system, command_data_1, thread_name, userdata)
             }
-            FMOD_SYSTEM_CALLBACK_PREUPDATE => C::pre_update(system, userdata).into(),
-            FMOD_SYSTEM_CALLBACK_POSTUPDATE => C::post_update(system, userdata).into(),
-            FMOD_SYSTEM_CALLBACK_RECORDLISTCHANGED => {
-                C::record_list_changed(system, userdata).into()
-            }
-            FMOD_SYSTEM_CALLBACK_BUFFEREDNOMIX => C::buffered_no_mix(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_PREUPDATE => C::pre_update(system, userdata),
+            FMOD_SYSTEM_CALLBACK_POSTUPDATE => C::post_update(system, userdata),
+            FMOD_SYSTEM_CALLBACK_RECORDLISTCHANGED => C::record_list_changed(system, userdata),
+            FMOD_SYSTEM_CALLBACK_BUFFEREDNOMIX => C::buffered_no_mix(system, userdata),
             FMOD_SYSTEM_CALLBACK_DEVICEREINITIALIZE => {
                 let output_type = OutputType::try_from(command_data_1 as FMOD_OUTPUTTYPE)
                     .expect("invalid output type");
                 C::device_reinitialize(system, output_type, command_data_2 as c_int, userdata)
-                    .into()
             }
-            FMOD_SYSTEM_CALLBACK_OUTPUTUNDERRUN => C::output_underrun(system, userdata).into(),
+            FMOD_SYSTEM_CALLBACK_OUTPUTUNDERRUN => C::output_underrun(system, userdata),
             FMOD_SYSTEM_CALLBACK_RECORDPOSITIONCHANGED => {
                 let sound = unsafe { Sound::from_ffi(command_data_1.cast()) };
-                C::record_position_changed(system, sound, command_data_2 as c_int, userdata).into()
+                C::record_position_changed(system, sound, command_data_2 as c_int, userdata)
             }
             _ => {
                 eprintln!("warning: unknown callback type {callback_type}");
-                FMOD_RESULT::FMOD_OK
+                return FMOD_RESULT::FMOD_OK;
             }
-        }
+        };
+        FMOD_RESULT::from_result(result)
     })
 }
 
@@ -387,7 +384,7 @@ impl System {
     pub fn set_callback<C: SystemCallback>(&self, mask: SystemCallbackMask) -> Result<()> {
         unsafe {
             FMOD_System_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>), mask.into())
-                .into()
+                .to_result()
         }
     }
 }

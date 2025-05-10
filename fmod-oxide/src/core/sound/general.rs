@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use std::ffi::c_void;
 
+use crate::{FmodResultExt, Result};
 use crate::{Sound, System};
 
 impl Sound {

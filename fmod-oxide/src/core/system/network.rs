@@ -8,7 +8,8 @@ use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::c_int;
 
-use crate::{get_string, System};
+use crate::{FmodResultExt, Result};
+use crate::{System, get_string};
 
 impl System {
     /// Set a proxy server to use for all subsequent internet connections.

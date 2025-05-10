@@ -12,6 +12,7 @@ use std::{
 };
 
 use crate::{CpuUsage, SpeakerMode, System};
+use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
 use crate::OutputType;
@@ -70,8 +71,12 @@ impl System {
         let mut channels = 0;
         let mut real_channels = 0;
         unsafe {
-            FMOD_System_GetChannelsPlaying(self.inner.as_ptr(), &raw mut channels, &raw mut real_channels)
-                .to_result()?;
+            FMOD_System_GetChannelsPlaying(
+                self.inner.as_ptr(),
+                &raw mut channels,
+                &raw mut real_channels,
+            )
+            .to_result()?;
         }
         Ok((channels, real_channels))
     }

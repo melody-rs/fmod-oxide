@@ -9,6 +9,7 @@ use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::{c_char, c_int, c_uint, c_void};
 
 use crate::{Dsp, DspType, System};
+use crate::{FmodResultExt, Result};
 
 #[derive(Debug)]
 pub struct DspInfo {

@@ -381,7 +381,6 @@ dependencies = [
  "bindgen",
  "cc",
  "document-features",
- "num_enum",
 ]
 
 [[package]]

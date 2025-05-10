@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_int;
 
 use crate::{ChannelMask, Dsp, SpeakerMode};
+use crate::{FmodResultExt, Result};
 
 impl Dsp {
     /// Sets the PCM input format this [`Dsp`] will receive when processing.

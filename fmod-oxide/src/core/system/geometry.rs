@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use std::ffi::{c_float, c_int};
 
+use crate::{FmodResultExt, Result};
 use crate::{Geometry, System, Vector};
 
 impl System {

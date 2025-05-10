@@ -9,6 +9,7 @@ use std::ffi::c_ulonglong;
 use fmod_sys::*;
 
 use crate::ChannelControl;
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     /// Retrieves the DSP clock values at this point in time.
@@ -18,8 +19,12 @@ impl ChannelControl {
         let mut dsp_clock = 0;
         let mut parent_clock = 0;
         unsafe {
-            FMOD_ChannelControl_GetDSPClock(self.inner.as_ptr(), &raw mut dsp_clock, &raw mut parent_clock)
-                .to_result()?;
+            FMOD_ChannelControl_GetDSPClock(
+                self.inner.as_ptr(),
+                &raw mut dsp_clock,
+                &raw mut parent_clock,
+            )
+            .to_result()?;
         }
         Ok((dsp_clock, parent_clock))
     }

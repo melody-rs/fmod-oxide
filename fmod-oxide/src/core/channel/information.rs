@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_int;
 
 use crate::{Channel, Sound};
+use crate::{FmodResultExt, Result};
 
 impl Channel {
     /// Retrieves whether the Channel is being emulated by the virtual voice system.

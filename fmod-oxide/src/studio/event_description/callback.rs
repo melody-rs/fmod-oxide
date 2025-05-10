@@ -8,8 +8,9 @@ use fmod_sys::*;
 use std::ffi::c_void;
 
 use crate::studio::{
-    event_callback_impl, EventCallbackMask, EventDescription, EventInstanceCallback,
+    EventCallbackMask, EventDescription, EventInstanceCallback, event_callback_impl,
 };
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Sets the event user data.

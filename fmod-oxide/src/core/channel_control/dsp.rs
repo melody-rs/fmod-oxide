@@ -9,6 +9,7 @@ use std::ffi::c_int;
 use fmod_sys::*;
 
 use crate::{ChannelControl, Dsp};
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     pub const DSP_HEAD: FMOD_CHANNELCONTROL_DSP_INDEX = FMOD_CHANNELCONTROL_DSP_HEAD;

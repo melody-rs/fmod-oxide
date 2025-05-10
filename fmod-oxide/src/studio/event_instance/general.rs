@@ -13,6 +13,7 @@ use crate::studio::PlaybackState;
 
 #[cfg(fmod_2_3)]
 use crate::studio::System;
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Retrieves the event description.

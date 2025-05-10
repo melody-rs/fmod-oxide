@@ -7,6 +7,7 @@
 use fmod_sys::*;
 use std::ffi::{c_float, c_int, c_void};
 
+use crate::{FmodResultExt, Result};
 use crate::{Geometry, Vector};
 
 impl Geometry {
@@ -64,8 +65,12 @@ impl Geometry {
         let mut max_polygons = 0;
         let mut max_vertices = 0;
         unsafe {
-            FMOD_Geometry_GetMaxPolygons(self.inner.as_ptr(), &raw mut max_polygons, &raw mut max_vertices)
-                .to_result()?;
+            FMOD_Geometry_GetMaxPolygons(
+                self.inner.as_ptr(),
+                &raw mut max_polygons,
+                &raw mut max_vertices,
+            )
+            .to_result()?;
         }
         Ok((max_polygons, max_vertices))
     }
@@ -103,8 +108,12 @@ impl Geometry {
     pub fn save(&self) -> Result<Vec<u8>> {
         let mut data_size = 0;
         unsafe {
-            FMOD_Geometry_Save(self.inner.as_ptr(), std::ptr::null_mut(), &raw mut data_size)
-                .to_result()?;
+            FMOD_Geometry_Save(
+                self.inner.as_ptr(),
+                std::ptr::null_mut(),
+                &raw mut data_size,
+            )
+            .to_result()?;
         }
 
         let mut data = vec![0; data_size as usize];

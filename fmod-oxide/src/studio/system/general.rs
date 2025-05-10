@@ -10,6 +10,7 @@ use std::mem::MaybeUninit;
 
 use crate::Guid;
 use crate::studio::{System, get_string_out_size};
+use crate::{FmodResultExt, Result};
 
 impl System {
     /// Retrieves the Core System.

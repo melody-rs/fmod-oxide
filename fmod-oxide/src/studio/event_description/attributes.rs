@@ -12,6 +12,7 @@ use crate::studio::EventDescription;
 
 #[cfg(doc)]
 use crate::studio::EventInstance;
+use crate::{FmodResultExt, Result};
 
 impl EventDescription {
     /// Retrieves the event's 3D status.
@@ -90,8 +91,11 @@ impl EventDescription {
     pub fn has_sustain_point(&self) -> Result<bool> {
         let mut sustain_point = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventDescription_HasSustainPoint(self.inner.as_ptr(), &raw mut sustain_point)
-                .to_result()?;
+            FMOD_Studio_EventDescription_HasSustainPoint(
+                self.inner.as_ptr(),
+                &raw mut sustain_point,
+            )
+            .to_result()?;
         }
         Ok(sustain_point.into())
     }
@@ -101,8 +105,12 @@ impl EventDescription {
         let mut min = 0.0;
         let mut max = 0.0;
         unsafe {
-            FMOD_Studio_EventDescription_GetMinMaxDistance(self.inner.as_ptr(), &raw mut min, &raw mut max)
-                .to_result()?;
+            FMOD_Studio_EventDescription_GetMinMaxDistance(
+                self.inner.as_ptr(),
+                &raw mut min,
+                &raw mut max,
+            )
+            .to_result()?;
         }
         Ok((min, max))
     }

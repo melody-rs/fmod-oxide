@@ -24,7 +24,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let reverb_group = system.create_channel_group(fmod::c!("reverb"))?;
     let main_group = system.create_channel_group(fmod::c!("main"))?;
 
-    // TODO expose these indexes in the fmod-oxide crate
     let reverb_unit = system.create_dsp_by_type(fmod::DspType::ConvolutionReverb)?;
     reverb_group.add_dsp(fmod::ffi::FMOD_CHANNELCONTROL_DSP_TAIL, reverb_unit)?;
 

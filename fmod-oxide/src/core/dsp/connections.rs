@@ -8,6 +8,7 @@ use fmod_sys::*;
 use std::ffi::c_int;
 
 use crate::{Dsp, DspConnection, DspConnectionType};
+use crate::{FmodResultExt, Result};
 
 impl Dsp {
     /// Adds a [`Dsp`] unit as an input to this object.

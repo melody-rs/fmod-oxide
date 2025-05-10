@@ -9,6 +9,7 @@ use std::{
     mem::MaybeUninit,
 };
 
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use lanyard::{Utf8CStr, Utf8CString};
 
@@ -827,10 +828,10 @@ impl<'a> SoundBuilder<'a> {
             data_len: c_uint,
         ) -> FMOD_RESULT {
             panic_wrapper(|| {
-                C::read(unsafe { Sound::from_ffi(sound) }, unsafe {
+                let result = C::read(unsafe { Sound::from_ffi(sound) }, unsafe {
                     std::slice::from_raw_parts_mut(data.cast(), data_len as _)
-                })
-                .into()
+                });
+                FMOD_RESULT::from_result(result)
             })
         }
         unsafe extern "C" fn pcm_set_pos<C: PcmCallback>(
@@ -840,13 +841,13 @@ impl<'a> SoundBuilder<'a> {
             postype: FMOD_TIMEUNIT,
         ) -> FMOD_RESULT {
             panic_wrapper(|| {
-                C::set_position(
+                let result = C::set_position(
                     unsafe { Sound::from_ffi(sound) },
                     subsound,
                     position,
                     postype.try_into().unwrap(),
-                )
-                .into()
+                );
+                FMOD_RESULT::from_result(result)
             })
         }
 
@@ -862,7 +863,10 @@ impl<'a> SoundBuilder<'a> {
             sound: *mut FMOD_SOUND,
             result: FMOD_RESULT,
         ) -> FMOD_RESULT {
-            panic_wrapper(|| C::call(unsafe { Sound::from_ffi(sound) }, result.into()).into())
+            panic_wrapper(|| {
+                let result = C::call(unsafe { Sound::from_ffi(sound) }, result.to_result());
+                FMOD_RESULT::from_result(result)
+            })
         }
 
         self.create_sound_ex_info.nonblockcallback = Some(nonblock_callback::<C>);

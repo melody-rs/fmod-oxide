@@ -9,6 +9,7 @@ use std::{ffi::c_uint, mem::MaybeUninit};
 use fmod_sys::*;
 
 use crate::studio::{EventInstance, MemoryUsage};
+use crate::{FmodResultExt, Result};
 
 impl EventInstance {
     /// Retrieves the event CPU usage data.

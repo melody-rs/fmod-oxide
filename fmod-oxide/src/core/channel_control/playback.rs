@@ -12,6 +12,7 @@ use crate::{ChannelControl, Mode};
 
 #[cfg(doc)]
 use crate::{Channel, ChannelGroup};
+use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
     /// Retrieves the playing state.

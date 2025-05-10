@@ -11,6 +11,7 @@ use std::ffi::c_int;
 use crate::{
     Channel, ChannelGroup, Dsp, DspType, Reverb3D, Sound, SoundBuilder, SoundGroup, System,
 };
+use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
 use crate::Mode;

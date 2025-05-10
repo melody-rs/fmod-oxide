@@ -10,6 +10,7 @@ use crate::{
     FileSystemAsync, FileSystemSync, async_filesystem_cancel, async_filesystem_read,
     filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
 };
+use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 
 use super::System;
