@@ -39,7 +39,6 @@ impl Dsp {
     }
 
     /// Retrieve information about a specified parameter.
-    // FIXME do we keep this around?
     pub fn get_parameter_info(&self, index: c_int) -> Result<DspParameterDescription> {
         let mut desc = std::ptr::null_mut();
         unsafe {

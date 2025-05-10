@@ -90,7 +90,6 @@ impl Vca {
     /// Retrieves the path.
     ///
     /// The strings bank must be loaded prior to calling this function, otherwise [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] is returned.
-    // TODO: convert into possible macro for the sake of reusing code
     pub fn get_path(&self) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_VCA_GetPath(self.inner.as_ptr(), path, size, ret)
