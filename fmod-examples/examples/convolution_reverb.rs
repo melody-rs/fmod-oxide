@@ -32,25 +32,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_mode(fmod::Mode::OPEN_ONLY)
         .build(system)?;
 
-    let (_, ir_sound_format, ir_sound_channels, _) = ir_sound.get_format()?;
-    let ir_sound_length = ir_sound.get_length(fmod::TimeUnit::PCM)?;
-
-    if ir_sound_format != fmod::SoundFormat::PCM16 {
-        panic!("Impulse response file is the wrong file format");
-    }
-
-    // Huh, I didn't know this was a thing?
-    let mut ir_data = vec![0_i16; ir_sound_length as usize * ir_sound_channels as usize + 1];
-    ir_data[0] = ir_sound_channels as _;
-    unsafe { ir_sound.read_data(bytemuck::cast_slice_mut(&mut ir_data[1..]))? };
-    unsafe {
-        reverb_unit.set_raw_parameter_data::<[std::ffi::c_short]>(
-            &ir_data,
-            fmod::ffi::FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as _,
-        )?;
-    }
-
-    reverb_unit.set_parameter(fmod::ffi::FMOD_DSP_CONVOLUTION_REVERB_PARAM_DRY as _, -80.0)?;
+    let ir_data = unsafe { fmod::convolution_reverb::ImpulseResponse::from_sound(ir_sound) }?;
+    reverb_unit.set_parameter(fmod::convolution_reverb::IR, ir_data)?;
+    reverb_unit.set_parameter(fmod::convolution_reverb::Dry, -80.0)?;
 
     ir_sound.release()?;
 

@@ -6,202 +6,14 @@
 
 use fmod_sys::*;
 use lanyard::Utf8CString;
-use std::ffi::{c_float, c_int};
+use std::ffi::c_int;
 
-use crate::{Dsp, DspParameterDataType, DspParameterDescription};
+use crate::{
+    Dsp, DspParameterDataType, DspParameterDescription, ReadableParameter, ReadableParameterIndex,
+    WritableParameter,
+};
 
-mod sealed {
-    pub trait ReadSeal {}
-
-    pub trait WriteSeal {}
-}
-pub trait ReadableParameter: sealed::ReadSeal + Sized {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
-
-    // FIXME Strings are a max of FMOD_DSP_GETPARAM_VALUESTR_LENGTH so we don't need to heap allocate them
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString>;
-}
-
-pub trait WritableParameter: sealed::WriteSeal + Sized {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
-}
-
-impl sealed::ReadSeal for bool {}
-impl ReadableParameter for bool {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe {
-            let mut value = FMOD_BOOL::FALSE;
-            FMOD_DSP_GetParameterBool(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
-                .to_result()?;
-            Ok(value.into())
-        }
-    }
-
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
-        let dsp = dsp.inner.as_ptr();
-        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
-        unsafe {
-            FMOD_DSP_GetParameterBool(
-                dsp,
-                index,
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr().cast(),
-                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
-            )
-            .to_result()?;
-
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
-            Ok(string)
-        }
-    }
-}
-
-impl sealed::WriteSeal for bool {}
-impl WritableParameter for bool {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterBool(dsp, index, self.into()).to_result() }
-    }
-}
-
-impl sealed::ReadSeal for c_int {}
-impl ReadableParameter for c_int {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe {
-            let mut value = 0;
-            FMOD_DSP_GetParameterInt(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
-                .to_result()?;
-            Ok(value)
-        }
-    }
-
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
-        let dsp = dsp.inner.as_ptr();
-        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
-        unsafe {
-            FMOD_DSP_GetParameterInt(
-                dsp,
-                index,
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr().cast(),
-                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
-            )
-            .to_result()?;
-
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
-            Ok(string)
-        }
-    }
-}
-
-impl sealed::WriteSeal for c_int {}
-impl WritableParameter for c_int {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterInt(dsp, index, self).to_result() }
-    }
-}
-
-impl sealed::ReadSeal for c_float {}
-impl ReadableParameter for c_float {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe {
-            let mut value = 0.0;
-            FMOD_DSP_GetParameterFloat(dsp, index, &raw mut value, std::ptr::null_mut(), 0)
-                .to_result()?;
-            Ok(value)
-        }
-    }
-
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
-        let dsp = dsp.inner.as_ptr();
-        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
-        unsafe {
-            FMOD_DSP_GetParameterFloat(
-                dsp,
-                index,
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr().cast(),
-                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
-            )
-            .to_result()?;
-
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
-            Ok(string)
-        }
-    }
-}
-
-impl sealed::WriteSeal for c_float {}
-impl WritableParameter for c_float {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        let dsp = dsp.inner.as_ptr();
-        unsafe { FMOD_DSP_SetParameterFloat(dsp, index, self).to_result() }
-    }
-}
-
-/// The trait for data types which a can be read from a DSP parameter.
-///
-///
-/// # Safety
-///
-/// Any type that implements this type must have the same layout as the data type the DSP expects.
-/// **This is very important to get right**.
-// TODO VERY IMPORTANT work out specific semantics (parameter type checking, for example)
-pub unsafe trait ReadableDataParameter: Sized {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
-}
-/// The trait for data types which a can be written to a DSP parameter.
-///
-/// # Safety
-///
-/// Any type that implements this type must have the same layout as the data type the DSP expects.
-/// **This is very important to get right**.
-pub unsafe trait WritableDataParameter: Sized {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
-}
-
-impl<T> sealed::ReadSeal for T where T: ReadableDataParameter {}
-impl<T> ReadableParameter for T
-where
-    T: ReadableDataParameter,
-{
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        <Self as ReadableDataParameter>::get_parameter(dsp, index)
-    }
-
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
-        let dsp = dsp.inner.as_ptr();
-        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
-        unsafe {
-            FMOD_DSP_GetParameterData(
-                dsp,
-                index,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr().cast(),
-                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
-            )
-            .to_result()?;
-
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
-            Ok(string)
-        }
-    }
-}
-
-impl<T> sealed::WriteSeal for T where T: WritableDataParameter {}
-impl<T> WritableParameter for T
-where
-    T: WritableDataParameter,
-{
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        <Self as WritableDataParameter>::set_parameter(self, dsp, index)
-    }
-}
+use super::WritableParameterIndex;
 
 impl Dsp {
     /// Retrieve the index of the first data parameter of a particular data type.
@@ -250,16 +62,28 @@ impl Dsp {
         }
     }
 
-    pub fn set_parameter<P: WritableParameter>(&self, index: c_int, parameter: P) -> Result<()> {
-        parameter.set_parameter(*self, index)
+    pub fn set_parameter<I, P>(&self, index: I, parameter: P) -> Result<()>
+    where
+        I: WritableParameterIndex<P>,
+        P: WritableParameter,
+    {
+        parameter.set_parameter(*self, index.into_index())
     }
 
-    pub fn get_parameter<P: ReadableParameter>(&self, index: c_int) -> Result<P> {
-        P::get_parameter(*self, index)
+    pub fn get_parameter<I, P>(&self, index: I) -> Result<P>
+    where
+        I: ReadableParameterIndex<P>,
+        P: ReadableParameter,
+    {
+        P::get_parameter(*self, index.into_index())
     }
 
-    pub fn get_parameter_string<P: ReadableParameter>(&self, index: c_int) -> Result<Utf8CString> {
-        P::get_parameter_string(*self, index)
+    pub fn get_parameter_string<P, I>(&self, index: I) -> Result<Utf8CString>
+    where
+        I: ReadableParameterIndex<P>,
+        P: ReadableParameter,
+    {
+        P::get_parameter_string(*self, index.into_index())
     }
 
     /// # Safety
@@ -286,15 +110,48 @@ impl Dsp {
         index: c_int,
     ) -> Result<()> {
         unsafe {
+            let mut data_ptr = std::ptr::null_mut();
+            let mut data_size = 0;
+
             FMOD_DSP_GetParameterData(
                 self.inner.as_ptr(),
                 index,
-                std::ptr::from_mut(data).cast(),
-                size_of_val(data) as _,
+                &raw mut data_ptr,
+                &raw mut data_size,
                 std::ptr::null_mut(),
                 0,
             )
-            .to_result()
+            .to_result()?;
+
+            debug_assert_eq!(data_size, size_of::<T>() as _); // If this panics, we're in *trouble*
+
+            std::ptr::copy(data_ptr.cast(), data.as_mut_ptr(), 1);
+
+            Ok(())
+        }
+    }
+
+    /// # Safety
+    ///
+    /// The returned slice has an effectively unbounded lifetime.
+    /// You must copy it to an owned type (i.e. Vec) as soon as possible.
+    pub unsafe fn get_raw_parameter_data_slice(&self, index: c_int) -> Result<&[u8]> {
+        unsafe {
+            // Can this be null?
+            let mut data_ptr = std::ptr::null_mut();
+            let mut data_size = 0;
+
+            FMOD_DSP_GetParameterData(
+                self.inner.as_ptr(),
+                index,
+                &raw mut data_ptr,
+                &raw mut data_size,
+                std::ptr::null_mut(),
+                0,
+            )
+            .to_result()?;
+
+            Ok(std::slice::from_raw_parts(data_ptr.cast(), data_size as _))
         }
     }
 }

@@ -388,7 +388,6 @@ dependencies = [
 name = "fmod-examples"
 version = "1.0.0"
 dependencies = [
- "bytemuck",
  "crossterm",
  "fmod-oxide",
 ]
@@ -398,6 +397,7 @@ name = "fmod-oxide"
 version = "0.1.0"
 dependencies = [
  "bitflags",
+ "bytemuck",
  "document-features",
  "fmod-audio-sys",
  "lanyard",

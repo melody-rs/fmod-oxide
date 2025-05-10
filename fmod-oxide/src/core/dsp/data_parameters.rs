@@ -5,9 +5,9 @@ use std::{
 
 use fmod_sys::*;
 
-use crate::{Attributes3D, Dsp, DspParameterDataType, ReadableDataParameter};
-
-use super::parameters::WritableDataParameter;
+use crate::{
+    Attributes3D, Dsp, DspParameterDataType, ReadableDataParameter, WritableDataParameter,
+};
 
 fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameterDataType) -> bool {
     if dsp_parameter_desc.type_ != FMOD_DSP_PARAMETER_TYPE_DATA {
@@ -18,13 +18,13 @@ fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameter
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
-pub struct OverAlign {
+pub struct OverallGain {
     pub linear_gain: c_float,
     pub linear_gain_additive: c_float,
 }
 
 // Safety: we validate the data type matches what we expect.
-unsafe impl ReadableDataParameter for OverAlign {
+unsafe impl ReadableDataParameter for OverallGain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::OverAlign) {
@@ -158,14 +158,14 @@ unsafe impl ReadableDataParameter for Fft {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
-pub struct DspAttributes3DMulti {
+pub struct Attributes3DMulti {
     listener_count: c_int,
     relative: [Attributes3D; FMOD_MAX_LISTENERS as usize],
     weight: [c_float; FMOD_MAX_LISTENERS as usize],
     pub absolute: FMOD_3D_ATTRIBUTES,
 }
 
-impl DspAttributes3DMulti {
+impl Attributes3DMulti {
     pub fn new(data: &[(Attributes3D, c_float)], absolute: FMOD_3D_ATTRIBUTES) -> Self {
         let relative = std::array::from_fn(|i| data.get(i).map(|d| d.0).unwrap_or_default());
         let weight = std::array::from_fn(|i| data.get(i).map(|d| d.1).unwrap_or_default());
@@ -198,7 +198,7 @@ impl DspAttributes3DMulti {
     }
 }
 
-unsafe impl ReadableDataParameter for DspAttributes3DMulti {
+unsafe impl ReadableDataParameter for Attributes3DMulti {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
@@ -211,7 +211,7 @@ unsafe impl ReadableDataParameter for DspAttributes3DMulti {
     }
 }
 
-unsafe impl WritableDataParameter for DspAttributes3DMulti {
+unsafe impl WritableDataParameter for Attributes3DMulti {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {

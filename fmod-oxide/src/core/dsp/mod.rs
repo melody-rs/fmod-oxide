@@ -12,13 +12,16 @@ mod callback;
 mod channel_format;
 mod connections;
 mod data_parameters;
+mod effect_parameters;
 mod general;
 mod metering;
+mod parameter_traits;
 mod parameters;
 mod processing;
 
 pub use data_parameters::*;
-pub use parameters::{ReadableDataParameter, ReadableParameter};
+pub use effect_parameters::*;
+pub use parameter_traits::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types

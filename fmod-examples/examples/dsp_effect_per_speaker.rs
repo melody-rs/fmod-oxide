@@ -27,12 +27,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let channel = system.play_sound(sound, None, false)?;
 
     let low_pass = system.create_dsp_by_type(fmod::DspType::Lowpass)?;
-    low_pass.set_parameter(fmod::ffi::FMOD_DSP_LOWPASS_CUTOFF as _, 1000.0)?;
-    low_pass.set_parameter(fmod::ffi::FMOD_DSP_LOWPASS_RESONANCE as _, 4.0)?;
+    low_pass.set_parameter(fmod::lowpass::Cutoff, 1000.0)?;
+    low_pass.set_parameter(fmod::lowpass::Resonance, 4.0)?;
 
     let high_pass = system.create_dsp_by_type(fmod::DspType::Lowpass)?;
-    high_pass.set_parameter(fmod::ffi::FMOD_DSP_HIGHPASS_CUTOFF as _, 4000.0)?;
-    high_pass.set_parameter(fmod::ffi::FMOD_DSP_HIGHPASS_RESONANCE as _, 4.0)?;
+    high_pass.set_parameter(fmod::highpass::Cutoff, 4000.0)?;
+    high_pass.set_parameter(fmod::highpass::Resonance, 4.0)?;
 
     let main_group = system.get_master_channel_group()?;
 

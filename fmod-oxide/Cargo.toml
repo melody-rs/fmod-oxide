@@ -23,6 +23,7 @@ lanyard = { version = "0.1.0", path = "../lanyard/" }
 num_enum = "0.7.2"
 
 document-features = "0.2"
+bytemuck = { version = "1.23.0", features = ["extern_crate_alloc"] }
 
 [features]
 ## Disable Send + Sync impls for FMOD's types, making FMOD's thread-unsafe API safer
