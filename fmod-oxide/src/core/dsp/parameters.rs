@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use fmod_sys::*;
-use lanyard::Utf8CString;
+use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::c_int;
 
 use crate::{
@@ -175,7 +175,7 @@ impl Dsp {
             )
             .to_result()?;
 
-            let string = Utf8CString::from_utf8_with_nul_unchecked(bytes.to_vec());
+            let string = Utf8CStr::from_utf8_until_nul(&bytes).unwrap().to_cstring();
             Ok(string)
         }
     }

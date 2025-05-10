@@ -62,7 +62,7 @@ fn get_string_out_size(
 
     debug_assert_eq!(string_len, expected_string_len);
 
-    let string = unsafe { Utf8CString::from_utf8_with_nul_unchecked(buf) };
+    let string = Utf8CString::from_utf8_with_nul(buf).unwrap();
     Ok(string)
 }
 

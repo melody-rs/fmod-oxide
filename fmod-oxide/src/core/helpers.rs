@@ -5,14 +5,28 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use fmod_sys::*;
-use lanyard::Utf8CString;
+use lanyard::{Utf8CStr, Utf8CString};
 
 pub(crate) fn get_string(
     mut string_fn: impl FnMut(&mut [u8]) -> FMOD_RESULT,
 ) -> Result<Utf8CString> {
-    let mut buffer = vec![0u8; 256];
+    // Use stack-based buffer initially.
+    let mut buffer = [0; 256];
     // Initial call to get the string.
     let mut result = string_fn(&mut buffer);
+
+    match result.to_error() {
+        // String fit in 256 bytes
+        None => {
+            let string = Utf8CStr::from_utf8_until_nul(&buffer).unwrap().to_cstring();
+            return Ok(string);
+        }
+        // Didn't fit. Try using Vec
+        Some(Error::Fmod(FMOD_RESULT::FMOD_ERR_TRUNCATED)) => {}
+        Some(e) => return Err(e),
+    }
+
+    let mut buffer = vec![0u8; 256];
     // If the buffer is too small, resize it and try again.
     while let FMOD_RESULT::FMOD_ERR_TRUNCATED = result {
         buffer.resize(buffer.len() * 2, 0);
@@ -21,14 +35,7 @@ pub(crate) fn get_string(
 
     result.to_result()?;
 
-    let len = buffer.iter().position(|&b| b == 0).expect(
-        "fmod-oxide expected a null-terminated string but did not get one! THIS IS A VERY BAD BUG!",
-    );
-    // Resize to make sure we don't waste memory.
-    // We add 1 to include the null terminator.
-    buffer.truncate(len + 1);
-    buffer.shrink_to_fit();
-    let string = unsafe { Utf8CString::from_utf8_with_nul_unchecked(buffer) };
+    let string = Utf8CStr::from_utf8_until_nul(&buffer).unwrap().to_cstring();
     Ok(string)
 }
 

@@ -1,5 +1,5 @@
 use fmod_sys::*;
-use lanyard::Utf8CString;
+use lanyard::{Utf8CStr, Utf8CString};
 use std::ffi::{c_float, c_int};
 
 use crate::{Dsp, DspType};
@@ -63,7 +63,7 @@ impl ReadableParameter for bool {
             )
             .to_result()?;
 
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
+            let string = Utf8CStr::from_utf8_until_nul(&bytes).unwrap().to_cstring();
             Ok(string)
         }
     }
@@ -100,7 +100,7 @@ impl ReadableParameter for c_int {
             )
             .to_result()?;
 
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
+            let string = Utf8CStr::from_utf8_until_nul(&bytes).unwrap().to_cstring();
             Ok(string)
         }
     }
@@ -137,7 +137,7 @@ impl ReadableParameter for c_float {
             )
             .to_result()?;
 
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
+            let string = Utf8CStr::from_utf8_until_nul(&bytes).unwrap().to_cstring();
             Ok(string)
         }
     }
