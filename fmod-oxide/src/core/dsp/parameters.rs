@@ -86,9 +86,12 @@ impl Dsp {
         P::get_parameter_string(*self, index.into_index())
     }
 
+    // pub to let people use them, but #[doc(hidden)] to notate that they're more of an exposed internal API.
+
     /// # Safety
     ///
     /// You must ensure that the provided T matches the size and layout as the specified DSP parameter.
+    #[doc(hidden)]
     pub unsafe fn set_raw_parameter_data<T: ?Sized>(&self, data: &T, index: c_int) -> Result<()> {
         unsafe {
             FMOD_DSP_SetParameterData(
@@ -104,6 +107,7 @@ impl Dsp {
     /// # Safety
     ///
     /// You must ensure that the provided T matches the size and layout as the specified DSP parameter.
+    #[doc(hidden)]
     pub unsafe fn get_raw_parameter_data<T>(
         &self,
         data: &mut std::mem::MaybeUninit<T>,
@@ -135,6 +139,7 @@ impl Dsp {
     ///
     /// The returned slice has an effectively unbounded lifetime.
     /// You must copy it to an owned type (i.e. Vec) as soon as possible.
+    #[doc(hidden)]
     pub unsafe fn get_raw_parameter_data_slice(&self, index: c_int) -> Result<&[u8]> {
         unsafe {
             // Can this be null?
@@ -152,6 +157,26 @@ impl Dsp {
             .to_result()?;
 
             Ok(std::slice::from_raw_parts(data_ptr.cast(), data_size as _))
+        }
+    }
+
+    /// A safe wrapper around [`FMOD_DSP_GetParameterData`] that fetches a string.
+    #[doc(hidden)]
+    pub fn get_data_parameter_string(&self, index: c_int) -> Result<Utf8CString> {
+        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
+        unsafe {
+            FMOD_DSP_GetParameterData(
+                self.inner.as_ptr(),
+                index,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                bytes.as_mut_ptr().cast(),
+                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
+            )
+            .to_result()?;
+
+            let string = Utf8CString::from_utf8_with_nul_unchecked(bytes.to_vec());
+            Ok(string)
         }
     }
 }

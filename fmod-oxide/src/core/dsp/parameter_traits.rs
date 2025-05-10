@@ -6,6 +6,17 @@ use crate::{Dsp, DspType};
 
 // FIXME don't want sealed so users can impl their own types, what do?
 
+/// Trait for types that can be read from DSP parameters.
+///
+/// You should either defer to [`Dsp::get_parameter`] or call [`FMOD_DSP_GetParameterData`].
+///
+/// # Data types
+///
+/// Implementing this trait for anything aside from data types is relatively trivial.
+/// If you *are* implementing this for a data type, you must validate that the parameter type at `index` matches what you expect it to be.
+/// You can usually do this by getting the raw parameter info and checking that the [`FMOD_DSP_PARAMETER_DATA_TYPE`] field matches what you expect.
+///
+/// There are hidden methods on [`Dsp`] that can help you write correct implementations for [`Sized`] types.
 pub trait ReadableParameter: Sized {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
 
@@ -13,6 +24,17 @@ pub trait ReadableParameter: Sized {
     fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString>;
 }
 
+/// Trait for types that can be written to DSP parameters.
+///
+/// You should either defer to [`Dsp::set_parameter`] or call [`FMOD_DSP_SetParameterData`].
+///
+/// # Data types
+///
+/// Implementing this trait for anything aside from data types is relatively trivial.
+/// If you *are* implementing this for a data type, you must validate that the parameter type at `index` matches what you expect it to be.
+/// You can usually do this by getting the raw parameter info and checking that the [`FMOD_DSP_PARAMETER_DATA_TYPE`] field matches what you expect.
+///
+/// There are hidden methods on [`Dsp`] that can help you write correct implementations for [`Sized`] types.
 pub trait WritableParameter: Sized {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
 }
@@ -125,65 +147,6 @@ impl WritableParameter for c_float {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let dsp = dsp.inner.as_ptr();
         unsafe { FMOD_DSP_SetParameterFloat(dsp, index, self).to_result() }
-    }
-}
-
-/// The trait for data types which a can be read from a DSP parameter.
-///
-///
-/// # Safety
-///
-/// Any type that implements this type must have the same layout as the data type the DSP expects.
-/// **This is very important to get right**.
-// TODO VERY IMPORTANT work out specific semantics (parameter type checking, for example)
-pub unsafe trait ReadableDataParameter: Sized {
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
-}
-
-/// The trait for data types which a can be written to a DSP parameter.
-///
-/// # Safety
-///
-/// Any type that implements this type must have the same layout as the data type the DSP expects.
-/// **This is very important to get right**.
-pub unsafe trait WritableDataParameter: Sized {
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
-}
-
-impl<T> ReadableParameter for T
-where
-    T: ReadableDataParameter,
-{
-    fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
-        <Self as ReadableDataParameter>::get_parameter(dsp, index)
-    }
-
-    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString> {
-        let dsp = dsp.inner.as_ptr();
-        let mut bytes = [0; FMOD_DSP_GETPARAM_VALUESTR_LENGTH as usize];
-        unsafe {
-            FMOD_DSP_GetParameterData(
-                dsp,
-                index,
-                std::ptr::null_mut(),
-                std::ptr::null_mut(),
-                bytes.as_mut_ptr().cast(),
-                FMOD_DSP_GETPARAM_VALUESTR_LENGTH as i32,
-            )
-            .to_result()?;
-
-            let string = Utf8CString::from_utf8_with_nul(bytes.to_vec()).unwrap();
-            Ok(string)
-        }
-    }
-}
-
-impl<T> WritableParameter for T
-where
-    T: WritableDataParameter,
-{
-    fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
-        <Self as WritableDataParameter>::set_parameter(self, dsp, index)
     }
 }
 

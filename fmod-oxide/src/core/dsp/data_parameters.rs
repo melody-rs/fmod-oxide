@@ -5,9 +5,7 @@ use std::{
 
 use fmod_sys::*;
 
-use crate::{
-    Attributes3D, Dsp, DspParameterDataType, ReadableDataParameter, WritableDataParameter,
-};
+use crate::{Attributes3D, Dsp, DspParameterDataType, ReadableParameter, WritableParameter};
 
 fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameterDataType) -> bool {
     if dsp_parameter_desc.type_ != FMOD_DSP_PARAMETER_TYPE_DATA {
@@ -24,7 +22,7 @@ pub struct OverallGain {
 }
 
 // Safety: we validate the data type matches what we expect.
-unsafe impl ReadableDataParameter for OverallGain {
+impl ReadableParameter for OverallGain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::OverAlign) {
@@ -35,6 +33,10 @@ unsafe impl ReadableDataParameter for OverallGain {
         unsafe { dsp.get_raw_parameter_data(&mut this, index)? };
         Ok(unsafe { this.assume_init() })
     }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -44,7 +46,7 @@ pub struct DspAttributes3D {
     pub absolute: Attributes3D,
 }
 
-unsafe impl ReadableDataParameter for DspAttributes3D {
+impl ReadableParameter for DspAttributes3D {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -55,9 +57,13 @@ unsafe impl ReadableDataParameter for DspAttributes3D {
         unsafe { dsp.get_raw_parameter_data(&mut this, index)? };
         Ok(unsafe { this.assume_init() })
     }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
+    }
 }
 
-unsafe impl WritableDataParameter for DspAttributes3D {
+impl WritableParameter for DspAttributes3D {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -74,7 +80,7 @@ pub struct Sidechain {
     pub enable: bool,
 }
 
-unsafe impl ReadableDataParameter for Sidechain {
+impl ReadableParameter for Sidechain {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -88,9 +94,13 @@ unsafe impl ReadableDataParameter for Sidechain {
             enable: raw.sidechainenable.into(),
         })
     }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
+    }
 }
 
-unsafe impl WritableDataParameter for Sidechain {
+impl WritableParameter for Sidechain {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -131,7 +141,7 @@ impl Fft {
 }
 
 // So glad this is read only because this would be AWFUL to implement writing for
-unsafe impl ReadableDataParameter for Fft {
+impl ReadableParameter for Fft {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3D) {
@@ -153,6 +163,10 @@ unsafe impl ReadableDataParameter for Fft {
             spectrum_size: raw.length as _,
             data: data.into_boxed_slice(),
         })
+    }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
     }
 }
 
@@ -198,7 +212,7 @@ impl Attributes3DMulti {
     }
 }
 
-unsafe impl ReadableDataParameter for Attributes3DMulti {
+impl ReadableParameter for Attributes3DMulti {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
@@ -209,9 +223,13 @@ unsafe impl ReadableDataParameter for Attributes3DMulti {
         unsafe { dsp.get_raw_parameter_data(&mut raw, index)? };
         Ok(unsafe { raw.assume_init() })
     }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
+    }
 }
 
-unsafe impl WritableDataParameter for Attributes3DMulti {
+impl WritableParameter for Attributes3DMulti {
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::Attributes3DMulti) {
@@ -229,7 +247,7 @@ pub struct AttenuationRange {
     pub max: c_float,
 }
 
-unsafe impl ReadableDataParameter for AttenuationRange {
+impl ReadableParameter for AttenuationRange {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::AttenuationRange) {
@@ -239,6 +257,10 @@ unsafe impl ReadableDataParameter for AttenuationRange {
         // Safety: we already validated that this is the right data type, so this is safe.
         unsafe { dsp.get_raw_parameter_data(&mut raw, index)? };
         Ok(unsafe { raw.assume_init() })
+    }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
     }
 }
 
@@ -251,7 +273,7 @@ pub struct DynamicResponse {
 }
 
 #[cfg(fmod_2_3)]
-unsafe impl ReadableDataParameter for DynamicResponse {
+impl ReadableParameter for DynamicResponse {
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
         let desc = dsp.get_raw_parameter_info(index)?;
         if !parameter_is(&desc, DspParameterDataType::DynamicResponse) {
@@ -261,5 +283,9 @@ unsafe impl ReadableDataParameter for DynamicResponse {
         // Safety: we already validated that this is the right data type, so this is safe.
         unsafe { dsp.get_raw_parameter_data(&mut raw, index)? };
         Ok(unsafe { raw.assume_init() })
+    }
+
+    fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+        dsp.get_data_parameter_string(index)
     }
 }

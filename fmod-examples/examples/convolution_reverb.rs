@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build(system)?;
 
     let ir_data = unsafe { fmod::convolution_reverb::ImpulseResponse::from_sound(ir_sound) }?;
-    reverb_unit.set_parameter(fmod::convolution_reverb::IR, ir_data)?;
+    reverb_unit.set_parameter(fmod::convolution_reverb::IR, &ir_data)?;
     reverb_unit.set_parameter(fmod::convolution_reverb::Dry, -80.0)?;
 
     ir_sound.release()?;

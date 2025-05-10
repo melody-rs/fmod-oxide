@@ -1,8 +1,7 @@
 use crate::{
     AttenuationRange as AttenuationRangeType, Attributes3DMulti, Dsp, DspType, DynamicResponse,
-    Fft, OverallGain as OverallGainType, ReadableDataParameter, ReadableParameter,
-    ReadableParameterIndex, Sidechain, SpeakerMode as SpeakerModeType, WritableDataParameter,
-    WritableParameter, WritableParameterIndex,
+    Fft, OverallGain as OverallGainType, ReadableParameter, ReadableParameterIndex, Sidechain,
+    SpeakerMode as SpeakerModeType, WritableParameter, WritableParameterIndex,
 };
 
 use fmod_sys::*;
@@ -201,8 +200,7 @@ pub mod convolution_reverb {
         }
     }
 
-    // FIXME: Taking `self` here feels wrong....
-    unsafe impl WritableDataParameter for ImpulseResponse {
+    impl WritableParameter for &ImpulseResponse {
         fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
             if dsp.get_type()? != DspType::ConvolutionReverb
                 || index != FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as i32
@@ -213,7 +211,7 @@ pub mod convolution_reverb {
         }
     }
 
-    unsafe impl ReadableDataParameter for ImpulseResponse {
+    impl ReadableParameter for ImpulseResponse {
         fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
             if dsp.get_type()? != DspType::ConvolutionReverb
                 || index != FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as i32
@@ -225,9 +223,29 @@ pub mod convolution_reverb {
             let data = bytemuck::cast_vec(raw_data);
             Ok(Self { data })
         }
+
+        fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+            dsp.get_data_parameter_string(index)
+        }
     }
 
-    dsp_param_impl!(ConvolutionReverb => struct IR(FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR): ImpulseResponse);
+    #[derive(Debug, Clone, Copy)]
+    pub struct IR;
+
+    impl ReadableParameterIndex<ImpulseResponse> for IR {
+        const TYPE: DspType = DspType::ConvolutionReverb;
+        fn into_index(self) -> c_int {
+            FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as c_int
+        }
+    }
+
+    impl WritableParameterIndex<&ImpulseResponse> for IR {
+        const TYPE: DspType = DspType::ConvolutionReverb;
+        fn into_index(self) -> c_int {
+            FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as c_int
+        }
+    }
+
     dsp_param_impl!(ConvolutionReverb => struct Wet(FMOD_DSP_CONVOLUTION_REVERB_PARAM_WET): c_float);
     dsp_param_impl!(ConvolutionReverb => struct Dry(FMOD_DSP_CONVOLUTION_REVERB_PARAM_DRY): c_float);
     dsp_param_impl!(ConvolutionReverb => struct ReleaLinkedse(FMOD_DSP_CONVOLUTION_REVERB_PARAM_LINKED): bool);
@@ -412,7 +430,7 @@ pub mod loudness_meter {
         pub max_momentary_loudness: c_float,
     }
 
-    unsafe impl ReadableDataParameter for InfoData {
+    impl ReadableParameter for InfoData {
         fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_INFO as i32
@@ -424,6 +442,9 @@ pub mod loudness_meter {
             unsafe { dsp.get_raw_parameter_data(&mut this, index)? };
             Ok(unsafe { this.assume_init() })
         }
+        fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+            dsp.get_data_parameter_string(index)
+        }
     }
 
     #[derive(Debug, Clone, Copy, PartialEq)]
@@ -432,7 +453,7 @@ pub mod loudness_meter {
         pub channel_weight: [c_float; 32],
     }
 
-    unsafe impl ReadableDataParameter for WeightingData {
+    impl ReadableParameter for WeightingData {
         fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_WEIGHTING as i32
@@ -444,9 +465,13 @@ pub mod loudness_meter {
             unsafe { dsp.get_raw_parameter_data(&mut this, index)? };
             Ok(unsafe { this.assume_init() })
         }
+
+        fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
+            dsp.get_data_parameter_string(index)
+        }
     }
 
-    unsafe impl WritableDataParameter for WeightingData {
+    impl WritableParameter for WeightingData {
         fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()> {
             if dsp.get_type()? != DspType::LoudnessMeter
                 || index != FMOD_DSP_LOUDNESS_METER_WEIGHTING as i32
