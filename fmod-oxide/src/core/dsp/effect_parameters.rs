@@ -157,19 +157,15 @@ pub mod convolution_reverb {
     use super::*;
     use crate::Sound;
 
-    // TODO: version that doesn't allocate?
-    #[derive(Debug, Clone)]
+    #[derive(Debug)]
+    #[repr(transparent)]
     pub struct ImpulseResponse {
-        data: Vec<c_short>,
+        data: [c_short],
     }
 
     impl ImpulseResponse {
-        pub fn new(channel_count: c_short, pcm_data: &[c_short]) -> Self {
-            let mut data = Vec::with_capacity(pcm_data.len() + 1);
-            data.push(channel_count);
-            data.extend_from_slice(pcm_data);
-
-            Self { data }
+        pub fn new(data: &[c_short]) -> &Self {
+            unsafe { &*(std::ptr::from_ref::<[c_short]>(data) as *const Self) }
         }
 
         pub fn channel_count(&self) -> c_short {
@@ -182,8 +178,8 @@ pub mod convolution_reverb {
 
         /// # Safety
         ///
-        /// This function uses [`Sound::read_data`], which is *unsafe* [`Sound::release`] is called from another thread while [`Sound::read_data`] is processing.
-        pub unsafe fn from_sound(sound: Sound) -> Result<Self> {
+        /// This function uses [`Sound::read_data`], which is *unsafe* if [`Sound::release`] is called from another thread while [`Sound::read_data`] is processing.
+        pub unsafe fn from_sound(sound: Sound) -> Result<Box<Self>> {
             let (_, format, channels, _) = sound.get_format()?;
             if format != crate::SoundFormat::PCM16 {
                 return Err(Error::InvalidParam);
@@ -197,7 +193,8 @@ pub mod convolution_reverb {
                 sound.read_data(bytemuck::cast_slice_mut(&mut data[1..]))?;
             }
 
-            Ok(Self { data })
+            let data = data.into_boxed_slice();
+            Ok(unsafe { std::mem::transmute::<Box<[i16]>, Box<ImpulseResponse>>(data) })
         }
     }
 
@@ -212,7 +209,7 @@ pub mod convolution_reverb {
         }
     }
 
-    impl ReadableParameter for ImpulseResponse {
+    impl ReadableParameter for Box<ImpulseResponse> {
         fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
             if dsp.get_type()? != DspType::ConvolutionReverb
                 || index != FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as i32
@@ -221,8 +218,8 @@ pub mod convolution_reverb {
             }
 
             let raw_data = unsafe { dsp.get_raw_parameter_data_slice(index) }?.to_vec();
-            let data = bytemuck::cast_vec(raw_data);
-            Ok(Self { data })
+            let data: Box<[c_short]> = bytemuck::cast_vec(raw_data).into_boxed_slice();
+            Ok(unsafe { std::mem::transmute::<Box<[i16]>, Box<ImpulseResponse>>(data) })
         }
 
         fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
@@ -233,7 +230,7 @@ pub mod convolution_reverb {
     #[derive(Debug, Clone, Copy)]
     pub struct IR;
 
-    impl ReadableParameterIndex<ImpulseResponse> for IR {
+    impl ReadableParameterIndex<Box<ImpulseResponse>> for IR {
         const TYPE: DspType = DspType::ConvolutionReverb;
         fn into_index(self) -> c_int {
             FMOD_DSP_CONVOLUTION_REVERB_PARAM_IR as c_int
