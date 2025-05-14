@@ -34,9 +34,6 @@ thread-unsafe = []
 studio = ["fmod-audio-sys/studio"]
 default = ["studio"]
 
-[dev-dependencies]
-once_cell = "1.19"
-
 [package.metadata.docs.rs]
 default-target = "x86_64-unknown-linux-gnu" # crate is published from this platform
 targets = []
@@ -44,3 +41,4 @@ targets = []
 rustc-args = ["--cfg", "use_docs_bindings"]
 
 features = ["fmod-audio-sys/force-docs-bindings"]
+cargo-args = ["-Zunstable-options", "-Zrustdoc-scrape-examples"]

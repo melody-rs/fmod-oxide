@@ -45,12 +45,12 @@ impl fmod::FileSystem for CustomFilesystem {
         // we made sure to include the nul in loadBankCustom so this should be ok?
         let filename = unsafe { fmod::Utf8CStr::from_ptr_unchecked(userdata.cast()) };
         let Ok(file) = std::fs::File::open(filename.as_str()) else {
-            return Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_NOTFOUND.into());
+            return Err(fmod::Error::FileNotFound);
         };
 
         let file_size = file.metadata().unwrap().len();
         let Ok(file_size) = u32::try_from(file_size) else {
-            return Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_BAD.into());
+            return Err(fmod::Error::FileBad);
         };
 
         let handle = Box::into_raw(Box::new(file)).cast();
@@ -75,7 +75,7 @@ impl fmod::FileSystemSync for CustomFilesystem {
         let mut reader = file.take(buffer.capacity() as _);
         match std::io::copy(&mut reader, &mut buffer) {
             Ok(_) => Ok(()),
-            Err(_) => Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_BAD.into()),
+            Err(_) => Err(fmod::Error::FileBad),
         }
     }
 
@@ -83,7 +83,7 @@ impl fmod::FileSystemSync for CustomFilesystem {
         let file: &mut std::fs::File = unsafe { &mut *handle.cast() };
         match file.seek(std::io::SeekFrom::Start(position as _)) {
             Ok(_) => Ok(()),
-            Err(_) => Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_BAD.into()),
+            Err(_) => Err(fmod::Error::FileBad),
         }
     }
 }
@@ -102,13 +102,13 @@ fn load_bank(
         }
         LoadBankMethod::Memory => {
             let Ok(data) = std::fs::read(filename.as_str()) else {
-                return Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_NOTFOUND.into());
+                return Err(fmod::Error::FileNotFound);
             };
             system.load_bank_memory(&data, fmod::studio::LoadBankFlags::NONBLOCKING)
         }
         LoadBankMethod::MemoryPoint => {
             let Ok(data) = std::fs::read(filename.as_str()) else {
-                return Err(fmod::FMOD_RESULT::FMOD_ERR_FILE_NOTFOUND.into());
+                return Err(fmod::Error::FileNotFound);
             };
             // We relly should read directly into this but this is easier :P
             let mut aligned_data = MemoryPointData::with_capacity(0, data.len());

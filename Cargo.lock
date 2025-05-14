@@ -401,7 +401,6 @@ dependencies = [
  "fmod-audio-sys",
  "lanyard",
  "num_enum",
- "once_cell",
  "thiserror",
 ]
 

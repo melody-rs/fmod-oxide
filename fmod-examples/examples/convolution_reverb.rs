@@ -25,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let main_group = system.create_channel_group(fmod::c!("main"))?;
 
     let reverb_unit = system.create_dsp_by_type(fmod::DspType::ConvolutionReverb)?;
-    reverb_group.add_dsp(fmod::ffi::FMOD_CHANNELCONTROL_DSP_TAIL, reverb_unit)?;
+    reverb_group.add_dsp(fmod::ChannelControl::DSP_TAIL, reverb_unit)?;
 
     let ir_sound = fmod::SoundBuilder::open(&media_path_for("standrews.wav"))
         .with_mode(fmod::Mode::OPEN_ONLY)
@@ -42,7 +42,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build(system)?;
     let channel = system.play_sound(sound, Some(main_group), true)?;
 
-    let channel_head = channel.get_dsp(fmod::ffi::FMOD_CHANNELCONTROL_DSP_HEAD as _)?;
+    let channel_head = channel.get_dsp(fmod::ChannelControl::DSP_HEAD)?;
     let reverb_connection = reverb_unit.add_input(channel_head, fmod::DspConnectionType::Send)?;
 
     channel.set_paused(false)?;

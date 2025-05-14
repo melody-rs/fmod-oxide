@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let main_group = system.get_master_channel_group()?;
 
-    let head = main_group.get_dsp(fmod::ffi::FMOD_CHANNELCONTROL_DSP_HEAD)?;
+    let head = main_group.get_dsp(fmod::ChannelControl::DSP_HEAD)?;
 
     let (channel_mixer, _) = head.get_input(0)?;
     head.disconnect_from(Some(channel_mixer), None)?;

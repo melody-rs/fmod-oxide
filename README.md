@@ -4,12 +4,22 @@ Safe rust bindings to the FMOD sound engine.
 This crate tries to be as rusty and low-cost as possible, without compromising on any APIs.
 Certain APIs, such as loading banks from a pointer, are marked as unsafe, but are still available for use.
 
+Supports FMOD versions >2.0.2.28 and >2.0.3.07, and Windows/Linux/MacOS/HTML5 platforms.
+
+Any newer patch-level FMOD versions should compile but might have missing features.
+
+Most of the real world testing and development of this crate comes from one source (me) and only on a Linux system.
+Despite that, I'm trying my best to support other platforms. 
+If you can't compile/run an example on a specific platform, please file an issue!
+
 #### Currently in BETA.
 
-I'm currently developing this crate in tandem with another game, which means most of the real world testing of this crate comes from one source and only on a Windows/Linux system.
-This means that for some functions/use cases I haven't gotten the API down quite yet. (Custom Filesystems, Mix Matrices, Mac Support, etc)
-Almost all of the crate is feature complete though. 
-I need to add support for more FMOD versions, and double check the safety of everything before I'm confident releasing this as anything but a beta.
+Almost all of the crate is feature complete!
+
+There's some use cases that I'm still figuring out the exact design for, but they're mainly power user features.
+You should be able to use the raw FFI functions from `fmod-audio-sys` even if I don't have a particular API covered.
+
+I need to double check the safety of everything before I'm confident releasing this as anything but a beta.
 
 ### Using this crate
 

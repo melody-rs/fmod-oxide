@@ -48,15 +48,20 @@ pub use result::{Error, Result};
 // FMOD requires libc on pretty much every platform (even webassembly!)
 // If you're using libc you probably can use std too.
 
-pub use lanyard::*;
-
-#[doc(inline)]
-pub use fmod_sys as ffi;
-pub use fmod_sys::FMOD_RESULT;
-
 pub mod core;
+
 #[doc(inline)]
 pub use core::*;
+
+#[doc(no_inline)]
+pub use core::effects::*;
+#[doc(no_inline)]
+pub use fmod_sys as sys;
+#[doc(no_inline)]
+pub use lanyard::*;
+
+#[cfg(test)]
+mod tests;
 
 /// The FMOD Studio API.
 ///
