@@ -4,16 +4,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use std::collections::HashMap;
-
 use indexmap::{IndexMap, IndexSet};
 
 pub struct CInfo {
     pub categories: IndexSet<String>,
     pub functions: IndexMap<String, CFunction>,
-    pub enums: HashMap<String, CEnum>,
-    pub macros: HashMap<String, bool>,
-    pub structs: HashMap<String, bool>,
+    pub enums: IndexMap<String, CEnum>,
+    pub macros: IndexMap<String, bool>,
+    pub structs: IndexMap<String, bool>,
 }
 
 pub struct CFunction {
@@ -22,7 +20,7 @@ pub struct CFunction {
 }
 
 pub struct CEnum {
-    pub variants: HashMap<String, bool>,
+    pub variants: IndexMap<String, bool>,
 }
 
 pub fn collect(
@@ -37,9 +35,9 @@ pub fn collect(
 
     let mut categories = IndexSet::new();
     let mut functions = IndexMap::new();
-    let mut macros = HashMap::new();
-    let mut enums = HashMap::new();
-    let mut structs = HashMap::new();
+    let mut macros = IndexMap::new();
+    let mut enums = IndexMap::new();
+    let mut structs = IndexMap::new();
 
     let mut seen = std::collections::HashSet::new();
     for entity in entities {
