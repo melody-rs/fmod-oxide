@@ -15,6 +15,7 @@ use lanyard::{Utf8CStr, Utf8CString};
 
 use crate::{Sound, TimeUnit, get_string};
 
+/// Named marker for a given point in time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct SyncPoint {

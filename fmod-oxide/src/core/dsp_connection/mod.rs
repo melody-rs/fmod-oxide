@@ -11,6 +11,7 @@ use fmod_sys::*;
 mod general;
 mod mix_properties;
 
+/// An interface that manages Digital Signal Processor (DSP) connections
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct DspConnection {

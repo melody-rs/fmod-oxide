@@ -19,9 +19,13 @@ mod parameter_traits;
 mod parameters;
 mod processing;
 
+pub use callback::DspCallback;
 pub use data_parameters::*;
 pub use parameter_traits::*;
 
+/// A digital signal processor is one node within a graph that transforms input audio signals into an output stream.
+///
+/// Create with [`System::createDSP`], [`System::createDSPByType`] or [`System::createDSPByPlugin`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct Dsp {

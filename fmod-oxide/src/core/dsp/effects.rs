@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::{
     AttenuationRange as AttenuationRangeType, Attributes3DMulti, Dsp, DspType, DynamicResponse,
     Fft, OverallGain as OverallGainType, ReadableParameter, ReadableParameterIndex, Sidechain,

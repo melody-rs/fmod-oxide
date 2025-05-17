@@ -25,7 +25,7 @@
     clippy::pedantic,
     missing_debug_implementations,
     missing_copy_implementations,
-    //missing_docs
+    missing_docs
 )]
 #![allow(
     clippy::missing_errors_doc,
@@ -48,6 +48,7 @@ pub use result::{Error, Result};
 // FMOD requires libc on pretty much every platform (even webassembly!)
 // If you're using libc you probably can use std too.
 
+/// The low-level FMOD core API.
 pub mod core;
 
 #[doc(inline)]
@@ -69,9 +70,17 @@ mod tests;
 #[cfg(feature = "studio")]
 pub mod studio;
 
+/// Current FMOD version number.
+///
+/// The version is a 32 bit hexadecimal value formatted as 16:8:8, with the upper 16 bits being the product version,
+/// the middle 8 bits being the major version and the bottom 8 bits being the minor version.
+/// For example a value of `0x00010203` is equal to `1.02.03`.
 pub const VERSION: u32 = fmod_sys::FMOD_VERSION;
+/// Maximum number of channels per sample of audio supported by audio files, buffers, connections and [`Dsp`]s.
 pub const MAX_CHANNEL_WIDTH: u32 = fmod_sys::FMOD_MAX_CHANNEL_WIDTH;
+/// Maximum number of listeners supported.
 pub const MAX_LISTENERS: u32 = fmod_sys::FMOD_MAX_LISTENERS;
+/// Maximum number of System objects allowed.
 pub const MAX_SYSTEMS: u32 = fmod_sys::FMOD_MAX_SYSTEMS;
 
 pub(crate) fn panic_wrapper<F>(f: F) -> fmod_sys::FMOD_RESULT

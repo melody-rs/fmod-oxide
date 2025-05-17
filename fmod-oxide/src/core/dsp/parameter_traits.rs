@@ -19,8 +19,10 @@ use crate::{FmodResultExt, Result};
 ///
 /// There are hidden methods on [`Dsp`] that can help you write correct implementations for [`Sized`] types.
 pub trait ReadableParameter: Sized {
+    /// Get the parameter at `index`.
     fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self>;
 
+    /// Get the parameter string at `index`.
     // FIXME Strings are a max of FMOD_DSP_GETPARAM_VALUESTR_LENGTH so we don't need to heap allocate them
     fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<Utf8CString>;
 }
@@ -37,6 +39,7 @@ pub trait ReadableParameter: Sized {
 ///
 /// There are hidden methods on [`Dsp`] that can help you write correct implementations for [`Sized`] types.
 pub trait WritableParameter: Sized {
+    /// Set the parameter at `index`.
     fn set_parameter(self, dsp: Dsp, index: c_int) -> Result<()>;
 }
 
@@ -151,9 +154,12 @@ impl WritableParameter for c_float {
     }
 }
 
+/// Trait for types that can be turned into a *readable* parameter index.
 pub trait ReadableParameterIndex<T> {
+    /// What type of DSP this index is for.
     const TYPE: DspType;
 
+    /// Convert `self` into a DSP index.
     fn into_index(self) -> c_int;
 }
 
@@ -165,9 +171,12 @@ impl<T> ReadableParameterIndex<T> for c_int {
     }
 }
 
+/// Trait for types that can be turned into a *writable* parameter index.
 pub trait WritableParameterIndex<T> {
+    /// What type of DSP this index is for.
     const TYPE: DspType;
 
+    /// Convert `self` into a DSP index.
     fn into_index(self) -> c_int;
 }
 

@@ -12,6 +12,7 @@ mod general;
 mod polygons;
 mod spatialization;
 
+/// An interface that allows the setup and modification of geometry for occlusion.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct Geometry {

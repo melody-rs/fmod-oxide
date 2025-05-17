@@ -23,6 +23,10 @@ impl DspConnection {
         Ok(volume)
     }
 
+    /// Sets a 2 dimensional pan matrix that maps the signal from input channels (columns) to output speakers (rows).
+    ///
+    /// Matrix element values can be below 0 to invert a signal and above 1 to amplify the signal.
+    /// Note that increasing the signal level too far may cause audible distortion.
     pub fn set_mix_matrix<const IN: usize, const OUT: usize>(
         &self,
         matrix: [[f32; IN]; OUT],
@@ -49,6 +53,10 @@ impl DspConnection {
         }
     }
 
+    /// Retrieves a 2 dimensional pan matrix that maps the signal from input channels (columns) to output speakers (rows).
+    ///
+    /// Matrix element values can be below 0 to invert a signal and above 1 to amplify the signal.
+    /// Note that increasing the signal level too far may cause audible distortion.
     pub fn get_mix_matrix<const IN: usize, const OUT: usize>(
         &self,
     ) -> Result<([[f32; IN]; OUT], c_int, c_int)> {

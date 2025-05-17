@@ -60,6 +60,10 @@ impl Dsp {
         }
     }
 
+    /// Sets a parameter by index.
+    ///
+    /// The parameter must be writable and index must be a type that impls [`WritableParameterIndex<P>`].
+    /// Notably, [`c_int`] impls [`WritableParameterIndex<T>`] for any `T`.
     pub fn set_parameter<I, P>(&self, index: I, parameter: P) -> Result<()>
     where
         I: WritableParameterIndex<P>,
@@ -68,6 +72,10 @@ impl Dsp {
         parameter.set_parameter(*self, index.into_index())
     }
 
+    /// Gets a parameter by index.
+    ///
+    /// The parameter must be readable and index must be a type that impls [`ReadableParameterIndex<P>`].
+    /// Notably, [`c_int`] impls [`ReadableParameterIndex<T>`] for any `T`.
     pub fn get_parameter<I, P>(&self, index: I) -> Result<P>
     where
         I: ReadableParameterIndex<P>,
@@ -76,6 +84,10 @@ impl Dsp {
         P::get_parameter(*self, index.into_index())
     }
 
+    /// Gets a parameter by index.
+    ///
+    /// The parameter must be readable and index must be a type that impls [`ReadableParameterIndex<P>`].
+    /// Notably, [`c_int`] impls [`ReadableParameterIndex<T>`] for any `T`.
     pub fn get_parameter_string<P, I>(&self, index: I) -> Result<Utf8CString>
     where
         I: ReadableParameterIndex<P>,

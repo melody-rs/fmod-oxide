@@ -12,6 +12,7 @@ mod general;
 mod group;
 mod sound;
 
+/// An interface that manages Sound Groups.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct SoundGroup {

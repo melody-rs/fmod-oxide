@@ -26,6 +26,7 @@ pub use builder::SystemBuilder;
 pub use callback::{ErrorCallbackInfo, Instance, SystemCallback, SystemCallbackMask};
 pub use setup::RolloffCallback;
 
+/// Management object from which all resources are created and played.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct System {

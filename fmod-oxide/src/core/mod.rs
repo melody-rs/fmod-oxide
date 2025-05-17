@@ -44,9 +44,13 @@ mod reverb_presets;
 mod structs;
 pub use structs::*;
 
+/// Low level control over FMOD's debug logging.
 pub mod debug;
+/// Low level control over FMOD's filesystem access.
 pub mod file;
+/// Low level control over how FMOD allocates memory.
 pub mod memory;
+/// Low level control over FMOD's threads.
 pub mod thread;
 
 mod filesystem;

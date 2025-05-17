@@ -8,16 +8,22 @@ use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use std::ffi::{c_char, c_int, c_uint, c_void};
 
+/// How you want FMOD to handle memory.
 #[derive(PartialEq, Eq, Debug)]
 pub enum MemoryType {
+    /// Static block of memory for FMOD to manage.
     Pool(&'static mut [u8]),
+    /// Custom allocator functions.
     Callback {
+        /// Memory allocation callback compatible with ANSI malloc.
         alloc: unsafe extern "C" fn(
             size: c_uint,
             type_: FMOD_MEMORY_TYPE,
             sourcestr: *const c_char,
         ) -> *mut c_void,
+        ///  Memory reallocation callback compatible with ANSI realloc.
         realloc: FMOD_MEMORY_REALLOC_CALLBACK,
+        /// Memory free callback compatible with ANSI free.
         free: unsafe extern "C" fn(
             ptr: *mut c_void,
             type_: FMOD_MEMORY_TYPE,
@@ -27,15 +33,25 @@ pub enum MemoryType {
 }
 
 bitflags::bitflags! {
+    /// Bitfields for memory allocation type being passed into FMOD memory callbacks.
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
     pub struct MemoryFlags: FMOD_MEMORY_TYPE {
+        /// Standard memory.
       const NORMAL         = FMOD_MEMORY_NORMAL;
+      /// Stream file buffer, size controllable with [`System::setStreamBufferSize`].
       const STREAM_FILE    = FMOD_MEMORY_STREAM_FILE;
+      /// Stream decode buffer, size controllable with [`FMOD_CREATESOUNDEXINFO::decodebuffersize`].
       const STREAM_DECODE  = FMOD_MEMORY_STREAM_DECODE;
+      /// Sample data buffer. Raw audio data, usually PCM/MPEG/ADPCM/XMA data.
       const SAMPLEDATA     = FMOD_MEMORY_SAMPLEDATA;
+      /// Deprecated.
+      #[deprecated]
       const DSP_BUFFER     = FMOD_MEMORY_DSP_BUFFER;
+      /// Memory allocated by a third party plugin.
       const PLUGIN         = FMOD_MEMORY_PLUGIN;
+      /// Persistent memory. Memory will be freed when [`System::release`] is called.
       const PERSISTENT     = FMOD_MEMORY_PERSISTENT;
+      /// Mask specifying all memory types.
       const ALL            = FMOD_MEMORY_ALL;
     }
 }

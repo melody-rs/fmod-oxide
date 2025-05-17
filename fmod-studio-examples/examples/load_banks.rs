@@ -39,7 +39,7 @@ impl std::fmt::Display for LoadBankMethod {
 struct CustomFilesystem;
 
 impl fmod::FileSystem for CustomFilesystem {
-    fn open(name: &fmod::Utf8CStr, userdata: *mut c_void) -> fmod::Result<fmod::FileInfo> {
+    fn open(name: &fmod::Utf8CStr, userdata: *mut c_void) -> fmod::Result<(*mut c_void, c_uint)> {
         eprintln!("{name:?}");
         // loadBankCustom doesn't pass a name parameter by default so we have to use userdata instead
         // we made sure to include the nul in loadBankCustom so this should be ok?
@@ -55,7 +55,7 @@ impl fmod::FileSystem for CustomFilesystem {
 
         let handle = Box::into_raw(Box::new(file)).cast();
 
-        Ok(fmod::FileInfo { handle, file_size })
+        Ok((handle, file_size))
     }
 
     fn close(handle: *mut c_void, _: *mut c_void) -> fmod::Result<()> {

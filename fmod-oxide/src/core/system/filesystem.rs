@@ -23,7 +23,7 @@ impl System {
     /// Setting blockalign to 0 will disable file buffering and cause every read to invoke the relevant callback (not recommended),
     /// current default is tuned for memory usage vs performance.
     /// Be mindful of the I/O capabilities of the platform before increasing this default.
-    pub fn set_default_filesystem<F: FileSystemSync>(&self, block_align: c_int) -> Result<()> {
+    pub fn set_default_filesystem(&self, block_align: c_int) -> Result<()> {
         unsafe {
             FMOD_System_SetFileSystem(
                 self.inner.as_ptr(),
@@ -114,7 +114,8 @@ impl System {
         }
     }
 
-    pub fn dettach_filesystem<F: FileSystemSync>(&self) -> Result<()> {
+    /// Detach the currently attached listener filesystem.
+    pub fn detach_filesystem(&self) -> Result<()> {
         unsafe {
             FMOD_System_AttachFileSystem(self.inner.as_ptr(), None, None, None, None).to_result()
         }

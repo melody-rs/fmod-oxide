@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use fmod_sys::*;
 
 #[derive(Clone, PartialEq, Eq, Debug)]

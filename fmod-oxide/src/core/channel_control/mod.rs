@@ -19,6 +19,7 @@ mod spatialization;
 mod volume;
 pub use callback::{ChannelControlCallback, ChannelControlType};
 
+/// An interface that represents the shared APIs between [`Channel`] and [`ChannelGroup`].
 // FMOD's C API provides two versions of functions for channels: one that takes a `*mut FMOD_CHANNEL` and one that takes a `*mut FMOD_CHANNELGROUP`.
 // The C++ API provides a base class `ChannelControl` that `Channel` and `ChannelGroup` inherits from.
 // Seeing as we can cast from FMOD_CHANNELCONTROL to Channel* (in c++) we should be able to cast from FMOD_CHANNEL(GROUP) to FMOD_CHANNELCONTROL.

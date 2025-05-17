@@ -84,6 +84,11 @@ impl ChannelControl {
         }
     }
 
+    // TODO i don't like this const generic API
+
+    /// Sets a two-dimensional pan matrix that maps the signal from input channels (columns) to output speakers (rows).
+    ///
+    /// This will overwrite values set via [`ChannelControl::setPan`], [`ChannelControl::setMixLevelsInput`] and [`ChannelControl::setMixLevelsOutput`].
     pub fn set_mix_matrix<const IN: usize, const OUT: usize>(
         &self,
         matrix: [[f32; IN]; OUT],
@@ -98,6 +103,7 @@ impl ChannelControl {
                 "OUT must be <= FMOD_MAX_CHANNEL_WIDTH"
             );
         }
+        // TODO: matrix can be null, cover that
         unsafe {
             FMOD_ChannelControl_SetMixMatrix(
                 self.inner.as_ptr(),
@@ -110,6 +116,9 @@ impl ChannelControl {
         }
     }
 
+    /// Retrieves a 2 dimensional pan matrix that maps the signal from input channels (columns) to output speakers (rows).
+    ///
+    /// Matrix element values can be below 0 to invert a signal and above 1 to amplify the signal. Note that increasing the signal level too far may cause audible distortion.
     pub fn get_mix_matrix<const IN: usize, const OUT: usize>(
         &self,
     ) -> Result<([[f32; IN]; OUT], c_int, c_int)> {

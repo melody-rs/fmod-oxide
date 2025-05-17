@@ -11,6 +11,7 @@ use fmod_sys::*;
 use crate::{FmodResultExt, Result};
 use crate::{OpenState, Sound};
 
+/// A locked region of sound data.
 #[derive(Debug)]
 pub struct SoundLock<'a> {
     sound: Sound,
@@ -130,6 +131,7 @@ impl Sound {
     /// If FMOD frees the memory pointed to by [`SoundLock`], it's insta UB.
     ///
     /// Don't call [`FMOD_Sound_Unlock`] with the pointers from [`SoundLock`]. [`SoundLock`] will do that for you when dropped.
+    // FIXME: can this hand out multiple mutable references to the same region of data?
     pub unsafe fn lock(&self, offset: c_uint, length: c_uint) -> Result<SoundLock<'_>> {
         unsafe {
             let mut data = std::ptr::null_mut();

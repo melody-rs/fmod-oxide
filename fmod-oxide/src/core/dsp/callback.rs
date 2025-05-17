@@ -12,7 +12,11 @@ use crate::panic_wrapper;
 use super::Dsp;
 use crate::{FmodResultExt, Result};
 
+/// Trait for this particular FMOD callback.
+///
+/// No `self` parameter is passed to the callback!
 pub trait DspCallback {
+    /// Called when a DSP's data parameter can be released.
     // I'm not sure how FMOD_DSP_DATA_PARAMETER_INFO works we'll just pass the raw value
     fn data_parameter_release(dsp: Dsp, info: FMOD_DSP_DATA_PARAMETER_INFO) -> Result<()>;
 }
@@ -41,6 +45,7 @@ unsafe extern "C" fn callback_impl<C: DspCallback>(
 }
 
 impl Dsp {
+    /// Sets the callback for DSP notifications.
     pub fn set_callback<C: DspCallback>(&self) -> Result<()> {
         unsafe { FMOD_DSP_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>)).to_result() }
     }

@@ -14,26 +14,40 @@ use std::{
 use crate::{Channel, ChannelControl, ChannelGroup, panic_wrapper};
 use crate::{FmodResultExt, Result};
 
+/// Enum used to distinguish between [`Channel`] and [`ChannelGroup`] in the [`ChannelControl`] callback.
 #[derive(Debug, Clone, Copy)]
 pub enum ChannelControlType {
+    /// [`ChannelControl`] is a [`Channel`].
     Channel(Channel),
+    /// [`ChannelControl`] is a [`ChannelGroup`].
     ChannelGroup(ChannelGroup),
 }
 
+/// Trait for this particular FMOD callback.
+///
+/// No `self` parameter is passed to the callback!
 #[allow(unused_variables)]
 pub trait ChannelControlCallback {
+    /// Called when a sound ends. Supported by [`Channel`] only.
     fn end(channel_control: ChannelControlType) -> Result<()> {
         Ok(())
     }
 
+    /// Called when a [`Channel`] is made virtual or real. Supported by [`Channel`] objects only.
     fn virtual_voice(channel_control: ChannelControlType, is_virtual: bool) -> Result<()> {
         Ok(())
     }
 
+    /// Called when a syncpoint is encountered.
+    /// Can be from wav file markers or user added.
+    /// Supported by [`Channel`] only.
     fn sync_point(channel_control: ChannelControlType, sync_point: c_int) -> Result<()> {
         Ok(())
     }
 
+    /// alled when geometry occlusion values are calculated.
+    /// Can be used to clamp or change the value.
+    /// Supported by [`Channel`] and [`ChannelGroup`].
     // FIXME: is this &mut safe?
     fn occlusion(
         channel_control: ChannelControlType,
@@ -100,6 +114,7 @@ unsafe extern "C" fn callback_impl<C: ChannelControlCallback>(
 }
 
 impl ChannelControl {
+    /// Sets the callback for [`ChannelControl`] level notifications.
     pub fn set_callback<C: ChannelControlCallback>(&self) -> Result<()> {
         unsafe {
             FMOD_ChannelControl_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>))

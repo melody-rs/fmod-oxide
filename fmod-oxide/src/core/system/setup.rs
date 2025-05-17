@@ -12,7 +12,11 @@ use crate::{
 };
 use crate::{FmodResultExt, Result};
 
+/// Trait for this particular FMOD callback.
+///
+/// No `self` parameter is passed to the callback!
 pub trait RolloffCallback {
+    /// Callback to allow custom calculation of distance attenuation.
     fn rolloff(channel_control: ChannelControl, distance: c_float) -> c_float;
 }
 unsafe extern "C" fn rolloff_callback_impl<C: RolloffCallback>(

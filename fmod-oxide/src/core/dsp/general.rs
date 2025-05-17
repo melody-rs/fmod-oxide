@@ -107,11 +107,13 @@ impl Dsp {
         Ok((exclusive, inclusive))
     }
 
+    /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
         unsafe { FMOD_DSP_SetUserData(self.inner.as_ptr(), userdata).to_result() }
     }
 
+    /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {

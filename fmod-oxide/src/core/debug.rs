@@ -10,10 +10,14 @@ use lanyard::Utf8CString;
 use crate::{FmodResultExt, Result};
 use std::ffi::{c_char, c_int};
 
+/// Specify the destination of log output when using the logging version of FMOD.
 #[derive(PartialEq, Eq, Debug)]
 pub enum DebugMode {
+    /// Default log location per platform, i.e. Visual Studio output window, stderr, `LogCat`, etc.
     TTY,
+    /// Write log to specified file path.
     File(Utf8CString),
+    /// Call specified callback with log information.
     Callback(
         unsafe extern "C" fn(
             FMOD_DEBUG_FLAGS,
@@ -26,18 +30,30 @@ pub enum DebugMode {
 }
 
 bitflags::bitflags! {
+    /// Specify the requested information to be output when using the logging version of FMOD.
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
     pub struct DebugFlags: FMOD_DEBUG_FLAGS {
+        /// Disable all messages.
         const NONE = FMOD_DEBUG_LEVEL_NONE;
+        /// Enable only error messages.
         const ERROR = FMOD_DEBUG_LEVEL_ERROR;
+        /// Enable warning and error messages.
         const WARNING = FMOD_DEBUG_LEVEL_WARNING;
+        /// Enable informational, warning and error messages (default).
         const LOG = FMOD_DEBUG_LEVEL_LOG;
+        /// Verbose logging for memory operations, only use this if you are debugging a memory related issue.
         const MEMORY = FMOD_DEBUG_TYPE_MEMORY;
+        /// Verbose logging for file access, only use this if you are debugging a file related issue.
         const FILE = FMOD_DEBUG_TYPE_FILE;
+        /// Verbose logging for codec initialization, only use this if you are debugging a codec related issue.
         const CODEC = FMOD_DEBUG_TYPE_CODEC;
+        /// Verbose logging for internal errors, use this for tracking the origin of error codes.
         const TRACE = FMOD_DEBUG_TYPE_TRACE;
+        /// Display the time stamp of the log message in milliseconds.
         const DISPLAY_TIMESTAMPS = FMOD_DEBUG_DISPLAY_TIMESTAMPS;
+        /// Display the source code file and line number for where the message originated.
         const DISPLAY_LINENUMBERS = FMOD_DEBUG_DISPLAY_LINENUMBERS;
+        /// Display the thread ID of the calling function that generated the message.
         const DISPLAY_THREAD = FMOD_DEBUG_DISPLAY_THREAD;
     }
 }

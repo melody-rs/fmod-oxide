@@ -12,8 +12,11 @@ use crate::{ChannelControl, Dsp};
 use crate::{FmodResultExt, Result};
 
 impl ChannelControl {
+    /// Head of the DSP chain, closest to the output, equivalent of index 0.
     pub const DSP_HEAD: FMOD_CHANNELCONTROL_DSP_INDEX = FMOD_CHANNELCONTROL_DSP_HEAD;
+    /// Tail of the DSP chain, closest to the input, equivalent of the number of DSPs minus 1.
     pub const DSP_TAIL: FMOD_CHANNELCONTROL_DSP_INDEX = FMOD_CHANNELCONTROL_DSP_TAIL;
+    /// Built-in fader DSP.
     pub const DSP_FADER: FMOD_CHANNELCONTROL_DSP_INDEX = FMOD_CHANNELCONTROL_DSP_FADER;
 
     /// Adds a DSP unit to the specified index in the DSP chain.

@@ -3,6 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
+#![allow(missing_docs, deprecated)]
 
 use crate::{Error, FmodResultExt, Result};
 use std::ffi::{c_int, c_uint, c_void};
@@ -17,56 +18,96 @@ use crate::{
     Sound, SoundGroup, System, panic_wrapper,
 };
 
+/// Information describing an error that has occurred.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ErrorCallbackInfo<'a> {
+    /// Error code result.
     pub error: Error,
+    /// Type of instance the error occurred on.
     pub instance: Instance,
+    /// Function that the error occurred on.
     pub function_name: &'a Utf8CStr,
+    /// Function parameters that the error ocurred on.
     pub function_params: &'a Utf8CStr,
 }
 
+/// Identifier used to represent the different types of instance in the error callback.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Instance {
+    /// Type representing no known instance type.
     None,
+    /// Type representing [`System`].
     System(System),
+    /// Type representing [`Channel`].
     Channel(Channel),
     ChannelGroup(ChannelGroup),
+    /// Type representing [`ChannelControl`].
     ChannelControl(ChannelControl),
     Sound(Sound),
+    /// Type representing [`Sound`].
     SoundGroup(SoundGroup),
+    /// Type representing [`Dsp`].
     Dsp(Dsp),
+    /// Type representing [`DspConnection`].
     DspConnection(DspConnection),
+    /// Type representing [`Geometry`].
     Geometry(Geometry),
+    /// Type representing [`Reverb3D`].
     Reverb3D(Reverb3D),
+    /// Deprecated.
+    #[deprecated]
     StudioParameterInstance,
 
+    /// Type representing [`studio::System`].
     #[cfg(feature = "studio")]
     StudioSystem(studio::System),
+    /// Type representing [`studio::EventDescription`].
     #[cfg(feature = "studio")]
     StudioEventDescription(studio::EventDescription),
     #[cfg(feature = "studio")]
+    /// Type representing [`studio::EventInstance`].
     StudioEventInstance(studio::EventInstance),
     #[cfg(feature = "studio")]
+    /// Type representing [`studio::Bus`].
     StudioBus(studio::Bus),
     #[cfg(feature = "studio")]
+    /// Type representing [`studio::Vca`].
     StudioVCA(studio::Vca),
     #[cfg(feature = "studio")]
+    /// Type representing [`studio::Bank`].
     StudioBank(studio::Bank),
     #[cfg(feature = "studio")]
+    /// Type representing [`studio::CommandReplay`].
     StudioCommandReplay(studio::CommandReplay),
 
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioSystem(*mut c_void),
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioEventDescription(*mut c_void),
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioEventInstance(*mut c_void),
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioBus(*mut c_void),
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioVCA(*mut c_void),
     #[cfg(not(feature = "studio"))]
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     StudioBank(*mut c_void),
+    /// Represents a raw FMOD Studio type.
+    /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
     #[cfg(not(feature = "studio"))]
     StudioCommandReplay(*mut c_void),
 }
@@ -223,16 +264,26 @@ impl From<FMOD_SYSTEM_CALLBACK_TYPE> for SystemCallbackMask {
     }
 }
 
+/// Trait for this particular FMOD callback.
+///
+/// No `self` parameter is passed to the callback!
 #[allow(unused_variables)]
 pub trait SystemCallback {
+    /// Called from [`System::update`] when the enumerated list of devices has changed.
+    ///
+    /// Called from the main (calling) thread when set from the Core API or Studio API in synchronous mode,
+    /// and from the Studio Update Thread when in default / async mode.
     fn device_list_changed(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Deprecated.
+    #[deprecated]
     fn device_lost(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called directly when a memory allocation fails.
     fn memory_allocation_failed(
         system: System,
         file: &Utf8CStr,
@@ -242,6 +293,7 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    /// Called from the game thread when a thread is created.
     fn thread_created(
         system: System,
         handle: *mut c_void,
@@ -251,18 +303,23 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    /// Deprecated.
+    #[deprecated]
     fn bad_dsp_connection(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from the mixer thread before it starts the next block.
     fn premix(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from the mixer thread after it finishes a block.
     fn postmix(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called directly when an API function returns an error, including delayed async functions.
     fn error(
         system: System,
         error_info: ErrorCallbackInfo<'_>,
@@ -276,6 +333,7 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    /// Called from the game thread when a thread is destroyed.
     fn thread_destroyed(
         system: System,
         handle: *mut c_void,
@@ -285,22 +343,36 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    /// Called at start of [`System::update`] from the main (calling)
+    /// thread when set from the Core API or Studio API in synchronous mode,
+    /// and from the Studio Update Thread when in default / async mode.
     fn pre_update(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called at end of [`System::update`] from the main (calling)
+    /// thread when set from the Core API or Studio API in synchronous mode,
+    /// and from the Studio Update Thread when in default / async mode.
     fn post_update(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from [`System::update`] when the enumerated list of recording devices has changed.
+    /// Called from the main (calling) thread when set from the Core API or Studio API in synchronous mode,
+    /// and from the Studio Update Thread when in default / async mode.
     fn record_list_changed(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from the feeder thread after audio was consumed from the ring buffer,
+    /// but not enough to allow another mix to run.
     fn buffered_no_mix(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from [`System::update`] when an output device is re-initialized.
+    /// Called from the main (calling) thread when set from the Core API or Studio API in synchronous mode,
+    /// and from the Studio Update Thread when in default / async mode.
     fn device_reinitialize(
         system: System,
         output_type: OutputType,
@@ -310,10 +382,12 @@ pub trait SystemCallback {
         Ok(())
     }
 
+    /// Called from the mixer thread when the device output attempts to read more samples than are available in the output buffer.
     fn output_underrun(system: System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
+    /// Called from the mixer thread when the System record position changed.
     fn record_position_changed(
         system: System,
         sound: Sound,
@@ -331,6 +405,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
     command_data_2: *mut c_void,
     userdata: *mut c_void,
 ) -> FMOD_RESULT {
+    #[allow(deprecated)]
     panic_wrapper(|| {
         let system = unsafe { System::from_ffi(system) };
         let result = match callback_type {
