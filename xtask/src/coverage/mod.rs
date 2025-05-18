@@ -65,20 +65,20 @@ pub fn coverage(
         .sum::<usize>();
 
     writeln!(coverage_md, "# FMOD {product}.{major:0>2}.{minor:0>2}")?;
+    writeln!(
+        coverage_md,
+        "# Coverage: {total_covered}/{total_items} ({:.2}%)",
+        total_covered as f32 / total_items as f32 * 100.0
+    )?;
 
     writeln!(
         coverage_md,
         "Checked boxes mean that particular function/struct/enum/macro is mentioned in fmod-oxide."
     )?;
+    writeln!(coverage_md)?;
     writeln!(
         coverage_md,
         "It's a pretty decent metric for how much of FMOD this crate exposes."
-    )?;
-
-    writeln!(
-        coverage_md,
-        "Coverage: {total_covered}/{total_items} ({:.2}%)",
-        total_covered as f32 / total_items as f32 * 100.0
     )?;
 
     writeln!(coverage_md, "# Functions")?;

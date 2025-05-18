@@ -1,7 +1,8 @@
 # FMOD 2.02.40
+# Coverage: 1163/1356 (85.77%)
 Checked boxes mean that particular function/struct/enum/macro is mentioned in fmod-oxide.
+
 It's a pretty decent metric for how much of FMOD this crate exposes.
-Coverage: 1163/1356 (85.77%)
 # Functions
 ## Memory
 - [x] `FMOD_Memory_GetStats`
