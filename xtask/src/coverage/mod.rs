@@ -39,9 +39,49 @@ pub fn coverage(
 
     mark_rust_references::mark(&mut c_info, verbose)?;
 
-    let mut coverage_md = std::fs::File::create("COVERAGE.md")?;
+    let minor = c_info.fmod_version & 0xFF;
+    let major = (c_info.fmod_version >> 8) & 0xFF;
+    let product = c_info.fmod_version >> 16;
+
+    let mut coverage_md = std::fs::File::create(format!("COVERAGE.{product}.{major:0>2}.md"))?;
     let channel_filter_regex = regex::Regex::new(r"FMOD_(Channel|ChannelGroup)_(.*)$")?;
     let mut current_category = usize::MAX;
+
+    let mut total_items = c_info.functions.len() + c_info.macros.len() + c_info.structs.len();
+    total_items += c_info
+        .enums
+        .iter()
+        .map(|(_, e)| e.variants.len())
+        .sum::<usize>();
+
+    let mut total_covered = 0;
+    total_covered += c_info.functions.iter().filter(|(_, f)| f.marked).count();
+    total_covered += c_info.macros.iter().filter(|(_, m)| **m).count();
+    total_covered += c_info.structs.iter().filter(|(_, m)| **m).count();
+    total_covered += c_info
+        .enums
+        .iter()
+        .map(|(_, e)| e.variants.iter().filter(|(_, m)| **m).count())
+        .sum::<usize>();
+
+    writeln!(coverage_md, "# FMOD {product}.{major:0>2}.{minor:0>2}")?;
+
+    writeln!(
+        coverage_md,
+        "Checked boxes mean that particular function/struct/enum/macro is mentioned in fmod-oxide."
+    )?;
+    writeln!(
+        coverage_md,
+        "It's a pretty decent metric for how much of FMOD this crate exposes."
+    )?;
+
+    writeln!(
+        coverage_md,
+        "Coverage: {total_covered}/{total_items} ({:.2}%)",
+        total_covered as f32 / total_items as f32 * 100.0
+    )?;
+
+    writeln!(coverage_md, "# Functions")?;
 
     let fn_iter = c_info.functions.iter().filter(|(function, _)| {
         // check if relevant channel_control function exists, and remove it from the list
@@ -65,12 +105,12 @@ pub fn coverage(
             }
         }
         if function.marked {
-            writeln!(coverage_md, "- [x] {name}")?;
+            writeln!(coverage_md, "- [x] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗸".green());
             }
         } else {
-            writeln!(coverage_md, "- [ ] {name}")?;
+            writeln!(coverage_md, "- [ ] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗴".red())
             }
@@ -81,12 +121,12 @@ pub fn coverage(
 
     for (name, marked) in c_info.structs {
         if marked {
-            writeln!(coverage_md, "- [x] {name}")?;
+            writeln!(coverage_md, "- [x] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗸".green());
             }
         } else {
-            writeln!(coverage_md, "- [ ] {name}")?;
+            writeln!(coverage_md, "- [ ] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗴".red())
             }
@@ -99,12 +139,12 @@ pub fn coverage(
         writeln!(coverage_md, "## {name}")?;
         for (name, marked) in c_enum.variants {
             if marked {
-                writeln!(coverage_md, "- [x] {name}")?;
+                writeln!(coverage_md, "- [x] `{name}`")?;
                 if print {
                     println!("{} ({})", name.bright_white(), "🗸".green());
                 }
             } else {
-                writeln!(coverage_md, "- [ ] {name}")?;
+                writeln!(coverage_md, "- [ ] `{name}`")?;
                 if print {
                     println!("{} ({})", name.bright_white(), "🗴".red())
                 }
@@ -116,12 +156,12 @@ pub fn coverage(
 
     for (name, marked) in c_info.macros {
         if marked {
-            writeln!(coverage_md, "- [x] {name}")?;
+            writeln!(coverage_md, "- [x] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗸".green());
             }
         } else {
-            writeln!(coverage_md, "- [ ] {name}")?;
+            writeln!(coverage_md, "- [ ] `{name}`")?;
             if print {
                 println!("{} ({})", name.bright_white(), "🗴".red())
             }

@@ -12,6 +12,8 @@ pub struct CInfo {
     pub enums: IndexMap<String, CEnum>,
     pub macros: IndexMap<String, bool>,
     pub structs: IndexMap<String, bool>,
+
+    pub fmod_version: u32,
 }
 
 pub struct CFunction {
@@ -26,6 +28,8 @@ pub struct CEnum {
 const FILTER: &[&str] = &[
     // defined in the FMOD header but never used
     "FMOD_POLYGON",
+    // weird static error message
+    "FMOD_ErrorString",
 ];
 
 const PRE_MARKED: &[&str] = &[
@@ -171,6 +175,8 @@ pub fn collect(
     let mut seen: std::collections::HashSet<_> = FILTER.iter().copied().map(String::from).collect();
     let pre_marked: std::collections::HashSet<_> = PRE_MARKED.iter().copied().collect();
 
+    let mut fmod_version = None;
+
     for entity in entities {
         if let Some(name) = entity.get_name() {
             if !seen.insert(name) {
@@ -181,6 +187,13 @@ pub fn collect(
         match entity.get_kind() {
             clang::EntityKind::MacroDefinition => {
                 let name = entity.get_name().unwrap();
+                if name == "FMOD_VERSION" {
+                    let tokens = entity.get_range().unwrap().tokenize();
+
+                    let number = tokens[1].get_spelling();
+                    let digits = &number[2..]; // exclude 0x
+                    fmod_version = Some(u32::from_str_radix(digits, 16).unwrap());
+                }
                 if macro_regex.is_match(&name) {
                     if verbose {
                         println!("Found Macro: {name}");
@@ -251,5 +264,6 @@ pub fn collect(
         enums,
         macros,
         structs,
+        fmod_version: fmod_version.unwrap(),
     })
 }
