@@ -660,7 +660,7 @@ pub mod pan {
         dsp_param_impl!(Pan => struct Rolloff(FMOD_DSP_PAN_3D_ROLLOFF): RolloffType);
         dsp_param_impl!(Pan => struct MinDistance(FMOD_DSP_PAN_3D_MIN_DISTANCE): c_float);
         dsp_param_impl!(Pan => struct MaxDistance(FMOD_DSP_PAN_3D_MAX_DISTANCE): c_float);
-        dsp_param_impl!(Pan => struct ExtentMode(FMOD_DSP_PAN_3D_MIN_DISTANCE): ExtentModeType);
+        dsp_param_impl!(Pan => struct ExtentMode(FMOD_DSP_OBJECTPAN_3D_EXTENT_MODE): ExtentModeType);
         dsp_param_impl!(Pan => struct SoundSize(FMOD_DSP_PAN_3D_SOUND_SIZE): c_float);
         dsp_param_impl!(Pan => struct MinExtent(FMOD_DSP_PAN_3D_MIN_EXTENT): c_float);
         dsp_param_impl!(Pan => struct PanBlend(FMOD_DSP_PAN_3D_PAN_BLEND): c_float);

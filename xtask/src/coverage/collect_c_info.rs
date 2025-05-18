@@ -23,6 +23,8 @@ pub struct CEnum {
     pub variants: IndexMap<String, bool>,
 }
 
+const FILTER: [&str; 0] = [];
+
 pub fn collect(
     translation_unit: &clang::TranslationUnit<'_>,
     verbose: bool,
@@ -39,7 +41,8 @@ pub fn collect(
     let mut enums = IndexMap::new();
     let mut structs = IndexMap::new();
 
-    let mut seen = std::collections::HashSet::new();
+    // setup seen with an initial filter for functions we don't want to include (for any particular reason)
+    let mut seen: std::collections::HashSet<_> = FILTER.into_iter().map(String::from).collect();
     for entity in entities {
         if let Some(name) = entity.get_name() {
             if !seen.insert(name) {

@@ -153,6 +153,10 @@ Userdata isn't super commonly used anyway- it is mainly used to pass data into c
 If there was an easy way to enforce that a `T` is pointer sized and needs no `Drop` (at compile time) then I could use the approach I was going for early on in this crate and just transmute the `T` to a `*mut c_void`.
 (See [this commit](https://github.com/Speak2Erase/fmod-oxide/tree/a14876da32ce5df5b14673c118f09da6fec17544).)
 
+# Writing DSPs in Rust
+
+Currently not supported. If there's demand for it, I'll add it to the crate though!
+
 # Differences to other crates
 [libfmod](https://github.com/lebedec/libfmod) is similar to this crate, but its major difference is that it is automatically generated from the FMOD documentation instead of using handwritten bindings like this crate.
 Because it's automatically generated, it has a much faster release schedule than this crate will, but the API is closer to the C API. If you don't like my crate, it's a pretty decent alternative!

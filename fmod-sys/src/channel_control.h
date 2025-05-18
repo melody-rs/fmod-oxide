@@ -3,8 +3,8 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-#ifndef FMOD_CHANNEL_CONTROL_H
-#define FMOD_CHANNEL_CONTROL_H
+#ifndef _FMOD_CHANNEL_CONTROL_H
+#define _FMOD_CHANNEL_CONTROL_H
 
 #include <fmod.h>
 #ifndef _WIN32
