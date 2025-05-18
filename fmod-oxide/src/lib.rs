@@ -76,10 +76,17 @@ pub mod studio;
 /// the middle 8 bits being the major version and the bottom 8 bits being the minor version.
 /// For example a value of `0x00010203` is equal to `1.02.03`.
 pub const VERSION: u32 = fmod_sys::FMOD_VERSION;
+/// The FMOD build number.
+pub const BUILD_NUMBER: u32 = fmod_sys::FMOD_BUILDNUMBER;
 /// Maximum number of channels per sample of audio supported by audio files, buffers, connections and [`Dsp`]s.
 pub const MAX_CHANNEL_WIDTH: u32 = fmod_sys::FMOD_MAX_CHANNEL_WIDTH;
 /// Maximum number of listeners supported.
 pub const MAX_LISTENERS: u32 = fmod_sys::FMOD_MAX_LISTENERS;
+/// The maximum number of global reverb instances.
+///
+/// Each instance of a reverb is an instance of an [`DspType::SfxReverb`] DSP in the DSP graph.
+/// This is unrelated to the number of possible [`Reverb3D`] objects, which is unlimited.
+pub const MAX_REVERB_INSTANCES: u32 = fmod_sys::FMOD_REVERB_MAXINSTANCES;
 /// Maximum number of System objects allowed.
 pub const MAX_SYSTEMS: u32 = fmod_sys::FMOD_MAX_SYSTEMS;
 
