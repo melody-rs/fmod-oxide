@@ -14,7 +14,8 @@ use std::mem::MaybeUninit;
 // I really need to find better names for these.
 
 macro_rules! dsp_param_impl {
-    ($kind:ident =>  struct $name:ident($index:expr): $type:ty) => {
+    ($kind:ident => $( #[$attrs:meta] )* struct $name:ident($index:expr): $type:ty) => {
+        $( #[$attrs] )*
         #[derive(Debug, Clone, Copy)]
         pub struct $name;
 
@@ -727,6 +728,16 @@ pub mod param_eq {
     dsp_param_impl!(ParamEq => struct Center(FMOD_DSP_PARAMEQ_CENTER): c_float);
     dsp_param_impl!(ParamEq => struct Bandwith(FMOD_DSP_PARAMEQ_BANDWIDTH): c_float);
     dsp_param_impl!(ParamEq => struct Gain(FMOD_DSP_PARAMEQ_GAIN): c_float);
+}
+
+#[allow(deprecated)]
+pub mod pitch_shift {
+    use super::*;
+
+    dsp_param_impl!(ParamEq => struct Pitch(FMOD_DSP_PITCHSHIFT_PITCH): c_float);
+    dsp_param_impl!(ParamEq => struct FftSize(FMOD_DSP_PITCHSHIFT_FFTSIZE): c_float);
+    dsp_param_impl!(ParamEq => #[deprecated] struct Overlap(FMOD_DSP_PITCHSHIFT_OVERLAP): c_int);
+    dsp_param_impl!(ParamEq => struct MaxChannels(FMOD_DSP_PITCHSHIFT_MAXCHANNELS): c_float);
 }
 
 pub mod return_dsp {

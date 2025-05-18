@@ -1,5 +1,5 @@
 # FMOD 2.03.07
-# Coverage: 1209/1399 (86.42%)
+# Coverage: 1214/1399 (86.78%)
 Checked boxes mean that particular function/struct/enum/macro is mentioned in fmod-oxide.
 
 It's a pretty decent metric for how much of FMOD this crate exposes.
@@ -513,7 +513,7 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_OUTPUTTYPE_AUDIOTRACK`
 - [x] `FMOD_OUTPUTTYPE_OPENSL`
 - [x] `FMOD_OUTPUTTYPE_AUDIOOUT`
-- [ ] `FMOD_OUTPUTTYPE_AUDIO3D`
+- [x] `FMOD_OUTPUTTYPE_AUDIO3D`
 - [x] `FMOD_OUTPUTTYPE_WEBAUDIO`
 - [x] `FMOD_OUTPUTTYPE_NNAUDIO`
 - [x] `FMOD_OUTPUTTYPE_WINSONIC`
@@ -831,10 +831,10 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_DSP_MULTIBAND_DYNAMICS_MODE_EXPAND_UP`
 - [x] `FMOD_DSP_MULTIBAND_DYNAMICS_MODE_EXPAND_DOWN`
 ## FMOD_DSP_PITCHSHIFT
-- [ ] `FMOD_DSP_PITCHSHIFT_PITCH`
-- [ ] `FMOD_DSP_PITCHSHIFT_FFTSIZE`
-- [ ] `FMOD_DSP_PITCHSHIFT_OVERLAP`
-- [ ] `FMOD_DSP_PITCHSHIFT_MAXCHANNELS`
+- [x] `FMOD_DSP_PITCHSHIFT_PITCH`
+- [x] `FMOD_DSP_PITCHSHIFT_FFTSIZE`
+- [x] `FMOD_DSP_PITCHSHIFT_OVERLAP`
+- [x] `FMOD_DSP_PITCHSHIFT_MAXCHANNELS`
 ## FMOD_DSP_CHORUS
 - [x] `FMOD_DSP_CHORUS_MIX`
 - [x] `FMOD_DSP_CHORUS_RATE`
