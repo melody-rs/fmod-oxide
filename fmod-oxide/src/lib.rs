@@ -19,13 +19,18 @@
 //! # Feature flags
 #![doc = document_features::document_features!()]
 // Used to document cfgs (copied from https://docs.rs/winit/latest/src/winit/lib.rs.html#1-207)
-#![cfg_attr(docsrs, feature(doc_auto_cfg), doc(cfg_hide(doc, docsrs)))]
+#![cfg_attr(
+    docsrs,
+    feature(doc_auto_cfg, doc_cfg_hide),
+    doc(cfg_hide(doc, docsrs))
+)]
 #![warn(
     rust_2018_idioms,
     clippy::pedantic,
     missing_debug_implementations,
     missing_copy_implementations,
-    missing_docs
+    missing_docs,
+    rustdoc::all
 )]
 #![allow(
     clippy::missing_errors_doc,
@@ -39,6 +44,21 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![doc(html_favicon_url = "https://www.fmod.com/assets/fmod-logo.svg")]
 #![doc(html_logo_url = "https://www.fmod.com/assets/fmod-logo.svg")]
+
+/// How much of FMOD's API fmod-oxide covers.
+#[cfg(any(doc, doctest, test))]
+pub mod coverage {
+    pub mod _2_0_3 {
+        #![doc = include_str!("../../COVERAGE.2.03.md")]
+        #[allow(unused_imports)]
+        use fmod_sys::*;
+    }
+    pub mod _2_0_2 {
+        #![doc = include_str!("../../COVERAGE.2.02.md")]
+        #[allow(unused_imports)]
+        use fmod_sys::*;
+    }
+}
 
 mod result;
 pub(crate) use result::FmodResultExt;

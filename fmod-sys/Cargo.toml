@@ -1,13 +1,14 @@
 [package]
 name = "fmod-audio-sys"
 version = "0.1.0"
-edition = "2024"
-license = "MPL-2.0"
 description = "ffi bindings to FMOD and FMOD Studio"
-repository = "https://github.com/Speak2Erase/fmod-oxide"
-keywords = ["gamedev", "audio", "sound", "fmod"]
 categories = ["ffi", "api-bindings", "game-development", "multimedia::audio"]
 readme = "README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+authors.workspace = true
 
 build = "build.rs"
 

@@ -1,231 +1,200 @@
-#![allow(missing_docs)]
-
 use fmod_sys::*;
 
-#[derive(Clone, PartialEq, Eq, Debug)]
-#[derive(thiserror::Error)]
+/// An error that FMOD (or this crate) might return.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Error {
-    #[error(
-        "Tried to call a function on a data type that does not allow this type of functionality (ie calling Sound=>=>lock on a streaming sound)."
-    )]
+    /// Tried to call a function on a data type that does not allow this type of functionality (ie calling [`Sound::lock`] on a streaming sound).
     BadCommand,
-    #[error("Error trying to allocate a channel.")]
+    /// Error trying to allocate a channel.
     ChannelAlloc,
-    #[error("The specified channel has been reused to play another sound.")]
+    /// The specified channel has been reused to play another sound.
     ChannelStolen,
-    #[error("DMA Failure.  See debug output for more information.")]
+    /// DMA Failure.  See debug output for more information.
     DMA,
-    #[error(
-        "DSP connection error.  Connection possibly caused a cyclic dependency or connected dsps with incompatible buffer counts."
-    )]
+    /// DSP connection error.  Connection possibly caused a cyclic dependency or connected dsps with incompatible buffer counts.
     DspConnection,
-    #[error(
-        "DSP  code from a DSP process query callback.  Tells mixer not to call the process callback and therefore not consume CPU.  Use this to optimize the DSP graph."
-    )]
+    /// DSP  code from a DSP process query callback.  Tells mixer not to call the process callback and therefore not consume CPU.  Use this to optimize the DSP graph.
     DspDontProcess,
-    #[error(
-        "DSP Format error.  A DSP unit may have attempted to connect to this network with the wrong format, or a matrix may have been set with the wrong size if the target unit has a specified channel map."
-    )]
+    /// DSP Format error.  A DSP unit may have attempted to connect to this network with the wrong format, or a matrix may have been set with the wrong size if the target unit has a specified channel map.
     DspFormat,
-    #[error(
-        "DSP is already in the mixer's DSP network. It must be removed before being reinserted or released."
-    )]
+    /// DSP is already in the mixer's DSP network. It must be removed before being reinserted or released.
     DspInuse,
-    #[error("DSP connection error.  Couldn't find the DSP unit specified.")]
+    /// DSP connection error.  Couldn't find the DSP unit specified.
     DspNotFound,
-    #[error(
-        "DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system."
-    )]
+    /// DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system.
     DspReserved,
-    #[error(
-        "DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system."
-    )]
+    /// DSP operation error.  Cannot perform operation on this DSP as it is reserved by the system.
     DspSilence,
-    #[error("DSP operation cannot be performed on a DSP of this type.")]
+    /// DSP operation cannot be performed on a DSP of this type.
     DspType,
-    #[error("Error loading file.")]
+    /// Error loading file.
     FileBad,
-    #[error(
-        "Couldn't perform seek operation.  This is a limitation of the medium (ie netstreams) or the file format."
-    )]
+    /// Couldn't perform seek operation.  This is a limitation of the medium (ie netstreams) or the file format.
     FileCouldNotSeek,
-    #[error("Media was ejected while reading.")]
+    /// Media was ejected while reading.
     FileDiskEjected,
-    #[error("End of file unexpectedly reached while trying to read essential data (truncated?).")]
+    /// End of file unexpectedly reached while trying to read essential data (truncated?).
     FileEof,
-    #[error("End of current chunk reached while trying to read data.")]
+    /// End of current chunk reached while trying to read data.
     FileEndOfData,
-    #[error("File not found.")]
+    /// File not found.
     FileNotFound,
-    #[error("Unsupported file or audio format.")]
+    /// Unsupported file or audio format.
     Format,
-    #[error(
-        "There is a version mismatch between the FMOD header and either the FMOD Studio library or the FMOD Low Level library."
-    )]
+    /// There is a version mismatch between the FMOD header and either the FMOD Studio library or the FMOD Low Level library.
     HeaderMismatch,
-    #[error("A HTTP error occurred. This is a catch-all for HTTP errors not listed elsewhere.")]
+    /// A HTTP error occurred. This is a catch-all for HTTP errors not listed elsewhere.
     Http,
-    #[error("The specified resource requires authentication or is forbidden.")]
+    /// The specified resource requires authentication or is forbidden.
     HttpAccess,
-    #[error("Proxy authentication is required to access the specified resource.")]
+    /// Proxy authentication is required to access the specified resource.
     HttpProxyAuth,
-    #[error("A HTTP server error occurred.")]
+    /// A HTTP server error occurred.
     HttpServerError,
-    #[error("The HTTP request timed out.")]
+    /// The HTTP request timed out.
     HttpTimeout,
-    #[error("FMOD was not initialized correctly to support this function.")]
+    /// FMOD was not initialized correctly to support this function.
     Initialization,
-    #[error("Cannot call this command after System::init.")]
+    /// Cannot call this command after [`System::init`].
     Initialized,
-    #[error(
-        "An error occured in the FMOD system. Use the logging version of FMOD for more information."
-    )]
+    /// An error occured in the FMOD system. Use the logging version of FMOD for more information.
     Internal,
-    #[error("Value passed in was a NaN, Inf or denormalized float.")]
+    /// Value passed in was a NaN, Inf or denormalized float.
     InvalidFloat,
-    #[error("An invalid object handle was used.")]
+    /// An invalid object handle was used.
     InvalidHandle,
-    #[error("An invalid parameter was passed to this function.")]
+    /// An invalid parameter was passed to this function.
     InvalidParam,
-    #[error("An invalid seek position was passed to this function.")]
+    /// An invalid seek position was passed to this function.
     InvalidPosition,
-    #[error("An invalid speaker was passed to this function based on the current speaker mode.")]
+    /// An invalid speaker was passed to this function based on the current speaker mode.
     InvalidSpeaker,
-    #[error("The syncpoint did not come from this sound handle.")]
+    /// The syncpoint did not come from this sound handle.
     InvalidSyncPoint,
-    #[error("Tried to call a function on a thread that is not supported.")]
+    /// Tried to call a function on a thread that is not supported.
     InvalidThread,
-    #[error("The vectors passed in are not unit length, or perpendicular.")]
+    /// The vectors passed in are not unit length, or perpendicular.
     InvalidVector,
-    #[error("Reached maximum audible playback count for this sound's soundgroup.")]
+    /// Reached maximum audible playback count for this sound's soundgroup.
     MaxAudible,
-    #[error("Not enough memory or resources.")]
+    /// Not enough memory or resources.
     Memory,
-    #[error(
-        "Can't use FMOD_OPENMEMORY_POINT on non PCM source data, or non mp3/xma/adpcm data if FMOD_CREATECOMPRESSEDSAMPLE was used."
-    )]
+    /// Can't use [`FMOD_OPENMEMORY_POINT`] on non PCM source data, or non mp3/xma/adpcm data if [`FMOD_CREATECOMPRESSEDSAMPLE`] was used.
     MemoryCantPoint,
-    #[error("Tried to call a command on a 2d sound when the command was meant for 3d sound.")]
+    /// Tried to call a command on a 2d sound when the command was meant for 3d sound.
     Needs3D,
-    #[error("Tried to use a feature that requires hardware support.")]
+    /// Tried to use a feature that requires hardware support.
     NeedsHardWare,
-    #[error("Couldn't connect to the specified host.")]
+    /// Couldn't connect to the specified host.
     NetConnect,
-    #[error(
-        "A socket error occurred.  This is a catch-all for socket-related errors not listed elsewhere."
-    )]
+    /// A socket error occurred.  This is a catch-all for socket-related errors not listed elsewhere.
     NetSocketError,
-    #[error("The specified URL couldn't be resolved.")]
+    /// The specified URL couldn't be resolved.
     NetUrl,
-    #[error("The specified URL couldn't be resolved.")]
+    /// The specified URL couldn't be resolved.
     NetWouldBlock,
-    #[error(
-        "Operation could not be performed because specified sound/DSP connection is not ready."
-    )]
+    /// Operation could not be performed because specified sound/DSP connection is not ready.
     NotReady,
-    #[error(
-        "Error initializing output device, but more specifically, the output device is already in use and cannot be reused."
-    )]
+    /// Error initializing output device, but more specifically, the output device is already in use and cannot be reused.
     OutputAllocated,
-    #[error("Error creating hardware sound buffer.")]
+    /// Error creating hardware sound buffer.
     OutputCreateBuffer,
-    #[error(
-        "A call to a standard soundcard driver failed, which could possibly mean a bug in the driver or resources were missing or exhausted."
-    )]
+    /// A call to a standard soundcard driver failed, which could possibly mean a bug in the driver or resources were missing or exhausted.
     OuputDriverCall,
-    #[error("Soundcard does not support the specified format.")]
+    /// Soundcard does not support the specified format.
     OutputFormat,
-    #[error("Error initializing output device.")]
+    /// Error initializing output device.
     OutputInit,
-    #[error(
-        "The output device has no drivers installed.  If pre-init, FMOD_OUTPUT_NOSOUND is selected as the output mode.  If post-init, the function just fails."
-    )]
+    /// The output device has no drivers installed.  If pre-init, [`FMOD_OUTPUT_NOSOUND`] is selected as the output mode.  If post-init, the function just fails.
     OutputNoDrivers,
-    #[error("An unspecified error has been returned from a plugin.")]
+    /// An unspecified error has been returned from a plugin.
     Plugin,
-    #[error("A requested output, dsp unit type or codec was not available.")]
+    /// A requested output, dsp unit type or codec was not available.
     PluginMissing,
-    #[error(
-        "A resource that the plugin requires cannot be allocated or found. (ie the DLS file for MIDI playback)"
-    )]
+    /// A resource that the plugin requires cannot be allocated or found. (ie the DLS file for MIDI playback)
     PluginResource,
-    #[error("A plugin was built with an unsupported SDK version.")]
+    /// A plugin was built with an unsupported SDK version.
     PluginVersion,
-    #[error("An error occurred trying to initialize the recording device.")]
+    /// An error occurred trying to initialize the recording device.
     Record,
-    #[error(
-        "Reverb properties cannot be set on this channel because a parent channelgroup owns the reverb connection."
-    )]
+    /// Reverb properties cannot be set on this channel because a parent channelgroup owns the reverb connection.
     ReverbChannelGroup,
-    #[error(
-        "Specified instance in FMOD_REVERB_PROPERTIES couldn't be set. Most likely because it is an invalid instance number or the reverb doesn't exist."
-    )]
+    /// Specified instance in [`FMOD_REVERB_PROPERTIES`] couldn't be set. Most likely because it is an invalid instance number or the reverb doesn't exist.
     ReverbInstance,
-    #[error(
-        "The error occurred because the sound referenced contains subsounds when it shouldn't have, or it doesn't contain subsounds when it should have.  The operation may also not be able to be performed on a parent sound."
-    )]
+    /// The error occurred because the sound referenced contains subsounds when it shouldn't have, or it doesn't contain subsounds when it should have.  The operation may also not be able to be performed on a parent sound.
     Subsounds,
-    #[error(
-        "This subsound is already being used by another sound, you cannot have more than one parent to a sound.  Null out the other parent's entry first."
-    )]
+    /// This subsound is already being used by another sound, you cannot have more than one parent to a sound.  Null out the other parent's entry first.
     SubsoundAllocated,
-    #[error(
-        "Shared subsounds cannot be replaced or moved from their parent stream, such as when the parent stream is an FSB file."
-    )]
+    /// Shared subsounds cannot be replaced or moved from their parent stream, such as when the parent stream is an FSB file.
     SubsoundCantMove,
-    #[error("The specified tag could not be found or there are no tags.")]
+    /// The specified tag could not be found or there are no tags.
     TagNotFound,
-    #[error(
-        "The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in System::setSoftwareFormat."
-    )]
+    /// The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in [`System::setSoftwareFormat`].
     TooManyChannels,
-    #[error(
-        "The retrieved string is too long to fit in the supplied buffer and has been truncated."
-    )]
+    /// The retrieved string is too long to fit in the supplied buffer and has been truncated.
     Truncated,
-    #[error("Something in FMOD hasn't been implemented when it should be. Contact support.")]
+    /// Something in FMOD hasn't been implemented when it should be. Contact support.
     Unimplemented,
-    #[error("This command failed because System::init or System::setDriver was not called.")]
+    /// This command failed because [`System::init`] or [`System::setDriver`] was not called.
     Uninitialized,
-    #[error(
-        "A command issued was not supported by this object.  Possibly a plugin without certain callbacks specified."
-    )]
+    /// A command issued was not supported by this object.  Possibly a plugin without certain callbacks specified.
     Unsupported,
-    #[error("The version number of this file format is not supported.")]
+    /// The version number of this file format is not supported.
     Version,
-    #[error("The specified bank has already been loaded.")]
+    /// The specified bank has already been loaded.
     EventAlreadyLoaded,
-    #[error("The live update connection failed due to the game already being connected.")]
+    /// The live update connection failed due to the game already being connected.
     EventLiveUpdateBusy,
-    #[error(
-        "The live update connection failed due to the game data being out of sync with the tool."
-    )]
+    /// The live update connection failed due to the game data being out of sync with the tool.
     EventLiveUpdateMismatch,
-    #[error("The live update connection timed out.")]
+    /// The live update connection timed out.
     EventLiveUpdateTimeout,
-    #[error("The requested event, parameter, bus or vca could not be found.")]
+    /// The requested event, parameter, bus or vca could not be found.
     EventNotFound,
-    #[error("The Studio::System object is not yet initialized.")]
+    /// The [`Studio::System`] object is not yet initialized.
     StudioUninitialized,
-    #[error("The specified resource is not loaded, so it can't be unloaded.")]
+    /// The specified resource is not loaded, so it can't be unloaded.
     StudioNotLoaded,
-    #[error("An invalid string was passed to this function.")]
+    /// An invalid string was passed to this function.
     InvalidString,
-    #[error("The specified resource is already locked.")]
+    /// The specified resource is already locked.
     AlreadyLocked,
-    #[error("The specified resource is not locked, so it can't be unlocked.")]
+    /// The specified resource is not locked, so it can't be unlocked.
     NotLocked,
-    #[error("The specified recording driver has been disconnected.")]
+    /// The specified recording driver has been disconnected.
     RecordDisconnected,
-    #[error("The length provided exceeds the allowable limit.")]
+    /// The length provided exceeds the allowable limit.
     TooManySamples,
 
-    #[error(transparent)]
-    NulError(#[from] std::ffi::NulError),
-    #[error("No discriminant in enum `{name}` matches the value `{primitive:?}")]
-    EnumFromPrivitive { name: &'static str, primitive: i64 },
+    /// Failed to turn a number into an enum value
+    ///
+    /// This error does not come from FMOD, and instead comes from this crate.
+    /// If this error is ever returned from this crate, please file an issue!
+    EnumFromPrivitive {
+        /// The enum name
+        name: &'static str,
+        /// The invalid number
+        primitive: i64,
+    },
 }
 
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Error::EnumFromPrivitive { name, primitive } => f.write_fmt(format_args!(
+                "No discriminant in enum `{name}` matches the value `{primitive:?}. If you got this error from an FMOD function, please file an issue!"
+            )),
+            error => {
+                let fmod_result = (*error).into();
+                f.write_str(fmod_sys::error_code_to_str(fmod_result))
+            }
+        }
+    }
+}
+
+impl std::error::Error for Error {}
+
+/// Shorthand for [`std::result::Result<T, Error>`]
 pub type Result<T> = std::result::Result<T, Error>;
 
 impl From<FMOD_RESULT> for Error {
@@ -330,6 +299,7 @@ where
     }
 }
 
+#[allow(clippy::match_same_arms)]
 impl From<Error> for FMOD_RESULT {
     fn from(val: Error) -> Self {
         match val {
@@ -414,9 +384,8 @@ impl From<Error> for FMOD_RESULT {
             Error::NotLocked => FMOD_RESULT::FMOD_ERR_NOT_LOCKED,
             Error::RecordDisconnected => FMOD_RESULT::FMOD_ERR_RECORD_DISCONNECTED,
             Error::TooManySamples => FMOD_RESULT::FMOD_ERR_TOOMANYSAMPLES,
-            Error::NulError(_) | Error::EnumFromPrivitive { .. } => {
-                FMOD_RESULT::FMOD_ERR_INVALID_PARAM
-            }
+            // we want this logically separated
+            Error::EnumFromPrivitive { .. } => FMOD_RESULT::FMOD_ERR_INVALID_PARAM,
         }
     }
 }

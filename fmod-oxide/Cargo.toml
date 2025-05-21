@@ -1,13 +1,13 @@
 [package]
 name = "fmod-oxide"
 version = "0.1.0"
-edition = "2024"
-license = "MPL-2.0"
 description = "Zero cost bindings to FMOD and FMOD Studio"
-repository = "https://github.com/Speak2Erase/fmod-oxide"
-keywords = ["gamedev", "audio", "sound", "fmod"]
-categories = ["api-bindings", "game-development", "multimedia::audio"]
 readme = "../README.md"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+authors.workspace = true
 
 build = "build.rs"
 
@@ -23,7 +23,6 @@ lanyard = { version = "0.1.0", path = "../lanyard/" }
 num_enum = "0.7.2"
 
 document-features = "0.2"
-bytemuck = { version = "1.23.0", features = ["extern_crate_alloc"] }
 
 thiserror = "2.0.12"
 

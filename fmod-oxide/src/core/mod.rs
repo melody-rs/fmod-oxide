@@ -44,6 +44,9 @@ mod reverb_presets;
 mod structs;
 pub use structs::*;
 
+mod sound_builder;
+pub use sound_builder::*;
+
 /// Low level control over FMOD's debug logging.
 pub mod debug;
 /// Low level control over FMOD's filesystem access.

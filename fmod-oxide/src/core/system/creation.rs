@@ -113,7 +113,7 @@ impl System {
         }
     }
 
-    ///Create a DSP object given a built in type index.
+    /// Create a DSP object given a built in type index.
     ///
     /// A DSP object is a module that can be inserted into the mixing graph to allow sound filtering or sound generation. See the DSP architecture guide for more information.
     ///

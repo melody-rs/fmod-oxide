@@ -23,6 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 continue;
             };
 
+            #[allow(clippy::single_match)]
             match character {
                 'q' => break 'main_loop,
                 _ => {}

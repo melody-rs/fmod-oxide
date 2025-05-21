@@ -4,6 +4,7 @@ version = "1.0.0"
 edition = "2024"
 publish = false
 
+
 [dependencies]
 crossterm = "0.29.0"
 fmod-oxide = { version = "0.1.0", path = "../fmod-oxide/" }

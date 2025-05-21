@@ -348,7 +348,7 @@ pub enum TagType {
     User = FMOD_TAGTYPE_USER,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 // stupid enum repr hack
 #[cfg_attr(target_env = "msvc", repr(i32))]
 #[cfg_attr(not(target_env = "msvc"), repr(u32))]

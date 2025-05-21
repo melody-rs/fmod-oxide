@@ -193,7 +193,10 @@ pub mod convolution_reverb {
             data[0] = channels as _;
 
             unsafe {
-                sound.read_data(bytemuck::cast_slice_mut(&mut data[1..]))?;
+                // align_of<c_short> should always be > align_of<u8> so we dont have to check if this is aligned
+                // align_to_mut is more of a convenience here because i didn't want to pull in bytemuck just for this
+                let (_, subslice, _) = data[1..].align_to_mut::<u8>();
+                sound.read_data(subslice)?;
             }
 
             let data = data.into_boxed_slice();
@@ -220,9 +223,15 @@ pub mod convolution_reverb {
                 return Err(Error::InvalidParam);
             }
 
-            let raw_data = unsafe { dsp.get_raw_parameter_data_slice(index) }?.to_vec();
-            let data: Box<[c_short]> = bytemuck::cast_vec(raw_data).into_boxed_slice();
-            Ok(unsafe { std::mem::transmute::<Box<[i16]>, Box<ImpulseResponse>>(data) })
+            let raw_data = unsafe { dsp.get_raw_parameter_data_slice(index) }?;
+            // align_to is more of a convenience here because i didn't want to pull in bytemuck just for this
+            let (left, data, right) = unsafe { raw_data.align_to::<c_short>() };
+            // because we're going from [u8] -> [c_short] the slice might not be aligned.
+            // align_to handles that for us
+            assert_eq!(left.len(), 0, "Impluse response data was not aligned");
+            assert_eq!(right.len(), 0, "Impluse response data was not aligned");
+            let data = data.to_vec().into_boxed_slice();
+            Ok(unsafe { std::mem::transmute::<Box<[c_short]>, Box<ImpulseResponse>>(data) })
         }
 
         fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {

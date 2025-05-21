@@ -46,7 +46,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
     match result {
         FMOD_RESULT::FMOD_OK => "No errors.",
         FMOD_RESULT::FMOD_ERR_BADCOMMAND => {
-            "Tried to call a function on a data type that does not allow this type of functionality (ie calling Sound=>=>lock on a streaming sound)."
+            "Tried to call a function on a data type that does not allow this type of functionality (ie calling Sound::lock on a streaming sound)."
         }
         FMOD_RESULT::FMOD_ERR_CHANNEL_ALLOC => "Error trying to allocate a channel.",
         FMOD_RESULT::FMOD_ERR_CHANNEL_STOLEN => {
@@ -199,7 +199,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
             "The specified tag could not be found or there are no tags."
         }
         FMOD_RESULT::FMOD_ERR_TOOMANYCHANNELS => {
-            "The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in System=>=>setSoftwareFormat."
+            "The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in System::setSoftwareFormat."
         }
         FMOD_RESULT::FMOD_ERR_TRUNCATED => {
             "The retrieved string is too long to fit in the supplied buffer and has been truncated."
@@ -208,7 +208,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
             "Something in FMOD hasn't been implemented when it should be. Contact support."
         }
         FMOD_RESULT::FMOD_ERR_UNINITIALIZED => {
-            "This command failed because System=>=>init or System=>=>setDriver was not called."
+            "This command failed because System::init or System::setDriver was not called."
         }
         FMOD_RESULT::FMOD_ERR_UNSUPPORTED => {
             "A command issued was not supported by this object.  Possibly a plugin without certain callbacks specified."
@@ -226,7 +226,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
             "The requested event, parameter, bus or vca could not be found."
         }
         FMOD_RESULT::FMOD_ERR_STUDIO_UNINITIALIZED => {
-            "The Studio=>=>System object is not yet initialized."
+            "The Studio::System object is not yet initialized."
         }
         FMOD_RESULT::FMOD_ERR_STUDIO_NOT_LOADED => {
             "The specified resource is not loaded, so it can't be unloaded."

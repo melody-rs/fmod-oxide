@@ -2,7 +2,7 @@
 name = "fmod-examples"
 version = "1.0.0"
 edition = "2024"
-publish = true
+publish = false
 
 [dependencies]
 crossterm = "0.29.0"

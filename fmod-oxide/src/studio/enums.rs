@@ -10,7 +10,7 @@ use lanyard::Utf8CString;
 use std::ffi::{c_float, c_int};
 
 /// Loading state of various objects.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 // stupid enum repr hack
 #[cfg_attr(target_env = "msvc", repr(i32))]
 #[cfg_attr(not(target_env = "msvc"), repr(u32))]
