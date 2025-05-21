@@ -3,7 +3,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-#![allow(missing_docs)]
 
 use std::{
     ffi::{c_float, c_int, c_short, c_uchar, c_uint, c_ushort},
@@ -17,17 +16,23 @@ use lanyard::{Utf8CStr, Utf8CString};
 use super::{FloatMappingType, Resampler, Speaker};
 use crate::{DspParameterDataType, TagType, string_from_utf16_be, string_from_utf16_le};
 
+/// Structure describing a globally unique identifier.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 // force this type to have the exact same layout as FMOD_STUDIO_PARAMETER_ID so we can safely transmute between them.
 #[repr(C)]
 pub struct Guid {
+    /// Specifies the first 8 hexadecimal digits of the GUID.
     pub data_1: c_uint,
+    /// Specifies the first group of 4 hexadecimal digits.
     pub data_2: c_ushort,
+    /// Specifies the second group of 4 hexadecimal digits.
     pub data_3: c_ushort,
+    /// Specifies the second group of 4 hexadecimal digits.
     pub data_4: [c_uchar; 8],
 }
 
 impl Guid {
+    /// Parse a GUID from a string.
     #[cfg(feature = "studio")]
     pub fn parse(string: &Utf8CStr) -> Result<Self> {
         let mut guid = MaybeUninit::uninit();
@@ -79,11 +84,19 @@ impl std::fmt::Display for Guid {
     }
 }
 
+/// Structure describing a point in 3D space.
+///
+/// FMOD uses a left handed coordinate system by default.
+///
+/// To use a right handed coordinate system specify [`FMOD_INIT_3D_RIGHTHANDED`] from [`FMOD_INITFLAGS`] in [`System::init`].
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 #[repr(C)]
 pub struct Vector {
+    /// X coordinate in 3D space.
     pub x: c_float,
+    /// Y coordinate in 3D space.
     pub y: c_float,
+    /// Z coordinate in 3D space.
     pub z: c_float,
 }
 
@@ -107,12 +120,17 @@ impl From<FMOD_VECTOR> for Vector {
     }
 }
 
+/// Structure describing a position, velocity and orientation.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 #[repr(C)]
 pub struct Attributes3D {
+    /// Position in world space used for panning and attenuation.
     pub position: Vector,
+    /// Velocity in world space used for doppler.
     pub velocity: Vector,
+    /// Forwards orientation, must be of unit length (1.0) and perpendicular to up.
     pub forward: Vector,
+    /// Upwards orientation, must be of unit length (1.0) and perpendicular to forward.
     pub up: Vector,
 }
 
@@ -138,13 +156,30 @@ impl From<Attributes3D> for FMOD_3D_ATTRIBUTES {
     }
 }
 
+/// Performance information for Core API functionality.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 pub struct CpuUsage {
+    /// DSP mixing engine CPU usage.
+    ///
+    /// Percentage of [`FMOD_THREAD_TYPE_MIXER`], or main thread if [`FMOD_INIT_MIX_FROM_UPDATE`] flag is used with [`System::init`].
     pub dsp: c_float,
+    /// Streaming engine CPU usage.
+    ///
+    /// Percentage of [`FMOD_THREAD_TYPE_STREAM`], or main thread if [`FMOD_INIT_STREAM_FROM_UPDATE`] flag is used with [`System::init`].
     pub stream: c_float,
+    /// Geometry engine CPU usage.
+    ///
+    /// Percentage of [`FMOD_THREAD_TYPE_GEOMETRY`].
     pub geometry: c_float,
+    /// [`System::update`] CPU usage. Percentage of main thread.
     pub update: c_float,
+    /// Convolution reverb processing thread #1 CPU usage.
+    ///
+    /// Percentage of [`FMOD_THREAD_TYPE_CONVOLUTION1`].
     pub convolution_1: c_float,
+    /// Convolution reverb processing thread #2 CPU usage.
+    ///
+    /// Percentage of [`FMOD_THREAD_TYPE_CONVOLUTION2`].
     pub convolution_2: c_float,
 }
 
@@ -174,20 +209,33 @@ impl From<CpuUsage> for FMOD_CPU_USAGE {
     }
 }
 
+/// Structure defining a reverb environment.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 #[repr(C)]
 pub struct ReverbProperties {
+    /// Reverberation decay time.
     pub decay_time: c_float,
+    /// Initial reflection delay time.
     pub early_delay: c_float,
+    /// Late reverberation delay time relative to initial reflection.
     pub late_delay: c_float,
+    /// Reference high frequency.
     pub hf_reference: c_float,
+    /// High-frequency to mid-frequency decay time ratio.
     pub hf_decay_ratio: c_float,
+    /// Value that controls the echo density in the late reverberation decay.
     pub diffusion: c_float,
+    /// Value that controls the modal density in the late reverberation decay.
     pub density: c_float,
+    /// Reference low frequency
     pub low_shelf_frequency: c_float,
+    /// Relative room effect level at low frequencies.
     pub low_shelf_gain: c_float,
+    /// Relative room effect level at high frequencies.
     pub high_cut: c_float,
+    /// Early reflections level relative to room effect.
     pub early_late_mix: c_float,
+    /// Room effect level at mid frequencies.
     pub wet_level: c_float,
 }
 
@@ -229,48 +277,121 @@ impl From<ReverbProperties> for FMOD_REVERB_PROPERTIES {
     }
 }
 
+/// Base structure for DSP parameter descriptions.
 #[derive(Debug)]
 pub struct DspParameterDescription {
+    /// Parameter type.
     pub kind: DspParameterType,
+    /// Parameter name.
     pub name: Utf8CString,
+    /// Parameter label.
     pub label: Utf8CString,
+    /// Parameter description.
     pub description: Utf8CString,
 }
 
+/// DSP parameter types.
 #[derive(Clone, Debug, PartialEq)]
 pub enum DspParameterType {
+    /// Float parameter description.
     Float {
+        /// Minimum value.
         min: f32,
+        /// Maximum value.
         max: f32,
+        /// Default value.
         default: f32,
+        /// How the values are distributed across dials and automation curves.
         mapping: FloatMapping,
     },
+    /// Integer parameter description.
     Int {
+        /// Minimum value.
         min: i32,
+        /// Maximum value.
         max: i32,
+        /// Default value.
         default: i32,
+        /// Whether the last value represents infinity.
         goes_to_infinity: bool,
+        /// Names for each value (UTF-8 string).
+        ///
+        /// There should be as many strings as there are possible values (max - min + 1).
         names: Option<Vec<Utf8CString>>,
     },
+    /// Boolean parameter description.
     Bool {
+        /// Default parameter value.
         default: bool,
+        /// Names for false and true, respectively (UTF-8 string).
         names: Option<[Utf8CString; 2]>,
     },
+    /// Data parameter description.
     Data {
+        /// Type of data.
         data_type: DspParameterDataType,
     },
 }
 
+/// Structure to define a mapping for a DSP unit's float parameter.
 #[derive(Clone, Debug, PartialEq)]
 pub struct FloatMapping {
+    /// Float mapping type.
     pub kind: FloatMappingType,
+    /// Piecewise linear mapping type.
     pub piecewise_linear_mapping: Option<PiecewiseLinearMapping>,
 }
 
+/// Structure to define a piecewise linear mapping.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PiecewiseLinearMapping {
+    /// Values in the parameter's units for each point .
     pub point_param_values: Vec<c_float>,
-    pub point_positions: Vec<c_float>,
+    /// Positions along the control's scale (e.g. dial angle) corresponding to each parameter value.
+    ///
+    /// The range of this scale is arbitrary and all positions will be relative to the minimum and maximum values
+    /// (e.g. [0,1,3] is equivalent to [1,2,4] and [2,4,8]).
+    ///
+    /// If this array is `None`, `point_param_values` will be distributed with equal spacing.
+    pub point_positions: Option<Vec<c_float>>,
+}
+
+impl FloatMapping {
+    unsafe fn from_ffi(value: FMOD_DSP_PARAMETER_FLOAT_MAPPING) -> Self {
+        let kind = value.type_.try_into().unwrap();
+
+        let piecewise_linear_mapping = if kind == FloatMappingType::PiecewiceLinear {
+            let point_param_values = unsafe {
+                std::slice::from_raw_parts(
+                    value.piecewiselinearmapping.pointparamvalues,
+                    value.piecewiselinearmapping.numpoints as _,
+                )
+                .to_vec()
+            };
+            let point_positions = if value.piecewiselinearmapping.pointpositions.is_null() {
+                None
+            } else {
+                Some(unsafe {
+                    std::slice::from_raw_parts(
+                        value.piecewiselinearmapping.pointpositions,
+                        value.piecewiselinearmapping.numpoints as _,
+                    )
+                    .to_vec()
+                })
+            };
+            Some(PiecewiseLinearMapping {
+                point_param_values,
+                point_positions,
+            })
+        } else {
+            None
+        };
+
+        Self {
+            kind,
+            piecewise_linear_mapping,
+        }
+    }
 }
 
 impl DspParameterDescription {
@@ -295,39 +416,13 @@ impl DspParameterDescription {
         let kind = match value.type_ {
             FMOD_DSP_PARAMETER_TYPE_FLOAT => {
                 let floatdesc = unsafe { value.__bindgen_anon_1.floatdesc };
-                let kind = floatdesc.mapping.type_.try_into().unwrap();
-
-                let piecewise_linear_mapping = if kind == FloatMappingType::PiecewiceLinear {
-                    let point_param_values = unsafe {
-                        std::slice::from_raw_parts(
-                            floatdesc.mapping.piecewiselinearmapping.pointparamvalues,
-                            floatdesc.mapping.piecewiselinearmapping.numpoints as _,
-                        )
-                        .to_vec()
-                    };
-                    let point_positions = unsafe {
-                        std::slice::from_raw_parts(
-                            floatdesc.mapping.piecewiselinearmapping.pointpositions,
-                            floatdesc.mapping.piecewiselinearmapping.numpoints as _,
-                        )
-                        .to_vec()
-                    };
-                    Some(PiecewiseLinearMapping {
-                        point_param_values,
-                        point_positions,
-                    })
-                } else {
-                    None
-                };
+                let mapping = unsafe { FloatMapping::from_ffi(floatdesc.mapping) };
 
                 DspParameterType::Float {
                     min: floatdesc.min,
                     max: floatdesc.max,
                     default: floatdesc.defaultval,
-                    mapping: FloatMapping {
-                        kind,
-                        piecewise_linear_mapping,
-                    },
+                    mapping,
                 }
             }
             FMOD_DSP_PARAMETER_TYPE_INT => {
@@ -394,11 +489,16 @@ impl DspParameterDescription {
     // No FFI conversion is provided because we don't support writing dsps in rust yet
 }
 
+/// DSP metering info.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DspMeteringInfo {
+    /// Number of samples considered for this metering info.
     pub sample_count: c_int,
+    /// Peak level per channel.
     pub peak_level: [c_float; 32],
+    /// Rms level per channel.
     pub rms_level: [c_float; 32],
+    /// Number of channels.
     pub channel_count: c_short,
 }
 
@@ -424,23 +524,36 @@ impl From<DspMeteringInfo> for FMOD_DSP_METERING_INFO {
     }
 }
 
+/// Tag data / metadata description.
 #[derive(Debug)]
 pub struct Tag {
+    /// Tag type.
     pub kind: TagType,
+    /// Name.
     pub name: Utf8CString,
+    /// Tag data type.
     pub data: TagData,
+    /// True if this tag has been updated since last being accessed with [`Sound::getTag`]
     pub updated: bool,
 }
 
+/// List of tag data / metadata types.
 #[derive(Debug)]
 // FIXME: these strings are most likely null-terminated
 pub enum TagData {
+    /// Raw binary data.
     Binary(Vec<u8>),
+    /// Integer.
     Integer(i64),
+    /// IEEE floating point number.
     Float(f64),
+    /// 8bit ASCII char string.
     String(String),
+    /// 8 bit UTF string.
     Utf8String(String),
+    /// 16bit UTF string Big endian byte order.
     Utf16StringBE(String),
+    /// 16bit UTF string. Assume little endian byte order.
     Utf16String(String),
 }
 
@@ -520,14 +633,25 @@ impl Tag {
     }
 }
 
+/// Advanced configuration settings.
+///
+/// Structure to allow configuration of lesser used system level settings.
+/// These tweaks generally allow the user to set resource limits and customize settings to better fit their application.
 #[derive(Debug, Default)]
 pub struct AdvancedSettings {
+    /// Maximum MPEG Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_mpeg_codecs: c_int,
+    /// Maximum IMA-ADPCM Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_adpcm_codecs: c_int,
+    /// Maximum XMA Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_xma_codecs: c_int,
+    /// Maximum Vorbis Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_vorbis_codecs: c_int,
+    /// Maximum AT9 Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_at9_codecs: c_int,
+    /// Maximum FADPCM Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_fadpcm_codecs: c_int,
+    /// Maximum Opus Sounds created as [`FMOD_CREATECOMPRESSEDSAMPLE`].
     pub max_opus_codecs: c_int,
     #[cfg(fmod_lt_2_3)]
     pub max_pcm_codecs: c_int,
@@ -537,19 +661,55 @@ pub struct AdvancedSettings {
     // This is also not used when calling `SetAdvancedSettings` so we don't need to worry about asio_speaker_list matching the same length.
     // I *think*.
     // Should this be an enum?
+    /// Read only list of strings representing ASIO channel names (UTF-8 string).
     pub asio_channel_list: Option<Vec<Utf8CString>>,
+    /// List of speakers that represent each ASIO channel used for remapping.
+    ///
+    /// Use [`FMOD_SPEAKER_NONE`] to indicate no output for a given speaker.
     pub asio_speaker_list: Option<Vec<Speaker>>, // FIXME: validate this is copied
-
+    /// For use with [`FMOD_INIT_VOL0_BECOMES_VIRTUAL`],
+    ///
+    /// [`Channel`]s with audibility below this will become virtual.
+    ///
+    /// See the Virtual Voices guide for more information.
     pub vol0_virtual_vol: c_float,
+    /// For use with Streams, the default size of the double buffer.
     pub default_decode_buffer_size: c_uint,
+    /// For use with [`FMOD_INIT_PROFILE_ENABLE`],
+    /// specify the port to listen on for connections by FMOD Studio or FMOD Profiler.
     pub profile_port: c_ushort,
+    /// For use with [`Geometry`],
+    /// the maximum time it takes for a [`Channel`] to fade to the new volume level when its occlusion changes.
     pub geometry_max_fade_time: c_uint,
+    /// For use with [`FMOD_INIT_CHANNEL_DISTANCEFILTER`],
+    /// the default center frequency for the distance filter.
     pub distance_filter_center_freq: c_float,
+    /// For use with [`Reverb3D`], selects which global reverb instance to use.
     pub reverb_3d_instance: c_int,
+    /// Number of intermediate mixing buffers in the DSP buffer pool.
+    /// Each buffer in bytes is `dsp_buffer_pool_size` (See [`System::getDSPBufferSize`]) * sizeof(float) * output mode speaker count.
+    ///
+    /// ie 7.1 @ 1024 DSP block size = 1024 * 4 * 8 = 32KB.
     pub dsp_buffer_pool_size: c_int,
+    /// Resampling method used by [`Channel`]s.
     pub resampler_method: Resampler,
+    /// Seed value to initialize the internal random number generator.
     pub random_seed: c_uint,
+    /// Maximum number of CPU threads to use for [`FMOD_DSP_TYPE_CONVOLUTIONREVERB`] effect.
+    ///
+    /// 1 = effect is entirely processed inside the [`FMOD_THREAD_TYPE_MIXER`] thread.
+    ///
+    /// 2 and 3 offloads different parts of the convolution processing into different threads
+    /// ([`FMOD_THREAD_TYPE_CONVOLUTION1`] and [`FMOD_THREAD_TYPE_CONVOLUTION2`]) to increase throughput.
     pub max_convolution_threads: c_int,
+    /// Maximum Spatial Objects that can be reserved per FMOD system.
+    ///
+    /// [`FMOD_OUTPUTTYPE_AUDIO3D`] is a special case where multiple FMOD systems are not allowed.
+    ///
+    /// See the Object based approach section of the Spatial Audio white paper.
+    /// - A value of -1 means no Spatial Objects will be reserved.
+    /// - A value of 0 means all available Spatial Objects will be reserved.
+    /// - Any other value means it will reserve that many Spatial Objects.
     pub max_spatial_objects: c_int,
 }
 
