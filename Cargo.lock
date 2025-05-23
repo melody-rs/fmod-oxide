@@ -370,7 +370,7 @@ dependencies = [
 
 [[package]]
 name = "fmod-audio-sys"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bindgen",
  "cc",
@@ -387,7 +387,7 @@ dependencies = [
 
 [[package]]
 name = "fmod-oxide"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bitflags",
  "document-features",
