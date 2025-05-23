@@ -43,7 +43,8 @@ pub fn coverage(
     let major = (c_info.fmod_version >> 8) & 0xFF;
     let product = c_info.fmod_version >> 16;
 
-    let mut coverage_md = std::fs::File::create(format!("COVERAGE.{product}.{major:0>2}.md"))?;
+    let mut coverage_md =
+        std::fs::File::create(format!("./fmod-oxide/COVERAGE.{product}.{major:0>2}.md"))?;
     let channel_filter_regex = regex::Regex::new(r"FMOD_(Channel|ChannelGroup)_(.*)$")?;
     let mut current_category = usize::MAX;
 

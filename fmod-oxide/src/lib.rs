@@ -144,12 +144,12 @@
 #[cfg(any(doc, doctest, test))]
 pub mod coverage {
     pub mod _2_0_3 {
-        #![doc = include_str!("../../COVERAGE.2.03.md")]
+        #![doc = include_str!("../COVERAGE.2.03.md")]
         #[allow(unused_imports)]
         use fmod_sys::*;
     }
     pub mod _2_0_2 {
-        #![doc = include_str!("../../COVERAGE.2.02.md")]
+        #![doc = include_str!("../COVERAGE.2.02.md")]
         #[allow(unused_imports)]
         use fmod_sys::*;
     }
