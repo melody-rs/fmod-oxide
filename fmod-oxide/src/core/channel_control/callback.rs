@@ -45,7 +45,7 @@ pub trait ChannelControlCallback {
         Ok(())
     }
 
-    /// alled when geometry occlusion values are calculated.
+    /// Called when geometry occlusion values are calculated.
     /// Can be used to clamp or change the value.
     /// Supported by [`Channel`] and [`ChannelGroup`].
     // FIXME: is this &mut safe?

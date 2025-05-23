@@ -1,8 +1,8 @@
 use crate as fmod;
 use std::sync::LazyLock;
 
-pub static SYSTEM: LazyLock<fmod::studio::System> = LazyLock::new(|| {
-    fn try_make_system() -> fmod::Result<fmod::studio::System> {
+pub static SYSTEM: LazyLock<studio::System> = LazyLock::new(|| {
+    fn try_make_system() -> fmod::Result<studio::System> {
         fmod::debug::initialize(
             fmod::debug::DebugFlags::WARNING,
             fmod::debug::DebugMode::TTY,
@@ -10,7 +10,7 @@ pub static SYSTEM: LazyLock<fmod::studio::System> = LazyLock::new(|| {
 
         // # Safety
         // LazyLock synchronizes this for us.
-        let builder = unsafe { fmod::studio::SystemBuilder::new() }?;
+        let builder = unsafe { studio::SystemBuilder::new() }?;
         builder.build(
             1024,
             fmod::studio::InitFlags::NORMAL,

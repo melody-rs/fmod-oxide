@@ -12,6 +12,9 @@ use super::{
     filesystem_close, filesystem_open, filesystem_read, filesystem_seek,
 };
 
+#[cfg(doc)]
+use crate::Error;
+
 /// A builder for creating a [`Sound`].
 #[derive(Debug)]
 pub struct SoundBuilder<'a> {
@@ -53,8 +56,8 @@ pub trait PcmCallback {
 ///
 /// Since this callback can occur from the async thread, there are restrictions about what functions can be called during the callback.
 /// All [`Sound`] functions are safe to call, except for [`Sound::set_sound_group`] and [`Sound::release`].
-/// It is also safe to call [`System::get_user_data`].
-/// The rest of the Core API and the Studio API is not allowed. Calling a non-allowed function will return [`FMOD_ERR_INVALID_THREAD`].
+/// It is also safe to call [`System::get_userdata`].
+/// The rest of the Core API and the Studio API is not allowed. Calling a non-allowed function will return [`Error::InvalidThread`].
 pub unsafe trait NonBlockCallback {
     /// Call this particular callback.
     // "return code is ignored". so do we want to allow returning a result?
@@ -315,14 +318,14 @@ impl<'a> SoundBuilder<'a> {
         self
     }
 
-    /// Ignore [`System::set_file_system`] and this [`SoundBuilder`]'s file callbacks.
+    /// Ignore [`System::set_filesystem_sync`] and this [`SoundBuilder`]'s file callbacks.
     #[must_use]
     pub const fn with_ignore_set_filesystem(mut self, ignore: bool) -> Self {
         self.create_sound_ex_info.ignoresetfilesystem = ignore as _;
         self
     }
 
-    /// Hardware / software decoding policy for [`SoundType::AudioQueue`], see [`FMOD_AUDIOQUEUE_CODECPOLICY`].
+    /// Hardware / software decoding policy for [`SoundType::AudioQueue`].
     #[must_use]
     pub const fn with_audioqueue_policy(mut self, policy: c_uint) -> Self {
         self.create_sound_ex_info.audioqueuepolicy = policy;

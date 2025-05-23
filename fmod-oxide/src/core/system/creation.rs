@@ -30,7 +30,7 @@ impl System {
     /// Note that [`Mode::OPEN_RAW`], [`Mode::OPEN_MEMORY`], [`Mode::OPEN_MEMORY_POINT`] and [`Mode::OPEN_USER`] will not work here without the exinfo structure present, as more information is needed.
     ///
     /// Use [`Mode::NONBLOCKING`] to have the sound open or load in the background.
-    /// You can use `Sound::getOpenState` to determine if it has finished loading / opening or not. While it is loading (not ready), sound functions are not accessible for that sound.
+    /// You can use `Sound::get_open_state` to determine if it has finished loading / opening or not. While it is loading (not ready), sound functions are not accessible for that sound.
     /// Do not free memory provided with [`Mode::OPEN_MEMORY`] if the sound is not in a ready state, as it will most likely lead to a crash.
     ///
     /// To account for slow media that might cause buffer underrun (skipping / stuttering / repeating blocks of audio) with sounds created with [`FMOD_CREATESTREAM`],
@@ -119,7 +119,12 @@ impl System {
     ///
     /// DSPs must be attached to the DSP graph before they become active, either via `ChannelControl::addDSP` or `DSP::addInput`.
     ///
-    /// Using [`DspType::VstPlugin`] or [`DspType::WinampPlugin`] will return the first loaded plugin of this type.
+    #[cfg_attr(
+        fmod_2_2,
+        doc(
+            "Using [`DspType::VstPlugin`] or [`DspType::WinampPlugin`] will return the first loaded plugin of this type."
+        )
+    )]
     /// To access other plugins of these types, use `System::createDSPByPlugin` instead.
     pub fn create_dsp_by_type(&self, kind: DspType) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();

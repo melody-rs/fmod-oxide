@@ -13,9 +13,12 @@ mod channel_management;
 mod general;
 mod group_management;
 
+#[cfg(doc)]
+use crate::{Channel, System};
+
 /// A submix in the mixing hierarchy akin to a bus that can contain both [`Channel`] and [`ChannelGroup`] objects.
 ///
-/// Create with [`System::createChannelGroup`].
+/// Create with [`System::create_channel_group`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct ChannelGroup {

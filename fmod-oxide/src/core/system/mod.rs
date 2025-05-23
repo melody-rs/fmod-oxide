@@ -41,7 +41,7 @@ unsafe impl Sync for System {}
 impl System {
     /// # Safety
     ///
-    /// `value` must be a valid pointer either aquired from [`Self::as_raw`] or FMOD.
+    /// `value` must be a valid pointer either aquired from [`Self::as_ptr`] or FMOD.
     ///
     /// # Panics
     ///

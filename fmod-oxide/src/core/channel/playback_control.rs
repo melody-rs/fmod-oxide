@@ -58,7 +58,7 @@ impl Channel {
     ///
     /// If playing a Sound created with [`System::create_stream`] or [`Mode::CREATE_STREAM`] changing the position may cause a slow reflush operation while the file seek and decode occurs.
     /// You can avoid this by creating the stream with [`Mode::NONBLOCKING`].
-    /// This will cause the stream to go into `FMOD_OPENSTATE_SETPOSITION` state (see `Sound::getOpenState`) and Sound commands will return [`FMOD_RESULT::FMOD_ERR_NOTREADY`].
+    /// This will cause the stream to go into `FMOD_OPENSTATE_SETPOSITION` state (see `Sound::get_open_state`) and Sound commands will return [`FMOD_RESULT::FMOD_ERR_NOTREADY`].
     /// [`Channel::get_position`] will also not update until this non-blocking set position operation has completed.
     ///
     /// Using a VBR source that does not have an associated seek table or seek information (such as MP3 or MOD/S3M/XM/IT) may cause inaccurate seeking if you specify [`TimeUnit::MS`] or [`TimeUnit::PCM`].

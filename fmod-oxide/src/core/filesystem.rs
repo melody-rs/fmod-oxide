@@ -10,6 +10,9 @@ use crate::{FmodResultExt, Result};
 use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_int, c_uint, c_void};
 
+#[cfg(doc)]
+use crate::{Error, System};
+
 // I was lost on how to do this for a while, so I took some pointers from https://github.com/CAD97/fmod-rs/blob/main/crates/fmod-rs/src/core/common/file.rs#L181
 // It's not copied verbatim, I made some different design choices (like opting to make handle be a *mut c_void instead)
 // for similar reasons to this crate not handling userdata.
@@ -21,14 +24,14 @@ use std::ffi::{c_char, c_int, c_uint, c_void};
 pub trait FileSystem {
     /// Callback for opening a file.
     ///
-    /// Return the appropriate error code such as [`FMOD_ERR_FILE_NOTFOUND`] if the file fails to open.
-    /// If the callback is from [`System::attachFileSystem`], then the return value is ignored.
+    /// Return the appropriate error code such as [`Error::FileNotFound`] if the file fails to open.
+    /// If the callback is from [`System::attach_filesystem`], then the return value is ignored.
     fn open(name: &Utf8CStr, userdata: *mut c_void) -> Result<(*mut c_void, c_uint)>;
 
     /// Callback for closing a file.
     ///
     /// Close any user created file handle and perform any cleanup necessary for the file here.
-    /// If the callback is from [`System::attachFileSystem`], then the return value is ignored.
+    /// If the callback is from [`System::attach_filesystem`], then the return value is ignored.
     fn close(handle: *mut c_void, userdata: *mut c_void) -> Result<()>;
 }
 
@@ -79,15 +82,15 @@ impl std::io::Write for FileBuffer<'_> {
 pub trait FileSystemSync: FileSystem {
     /// Callback for reading from a file.
     ///
-    /// If the callback is from [`System::attachFileSystem`], then the return value is ignored.
+    /// If the callback is from [`System::attach_filesystem`], then the return value is ignored.
     ///
     /// If there is not enough data to read the requested number of bytes,
-    /// return fewer bytes in the bytesread parameter and and return [`FMOD_ERR_FILE_EOF`].
+    /// return fewer bytes in the bytesread parameter and and return [`Error::FileEof`].
     fn read(handle: *mut c_void, userdata: *mut c_void, buffer: FileBuffer<'_>) -> Result<()>;
 
     /// Callback for seeking within a file.
     ///
-    /// If the callback is from [`System::attachFileSystem`], then the return value is ignored.
+    /// If the callback is from [`System::attach_filesystem`], then the return value is ignored.
     fn seek(handle: *mut c_void, userdata: *mut c_void, position: c_uint) -> Result<()>;
 }
 
@@ -159,7 +162,7 @@ impl AsyncReadInfo {
 
     /// Signal the async read is done.
     ///
-    /// If [`AsyncReadInfo::written`] != [`AsyncReadInfo::size`] this function will send an [`FMOD_ERR_FILE_EOF`] for you.
+    /// If [`AsyncReadInfo::written`] != [`AsyncReadInfo::size`] this function will send an [`Error::FileEof`] for you.
     ///
     /// # Safety
     ///
@@ -232,13 +235,13 @@ pub unsafe trait FileSystemAsync: FileSystem {
     /// Marking an asynchronous job as 'done' outside of this callback can be done by calling [`AsyncReadInfo::finish`] with the file read result as a parameter.
     ///
     /// If the servicing routine is processed in the same thread as the thread that invokes this callback
-    /// (for example the thread that calls [`System::createSound`] or[`System::createStream`]),
-    /// a deadlock will occur because while [`System::createSound`] or [`System::createStream`] waits for the file data,
+    /// (for example the thread that calls [`System::create_sound`] or [`System::create_stream`]),
+    /// a deadlock will occur because while [`System::create_sound`] or [`System::create_stream`] waits for the file data,
     /// the servicing routine in the main thread won't be able to execute.
     ///
     /// This typically means an outside servicing routine should typically be run in a separate thread.
     ///
-    /// The read request can be queued or stored and this callback can return immediately with [`FMOD_OK`].
+    /// The read request can be queued or stored and this callback can return immediately with [`Ok`].
     /// Returning an error at this point will cause FMOD to stop what it was doing and return back to the caller.
     /// If it is from FMOD's stream thread, the stream will typically stop.
     fn read(info: AsyncReadInfo, userdata: *mut c_void) -> Result<()>;

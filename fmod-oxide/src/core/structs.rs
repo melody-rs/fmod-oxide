@@ -16,6 +16,9 @@ use lanyard::{Utf8CStr, Utf8CString};
 use super::{FloatMappingType, Resampler, Speaker};
 use crate::{DspParameterDataType, TagType, string_from_utf16_be, string_from_utf16_le};
 
+#[cfg(doc)]
+use crate::{Channel, Geometry, Reverb3D, Sound, System, SystemBuilder};
+
 /// Structure describing a globally unique identifier.
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 // force this type to have the exact same layout as FMOD_STUDIO_PARAMETER_ID so we can safely transmute between them.
@@ -88,7 +91,7 @@ impl std::fmt::Display for Guid {
 ///
 /// FMOD uses a left handed coordinate system by default.
 ///
-/// To use a right handed coordinate system specify [`FMOD_INIT_3D_RIGHTHANDED`] from [`FMOD_INITFLAGS`] in [`System::init`].
+/// To use a right handed coordinate system specify [`FMOD_INIT_3D_RIGHTHANDED`] from [`FMOD_INITFLAGS`] in [`SystemBuilder::build`].
 #[derive(Clone, Copy, Debug, PartialEq, PartialOrd, Default)]
 #[repr(C)]
 pub struct Vector {
@@ -161,11 +164,11 @@ impl From<Attributes3D> for FMOD_3D_ATTRIBUTES {
 pub struct CpuUsage {
     /// DSP mixing engine CPU usage.
     ///
-    /// Percentage of [`FMOD_THREAD_TYPE_MIXER`], or main thread if [`FMOD_INIT_MIX_FROM_UPDATE`] flag is used with [`System::init`].
+    /// Percentage of [`FMOD_THREAD_TYPE_MIXER`], or main thread if [`FMOD_INIT_MIX_FROM_UPDATE`] flag is used with [`SystemBuilder::build`].
     pub dsp: c_float,
     /// Streaming engine CPU usage.
     ///
-    /// Percentage of [`FMOD_THREAD_TYPE_STREAM`], or main thread if [`FMOD_INIT_STREAM_FROM_UPDATE`] flag is used with [`System::init`].
+    /// Percentage of [`FMOD_THREAD_TYPE_STREAM`], or main thread if [`FMOD_INIT_STREAM_FROM_UPDATE`] flag is used with [`SystemBuilder::build`].
     pub stream: c_float,
     /// Geometry engine CPU usage.
     ///
@@ -350,7 +353,7 @@ pub struct PiecewiseLinearMapping {
     /// Positions along the control's scale (e.g. dial angle) corresponding to each parameter value.
     ///
     /// The range of this scale is arbitrary and all positions will be relative to the minimum and maximum values
-    /// (e.g. [0,1,3] is equivalent to [1,2,4] and [2,4,8]).
+    /// (e.g. `[0,1,3]` is equivalent to `[1,2,4]` and `[2,4,8]`).
     ///
     /// If this array is `None`, `point_param_values` will be distributed with equal spacing.
     pub point_positions: Option<Vec<c_float>>,
@@ -533,7 +536,7 @@ pub struct Tag {
     pub name: Utf8CString,
     /// Tag data type.
     pub data: TagData,
-    /// True if this tag has been updated since last being accessed with [`Sound::getTag`]
+    /// True if this tag has been updated since last being accessed with [`Sound::get_tag`]
     pub updated: bool,
 }
 
@@ -687,7 +690,7 @@ pub struct AdvancedSettings {
     /// For use with [`Reverb3D`], selects which global reverb instance to use.
     pub reverb_3d_instance: c_int,
     /// Number of intermediate mixing buffers in the DSP buffer pool.
-    /// Each buffer in bytes is `dsp_buffer_pool_size` (See [`System::getDSPBufferSize`]) * sizeof(float) * output mode speaker count.
+    /// Each buffer in bytes is `dsp_buffer_pool_size` (See [`System::get_dsp_buffer_size`]) * sizeof(float) * output mode speaker count.
     ///
     /// ie 7.1 @ 1024 DSP block size = 1024 * 4 * 8 = 32KB.
     pub dsp_buffer_pool_size: c_int,

@@ -7,6 +7,9 @@
 use crate::{Error, Result};
 use fmod_sys::*;
 
+#[cfg(doc)]
+use crate::{Channel, ChannelControl, Dsp, Geometry, Sound, System, SystemBuilder, studio};
+
 /// Speaker mode types.
 ///
 /// Note below the phrase 'sound channels' is used. These are the subchannels inside a sound, they are not related and have nothing to do with the FMOD class "Channel".
@@ -15,64 +18,64 @@ use fmod_sys::*;
 ///
 /// [`FMOD_SPEAKERMODE_RAW`]
 /// This mode is for output devices that are not specifically mono/stereo/quad/surround/5.1 or 7.1, but are multi-channel.
-/// - Use [`System::setSoftwareFormat`] to specify the number of speakers you want to address, otherwise it will default to 2 (stereo).
+/// - Use [`SystemBuilder::software_format`] to specify the number of speakers you want to address, otherwise it will default to 2 (stereo).
 /// - Sound channels map to speakers sequentially, so a mono sound maps to output speaker 0, stereo sound maps to output speaker 0 & 1.
-/// - The user assumes knowledge of the speaker order. [`FMOD_SPEAKER`] enumerations may not apply, so raw channel indices should be used.
+/// - The user assumes knowledge of the speaker order. [`Speaker`] enumerations may not apply, so raw channel indices should be used.
 /// - Multi-channel sounds map input channels to output channels 1:1.
-/// - Speaker levels must be manually set with [`ChannelControl::setMixMatrix`].
-/// - [`ChannelControl::setPan`] and [`ChannelControl::setMixLevelsOutput`] do not work.
+/// - Speaker levels must be manually set with [`ChannelControl::set_mix_matrix`].
+/// - [`ChannelControl::set_pan`] and [`ChannelControl::set_mix_levels_output`] do not work.
 ///
 /// [`FMOD_SPEAKERMODE_MONO`]
 /// This mode is for a 1 speaker arrangement.
 ///
 /// - Panning does not work in this speaker mode.
 /// - Mono, stereo and multi-channel sounds have each sound channel played on the one speaker at unity.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// [`FMOD_SPEAKERMODE_STEREO`]
 /// This mode is for 2 speaker arrangements that have a left and right speaker.
 ///
-/// - Mono sounds default to an even distribution between left and right. They can be panned with [`ChannelControl::setPan`].
+/// - Mono sounds default to an even distribution between left and right. They can be panned with [`ChannelControl::set_pan`].
 /// - Stereo sounds default to the middle, or full left in the left speaker and full right in the right speaker.
-///   They can be cross faded with [`ChannelControl::setPan`].
+///   They can be cross faded with [`ChannelControl::set_pan`].
 /// - Multi-channel sounds have each sound channel played on each speaker at unity.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// [`FMOD_SPEAKERMODE_QUAD`]
 /// This mode is for 4 speaker arrangements that have a front left, front right, surround left and a surround right speaker.
 ///
-/// - Mono sounds default to an even distribution between front left and front right. They can be panned with [`ChannelControl::setPan`].
+/// - Mono sounds default to an even distribution between front left and front right. They can be panned with [`ChannelControl::set_pan`].
 /// - Stereo sounds default to the left sound channel played on the front left, and the right sound channel played on the front right.
-///   They can be cross faded with [`ChannelControl::setPan`].
+///   They can be cross faded with [`ChannelControl::set_pan`].
 /// - Multi-channel sounds default to all of their sound channels being played on each speaker in order of input.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// [`FMOD_SPEAKERMODE_SURROUND`]
 /// This mode is for 5 speaker arrangements that have a left/right/center/surround left/surround right.
 ///
-/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::setPan`].
+/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::set_pan`].
 /// - Stereo sounds default to the left sound channel played on the front left, and the right sound channel played on the front right.
-///   They can be cross faded with [`ChannelControl::setPan`].
+///   They can be cross faded with [`ChannelControl::set_pan`].
 /// - Multi-channel sounds default to all of their sound channels being played on each speaker in order of input.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// [`FMOD_SPEAKERMODE_5POINT1`]
 /// This mode is for 5.1 speaker arrangements that have a left/right/center/surround left/surround right and a subwoofer speaker.
 ///
-/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::setPan`].
+/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::set_pan`].
 /// - Stereo sounds default to the left sound channel played on the front left, and the right sound channel played on the front right.
-///   They can be cross faded with [`ChannelControl::setPan`].
+///   They can be cross faded with [`ChannelControl::set_pan`].
 /// - Multi-channel sounds default to all of their sound channels being played on each speaker in order of input.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// [`FMOD_SPEAKERMODE_7POINT1`]
 /// This mode is for 7.1 speaker arrangements that have a left/right/center/surround left/surround right/rear left/rear right and a subwoofer speaker.
 ///
-/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::setPan`].
+/// - Mono sounds default to the center speaker. They can be panned with [`ChannelControl::set_pan`].
 /// - Stereo sounds default to the left sound channel played on the front left, and the right sound channel played on the front right.
-///   They can be cross faded with [`ChannelControl::setPan`].
+///   They can be cross faded with [`ChannelControl::set_pan`].
 /// - Multi-channel sounds default to all of their sound channels being played on each speaker in order of input.
-/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::setMixMatrix`].
+/// - Mix behavior for multi-channel sounds can be set with [`ChannelControl::set_mix_matrix`].
 ///
 /// See the FMOD Studio Mixing Guide for graphical depictions of each speaker mode.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -85,11 +88,11 @@ use fmod_sys::*;
 #[cfg_attr(target_env = "msvc", repr(i32))]
 #[cfg_attr(not(target_env = "msvc"), repr(u32))]
 pub enum SpeakerMode {
-    /// Default speaker mode for the chosen output mode which will resolve after [`System::init`].
+    /// Default speaker mode for the chosen output mode which will resolve after [`SystemBuilder::build`].
     Default = FMOD_SPEAKERMODE_DEFAULT,
     /// Assume there is no special mapping from a given channel to a speaker, channels map 1:1 in order.
     ///
-    /// Use [`System::setSoftwareFormat`] to specify the speaker count.
+    /// Use [`SystemBuilder::software_format`] to specify the speaker count.
     Raw = FMOD_SPEAKERMODE_RAW,
     /// 1 speaker setup (monaural).
     Mono = FMOD_SPEAKERMODE_MONO,
@@ -121,7 +124,7 @@ pub enum OutputType {
     /// Picks the best output mode for the platform. This is the default.
     AutoDetect = FMOD_OUTPUTTYPE_AUTODETECT,
     /// All - 3rd party plug-in, unknown.
-    /// This is for use with [`System::getOutput`] only.
+    /// This is for use with [`System::get_output_type`] only.
     Unknown = FMOD_OUTPUTTYPE_UNKNOWN,
     /// All - Perform all mixing but discard the final output.
     NoSound = FMOD_OUTPUTTYPE_NOSOUND,
@@ -216,9 +219,9 @@ pub enum ThreadType {
     Profiler = FMOD_THREAD_TYPE_PROFILER,
     /// Thread for processing Studio API commands and scheduling sound playback.
     StudioUpdate = FMOD_THREAD_TYPE_STUDIO_UPDATE,
-    /// Thread for asynchronously loading [`Studio::Bank`] metadata.
+    /// Thread for asynchronously loading [`studio::Bank`] metadata.
     StudioLoadBank = FMOD_THREAD_TYPE_STUDIO_LOAD_BANK,
-    /// Thread for asynchronously loading [`Studio::Bank`] sample data.
+    /// Thread for asynchronously loading [`studio::Bank`] sample data.
     StudioLoadSample = FMOD_THREAD_TYPE_STUDIO_LOAD_SAMPLE,
     /// Thread for processing medium size delay lines for [`FMOD_DSP_TYPE_CONVOLUTIONREVERB`].
     Convolution1 = FMOD_THREAD_TYPE_CONVOLUTION1,
@@ -243,7 +246,7 @@ pub enum TimeUnit {
     PCMBytes = FMOD_TIMEUNIT_PCMBYTES,
     /// Raw file bytes of (compressed) sound data (does not include headers).
     ///
-    /// Only used by [`Sound::getLength`] and [`Channel::getPosition`].
+    /// Only used by [`Sound::get_length`] and [`Channel::get_position`].
     RawBytes = FMOD_TIMEUNIT_RAWBYTES,
     /// Fractions of 1 PCM sample. Unsigned int range 0 to `0xFFFFFFFF`.
     ///
@@ -251,17 +254,17 @@ pub enum TimeUnit {
     PCMFraction = FMOD_TIMEUNIT_PCMFRACTION,
     /// MOD/S3M/XM/IT. Order in a sequenced module format.
     ///
-    /// Use [`Sound::getFormat`] to determine the PCM format being decoded to.
+    /// Use [`Sound::get_format`] to determine the PCM format being decoded to.
     ModOrder = FMOD_TIMEUNIT_MODORDER,
     /// MOD/S3M/XM/IT. Current row in a sequenced module format.
     ///
-    /// Cannot use with [`Channel::setPosition`].
-    /// [`Sound::getLength`] will return the number of rows in the currently playing or seeked to pattern.
+    /// Cannot use with [`Channel::set_position`].
+    /// [`Sound::get_length`] will return the number of rows in the currently playing or seeked to pattern.
     ModRow = FMOD_TIMEUNIT_MODROW,
     /// MOD/S3M/XM/IT. Current pattern in a sequenced module format.
     ///
-    /// Cannot use with [`Channel::setPosition`].
-    /// [`Sound::getLength`] will return the number of patterns in the song and [`Channel::getPosition`] will return the currently playing pattern.
+    /// Cannot use with [`Channel::set_position`].
+    /// [`Sound::get_length`] will return the number of patterns in the song and [`Channel::get_position`] will return the currently playing pattern.
     ModPattern = FMOD_TIMEUNIT_MODPATTERN,
 }
 
@@ -534,7 +537,7 @@ pub enum PortType {
 #[cfg_attr(target_env = "msvc", repr(i32))]
 #[cfg_attr(not(target_env = "msvc"), repr(u32))]
 pub enum SoundGroupBehavior {
-    /// Excess sounds will fail when calling [`System::playSound`].
+    /// Excess sounds will fail when calling [`System::play_sound`].
     Fail = FMOD_SOUNDGROUP_BEHAVIOR_FAIL,
     /// Excess sounds will begin mute and will become audible when sufficient sounds are stopped.
     Mute = FMOD_SOUNDGROUP_BEHAVIOR_MUTE,
@@ -767,7 +770,7 @@ pub enum OpenState {
     Loading = FMOD_OPENSTATE_LOADING,
     /// Failed to open - file not found, out of memory etc.
     ///
-    /// See return value of [`Sound::getOpenState `]for what happened.
+    /// See return value of [`Sound::get_open_state`]for what happened.
     Error(Error) = FMOD_OPENSTATE_ERROR,
     /// Connecting to remote host (internet sounds only).
     Connecting = FMOD_OPENSTATE_CONNECTING,

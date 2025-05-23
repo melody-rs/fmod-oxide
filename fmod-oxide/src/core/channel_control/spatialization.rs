@@ -258,10 +258,10 @@ impl ChannelControl {
     ///
     /// 2D functions include:
     ///
-    /// - `ChannelControl::setPan`
-    /// - `ChannelControl::setMixLevelsOutput`
-    /// - `ChannelControl::setMixLevelsInput`
-    /// - `ChannelControl::setMixMatrix`
+    /// - `ChannelControl::set_pan`
+    /// - `ChannelControl::set_mix_levels_output`
+    /// - `ChannelControl::set_mix_levels_input`
+    /// - `ChannelControl::set_mix_matrix`
     ///
     /// 3D functions include:
     ///
@@ -278,10 +278,10 @@ impl ChannelControl {
     ///
     /// 2D functions include:
     ///
-    /// - `ChannelControl::setPan`
-    /// - `ChannelControl::setMixLevelsOutput`
-    /// - `ChannelControl::setMixLevelsInput`
-    /// - `ChannelControl::setMixMatrix`
+    /// - `ChannelControl::set_pan`
+    /// - `ChannelControl::set_mix_levels_output`
+    /// - `ChannelControl::set_mix_levels_input`
+    /// - `ChannelControl::set_mix_matrix`
     ///
     /// 3D functions include:
     ///

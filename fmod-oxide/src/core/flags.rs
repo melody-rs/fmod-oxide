@@ -210,7 +210,7 @@ bitflags::bitflags! {
     /// Just open the file, don't prebuffer or read.
     /// Good for fast opens for info, or when [`Sound::readData`] is to be used.
     const OPEN_ONLY                 = FMOD_OPENONLY;
-    /// For [`System::createSound`] - for accurate [`Sound::getLength`] / [`Channel::setPosition`] on VBR MP3,
+    /// For [`System::create_sound`] - for accurate [`Sound::get_length`] / [`Channel::set_position`] on VBR MP3,
     /// and MOD/S3M/XM/IT/MIDI files.
     /// Scans file first, so takes longer to open.
     /// [`FMOD_OPENONLY`] does not affect this.
@@ -220,7 +220,7 @@ bitflags::bitflags! {
     /// Normally only searches for 4k.
     const MPEG_SEARCH               = FMOD_MPEGSEARCH;
     /// For opening [`Sound`]s and getting streamed subsounds (seeking) asynchronously.
-    /// Use [`Sound::getOpenState`] to poll the state of the [`Sound`] as it opens or retrieves the subsound in the background.
+    /// Use [`Sound::get_open_state`] to poll the state of the [`Sound`] as it opens or retrieves the subsound in the background.
     const NONBLOCKING               = FMOD_NONBLOCKING;
     /// Unique [`Sound`], can only be played one at a time.
     const UNIQUE                    = FMOD_UNIQUE;

@@ -108,7 +108,7 @@ impl Sound {
     /// The distances are meant to simulate the 'size' of a sound. Reducing the min distance will mean the sound appears smaller in the world, and in some modes makes the volume attenuate faster as the listener moves away from the sound.
     /// Increasing the min distance simulates a larger sound in the world, and in some modes makes the volume attenuate slower as the listener moves away from the sound.
     ///
-    /// max will affect attenuation differently based on roll-off mode set in the mode parameter of `System::createSound`, `System::createStream`, `Sound::setMode` or `ChannelControl::setMode`.
+    /// max will affect attenuation differently based on roll-off mode set in the mode parameter of `System::create_sound`, `System::create_stream`, `Sound::setMode` or `ChannelControl::setMode`.
     ///
     /// For these modes the volume will attenuate to 0 volume (silence), when the distance from the sound is equal to or further than the max distance:
     /// - `FMOD_3D_LINEARROLLOFF`
@@ -182,7 +182,7 @@ impl Sound {
 
     /// Retrieves the mode of a sound.
     ///
-    /// The mode will be dependent on the mode set by a call to `System::createSound`, `System::createStream` or [`Sound::set_mode`].
+    /// The mode will be dependent on the mode set by a call to `System::create_sound`, `System::create_stream` or [`Sound::set_mode`].
     pub fn get_mode(&self) -> Result<Mode> {
         let mut mode = 0;
         unsafe {

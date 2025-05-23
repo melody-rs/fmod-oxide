@@ -23,9 +23,12 @@ pub use callback::DspCallback;
 pub use data_parameters::*;
 pub use parameter_traits::*;
 
+#[cfg(doc)]
+use crate::System;
+
 /// A digital signal processor is one node within a graph that transforms input audio signals into an output stream.
 ///
-/// Create with [`System::createDSP`], [`System::createDSPByType`] or [`System::createDSPByPlugin`].
+/// Create with [`System::create_dsp`], [`System::create_dsp_by_type`] or [`System::create_dsp_by_plugin`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct Dsp {

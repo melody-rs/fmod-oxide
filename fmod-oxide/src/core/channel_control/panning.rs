@@ -14,12 +14,12 @@ use crate::{FmodResultExt, Result};
 impl ChannelControl {
     /// Sets the left/right pan level.
     ///
-    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::setMixLevelsInput`,
-    /// `ChannelControl::setMixLevelsOutput` and `ChannelControl::setMixMatrix`.
+    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::set_mix_levels_input`,
+    /// `ChannelControl::set_mix_levels_output` and `ChannelControl::set_mix_matrix`.
     ///
     /// Mono inputs are panned from left to right using constant power panning (non linear fade).
     ///  Stereo and greater inputs will isolate the front left and right input channels and fade them up and down based on the pan value (silencing other channels).
-    /// The output channel count will always match the System speaker mode set via `System::setSoftwareFormat`.
+    /// The output channel count will always match the System speaker mode set via `SystemBuilder::software_format`.
     ///
     /// If the System is initialized with `FMOD_SPEAKERMODE_RAW` calling this function will produce silence.
     pub fn set_pan(&self, pan: c_float) -> Result<()> {
@@ -28,8 +28,8 @@ impl ChannelControl {
 
     /// Sets the incoming volume level for each channel of a multi-channel signal.
     ///
-    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::setPan`,
-    /// `ChannelControl::setMixLevelsOutput` and `ChannelControl::setMixMatrix`.
+    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::set_pan`,
+    /// `ChannelControl::set_mix_levels_output` and `ChannelControl::set_mix_matrix`.
     ///
     /// #### NOTE: Currently only supported for Channel, not `ChannelGroup`.
     pub fn set_mix_levels_input(&self, levels: &mut [c_float]) -> Result<()> {
@@ -51,9 +51,9 @@ impl ChannelControl {
     /// channels will be up/down mixed as appropriate to approximate the given speaker values.
     /// For example stereo input with 5.1 output will use the center parameter to distribute signal to the center speaker from front left and front right channels.
     ///
-    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::setPan`, `ChannelControl::setMixLevelsInput` and `ChannelControl::setMixMatrix`.
+    /// This is a convenience function to avoid passing a matrix, it will overwrite values set via `ChannelControl::set_pan`, `ChannelControl::set_mix_levels_input` and `ChannelControl::set_mix_matrix`.
     ///
-    /// The output channel count will always match the System speaker mode set via `System::setSoftwareFormat`.
+    /// The output channel count will always match the System speaker mode set via `SystemBuilder::software_format`.
     ///
     /// If the System is initialized with `FMOD_SPEAKERMODE_RAW` calling this function will produce silence.
     #[allow(clippy::too_many_arguments)] // no fixing this
@@ -88,7 +88,7 @@ impl ChannelControl {
 
     /// Sets a two-dimensional pan matrix that maps the signal from input channels (columns) to output speakers (rows).
     ///
-    /// This will overwrite values set via [`ChannelControl::setPan`], [`ChannelControl::setMixLevelsInput`] and [`ChannelControl::setMixLevelsOutput`].
+    /// This will overwrite values set via [`ChannelControl::set_pan`], [`ChannelControl::set_mix_levels_input`] and [`ChannelControl::set_mix_levels_output`].
     pub fn set_mix_matrix<const IN: usize, const OUT: usize>(
         &self,
         matrix: [[f32; IN]; OUT],

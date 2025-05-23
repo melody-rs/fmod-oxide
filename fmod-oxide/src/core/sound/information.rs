@@ -18,7 +18,7 @@ use crate::{Sound, SoundFormat, SoundType, Tag, TimeUnit, get_string};
 impl Sound {
     /// Retrieves the name of a sound.
     ///
-    /// If `FMOD_LOWMEM` has been specified in `System::createSound`, this function will return "(null)".
+    /// If `FMOD_LOWMEM` has been specified in `System::create_sound`, this function will return "(null)".
     pub fn get_name(&self) -> Result<Utf8CString> {
         get_string(|name| unsafe {
             FMOD_Sound_GetName(

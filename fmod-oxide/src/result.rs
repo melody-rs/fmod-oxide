@@ -1,5 +1,8 @@
 use fmod_sys::*;
 
+#[cfg(doc)]
+use crate::{OutputType, Sound, System, SystemBuilder, studio};
+
 /// An error that FMOD (or this crate) might return.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Error {
@@ -55,7 +58,7 @@ pub enum Error {
     HttpTimeout,
     /// FMOD was not initialized correctly to support this function.
     Initialization,
-    /// Cannot call this command after [`System::init`].
+    /// Cannot call this command after [`SystemBuilder::build`].
     Initialized,
     /// An error occured in the FMOD system. Use the logging version of FMOD for more information.
     Internal,
@@ -105,7 +108,7 @@ pub enum Error {
     OutputFormat,
     /// Error initializing output device.
     OutputInit,
-    /// The output device has no drivers installed.  If pre-init, [`FMOD_OUTPUT_NOSOUND`] is selected as the output mode.  If post-init, the function just fails.
+    /// The output device has no drivers installed.  If pre-init, [`OutputType::NoSound`] is selected as the output mode.  If post-init, the function just fails.
     OutputNoDrivers,
     /// An unspecified error has been returned from a plugin.
     Plugin,
@@ -129,13 +132,14 @@ pub enum Error {
     SubsoundCantMove,
     /// The specified tag could not be found or there are no tags.
     TagNotFound,
-    /// The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in [`System::setSoftwareFormat`].
+    /// The sound created exceeds the allowable input channel count.
+    /// This can be increased using the 'maxinputchannels' parameter in [`SystemBuilder::software_format`].
     TooManyChannels,
     /// The retrieved string is too long to fit in the supplied buffer and has been truncated.
     Truncated,
     /// Something in FMOD hasn't been implemented when it should be. Contact support.
     Unimplemented,
-    /// This command failed because [`System::init`] or [`System::setDriver`] was not called.
+    /// This command failed because [`SystemBuilder::build`] or [`System::set_driver`] was not called.
     Uninitialized,
     /// A command issued was not supported by this object.  Possibly a plugin without certain callbacks specified.
     Unsupported,
@@ -151,7 +155,7 @@ pub enum Error {
     EventLiveUpdateTimeout,
     /// The requested event, parameter, bus or vca could not be found.
     EventNotFound,
-    /// The [`Studio::System`] object is not yet initialized.
+    /// The [`studio::System`] object is not yet initialized.
     StudioUninitialized,
     /// The specified resource is not loaded, so it can't be unloaded.
     StudioNotLoaded,

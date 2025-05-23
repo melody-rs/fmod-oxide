@@ -16,7 +16,7 @@ impl Sound {
     /// This will stop any instances of this sound, and free the sound object and its children if it is a multi-sound object.
     /// If the sound was opened with `FMOD_NONBLOCKING` and hasn't finished opening yet, it will block.
     /// Additionally, if the sound is still playing or has recently been stopped, the release may stall, as the mixer may still be using the sound.
-    /// Using `Sound::getOpenState` and checking the open state for `FMOD_OPENSTATE_READY` and `FMOD_OPENSTATE_ERROR` is a good way to avoid stalls.
+    /// Using `Sound::get_open_state` and checking the open state for `FMOD_OPENSTATE_READY` and `FMOD_OPENSTATE_ERROR` is a good way to avoid stalls.
     pub fn release(&self) -> Result<()> {
         unsafe { FMOD_Sound_Release(self.inner.as_ptr()).to_result() }
     }

@@ -16,7 +16,7 @@ use crate::{
 use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
-use crate::studio::AdvancedSettings;
+use crate::{FileSystem, studio::AdvancedSettings};
 
 /// User data to be passed to the file callbacks.
 #[derive(Debug, Clone, Copy)]

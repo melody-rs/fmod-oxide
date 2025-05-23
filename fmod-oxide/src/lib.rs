@@ -3,7 +3,7 @@
 //! # Basic example
 //! ```ignore
 //! // System creation is unsafe and must be performed prior to any other FMOD operations.
-//! let mut builder = unsafe { fmod::studio::SystemBuilder::new() }?;
+//! let mut builder = unsafe { studio::SystemBuilder::new() }?;
 //! let system = builder.build()?;
 //!
 //! // Load a bank

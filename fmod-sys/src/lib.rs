@@ -199,7 +199,7 @@ pub const fn error_code_to_str(result: FMOD_RESULT) -> &'static str {
             "The specified tag could not be found or there are no tags."
         }
         FMOD_RESULT::FMOD_ERR_TOOMANYCHANNELS => {
-            "The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in System::setSoftwareFormat."
+            "The sound created exceeds the allowable input channel count.  This can be increased using the 'maxinputchannels' parameter in SystemBuilder::software_format."
         }
         FMOD_RESULT::FMOD_ERR_TRUNCATED => {
             "The retrieved string is too long to fit in the supplied buffer and has been truncated."

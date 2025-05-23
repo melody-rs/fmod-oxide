@@ -11,6 +11,9 @@ use fmod_sys::*;
 use crate::{FmodResultExt, Result};
 use crate::{OpenState, Sound};
 
+#[cfg(doc)]
+use crate::Error;
+
 /// A locked region of sound data.
 #[derive(Debug)]
 pub struct SoundLock<'a> {
@@ -118,8 +121,8 @@ impl Sound {
     /// If the sound is created with [`FMOD_CREATECOMPRESSEDSAMPLE`] the data retrieved will be the compressed bitstream.
     ///
     /// It is not possible to lock the following:
-    /// - A parent sound containing subsounds. A parent sound has no audio data and [`FMOD_ERR_SUBSOUNDS`] will be returned.
-    /// - A stream / sound created with [`FMOD_CREATESTREAM`]. [`FMOD_ERR_BADCOMMAND`] will be returned in this case.
+    /// - A parent sound containing subsounds. A parent sound has no audio data and [`Error::Subsounds`] will be returned.
+    /// - A stream / sound created with [`FMOD_CREATESTREAM`]. [`Error::BadCommand`] will be returned in this case.
     ///
     /// The names 'lock'/'unlock' are a legacy reference to older Operating System APIs that used to cause a mutex lock on the data,
     /// so that it could not be written to while the 'lock' was in place.
@@ -172,7 +175,7 @@ impl Sound {
     /// This can be used for decoding data offline in small pieces (or big pieces), rather than playing and capturing it,
     /// or loading the whole file at once and having to [`Sound::lock`] the data.
     ///
-    /// If too much data is read, it is possible [`FMOD_ERR_FILE_EOF`] will be returned, meaning it is out of data.
+    /// If too much data is read, it is possible [`Error::FileEof`] will be returned, meaning it is out of data.
     /// The 'read' parameter will reflect this by returning a smaller number of bytes read than was requested.
     ///
     /// As a non streaming sound reads and decodes the whole file then closes it upon calling [`System::create_sound`],

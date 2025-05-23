@@ -18,9 +18,12 @@ mod relationship;
 mod synchronization;
 pub use synchronization::SyncPoint;
 
+#[cfg(doc)]
+use crate::System;
+
 /// Container for sample data that can be played on a Channel.
 ///
-/// Create with [`System::createSound`] or [`System::createStream`].
+/// Create with [`System::create_sound`] or [`System::create_stream`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct Sound {

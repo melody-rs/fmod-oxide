@@ -12,9 +12,12 @@ use crate::ChannelControl;
 mod information;
 mod playback_control;
 
+#[cfg(doc)]
+use crate::{ChannelGroup, System};
+
 /// A source of audio signal that connects to the [`ChannelGroup`] mixing hierarchy.
 ///
-/// Create with [`System::playSound`] or [`System::playDSP`].
+/// Create with [`System::play_sound`] or [`System::play_dsp`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)] // so we can transmute between types
 pub struct Channel {

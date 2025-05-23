@@ -8,6 +8,9 @@ use fmod_sys::*;
 use crate::{Attributes3D, Dsp, DspParameterDataType, ReadableParameter, WritableParameter};
 use crate::{Error, Result};
 
+#[cfg(doc)]
+use crate::{System, studio};
+
 fn parameter_is(dsp_parameter_desc: &FMOD_DSP_PARAMETER_DESC, kind: DspParameterDataType) -> bool {
     if dsp_parameter_desc.type_ != FMOD_DSP_PARAMETER_TYPE_DATA {
         return false;
@@ -47,8 +50,8 @@ impl ReadableParameter for OverallGain {
 
 /// 3D attributes data structure.
 ///
-/// The [`FMOD::Studio::System`] sets this parameter automatically when an [`FMOD::Studio::EventInstance`] position changes.
-/// However, if you are using the core [`FMOD::System`] and not the [`FMOD::Studio::System`], you must set this DSP parameter explicitly.
+/// The [`studio::System`] sets this parameter automatically when an [`studio::EventInstance`] position changes.
+/// However, if you are using the core [`System`] and not the [`studio::System`], you must set this DSP parameter explicitly.
 ///
 /// Attributes must use a coordinate system with the positive Y axis being up and the positive X axis being right.
 /// The FMOD Engine converts passed-in coordinates to left-handed for the plug-in if the system was initialized with the [`FMOD_INIT_3D_RIGHTHANDED`] flag.
@@ -206,8 +209,8 @@ impl ReadableParameter for Fft {
 
 /// 3D attributes data structure for multiple listeners.
 ///
-/// The [`FMOD::Studio::System`] sets this parameter automatically when an [`FMOD::Studio::EventInstance`] position changes.
-/// However, if you are using the core API's [`FMOD::System`] and not the [`FMOD::Studio::System`],
+/// The [`studio::System`] sets this parameter automatically when an [`studio::EventInstance`] position changes.
+/// However, if you are using the core API's [`System`] and not the [`studio::System`],
 /// you must set this DSP parameter explicitly.
 ///
 /// Attributes must use a coordinate system with the positive Y axis being up and the positive X axis being right.
@@ -295,7 +298,7 @@ impl WritableParameter for Attributes3DMulti {
 }
 /// Attenuation range parameter data structure.
 ///
-/// The [`FMOD::Studio::System`] will set this parameter automatically if an [`FMOD::Studio::EventInstance`] min or max distance changes.
+/// The [`studio::System`] will set this parameter automatically if an [`studio::EventInstance`] min or max distance changes.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[repr(C)]
 pub struct AttenuationRange {

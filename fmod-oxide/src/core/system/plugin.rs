@@ -168,7 +168,7 @@ impl System {
 
     /// Register a Codec plugin description structure for later use.
     ///
-    /// To create an instances of this plugin use `System::createSound` and `System::createStream`.
+    /// To create an instances of this plugin use `System::create_sound` and `System::create_stream`.
     ///
     /// When opening a file each Codec tests whether it can support the file format in priority order.
     /// The priority for each `FMOD_SOUND_TYPE` are as follows:
@@ -201,7 +201,7 @@ impl System {
     ///
     /// Media Foundation is supported through the User codec, and therefore has the same priority as User.
     ///
-    /// Raw and User are only accesible if `FMOD_OPENRAW` or `FMOD_OPENUSER` is specified as the mode in `System::createSound`.
+    /// Raw and User are only accesible if `FMOD_OPENRAW` or `FMOD_OPENUSER` is specified as the mode in `System::create_sound`.
     ///
     /// # Safety
     ///

@@ -15,6 +15,9 @@ use fmod_sys::*;
 
 use super::System;
 
+#[cfg(doc)]
+use crate::Sound;
+
 impl System {
     /// Set callbacks to implement all file I/O instead of using the platform native method.
     ///

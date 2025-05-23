@@ -43,7 +43,7 @@ impl ChannelControl {
 
     /// Sets the paused state.
     ///
-    /// Pause halts playback which effectively freezes `Channel::getPosition` and `ChannelControl::getDSPClock` values.
+    /// Pause halts playback which effectively freezes `Channel::get_position` and `ChannelControl::getDSPClock` values.
     ///
     /// An individual pause state is kept for each object,
     /// pausing a parent `ChannelGroup` will effectively pause this object however when queried the individual pause state is returned.
@@ -83,12 +83,12 @@ impl ChannelControl {
     /// - [`Mode::VIRTUAL_PLAYFROM_START`]
     ///
     /// When changing the loop mode, sounds created with
-    /// `System::createStream` or [`Mode::CREATE_STREAM`] may have already been pre-buffered and executed their loop logic ahead of time before this call was even made.
+    /// `System::create_stream` or [`Mode::CREATE_STREAM`] may have already been pre-buffered and executed their loop logic ahead of time before this call was even made.
     /// This is dependent on the size of the sound versus the size of the stream decode buffer (see `FMOD_CREATESOUNDEXINFO`).
-    /// If this happens, you may need to reflush the stream buffer by calling `Channel::setPosition`.
+    /// If this happens, you may need to reflush the stream buffer by calling `Channel::set_position`.
     /// Note this will usually only happen if you have sounds or loop points that are smaller than the stream decode buffer size.
     ///
-    /// When changing the loop mode of sounds created with with `System::createSound` or `FMOD_CREATESAMPLE`,
+    /// When changing the loop mode of sounds created with with `System::create_sound` or `FMOD_CREATESAMPLE`,
     /// if the sound was set up as [`Mode::LOOP_OFF`], then set to [`Mode::LOOP_NORMAL`] with this function, the sound may click when playing the end of the sound.
     /// This is because the sound needs to be prepared for looping using `Sound::setMode`,
     /// by modifying the content of the PCM data (i.e. data past the end of the actual sample data) to allow the interpolators to read ahead without clicking.
