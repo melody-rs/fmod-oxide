@@ -18,6 +18,7 @@ fn bypass_char(bypass: bool) -> char {
     if bypass { ' ' } else { 'x' }
 }
 
+#[allow(deprecated)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let builder = unsafe {
         // Safety: we call this before calling any other functions and only in main, so this is safe

@@ -368,6 +368,8 @@ pub mod flange {
     dsp_param_impl!(Flange => struct Rate(FMOD_DSP_FLANGE_RATE): c_float);
 }
 
+#[allow(deprecated)]
+#[deprecated]
 pub mod highpass {
     use super::*;
 
@@ -375,10 +377,12 @@ pub mod highpass {
     dsp_param_impl!(Highpass => struct Resonance(FMOD_DSP_HIGHPASS_RESONANCE): c_float);
 }
 
+#[allow(deprecated)]
+#[deprecated]
 pub mod highpass_simple {
     use super::*;
 
-    dsp_param_impl!(Highpass => struct Cutoff(FMOD_DSP_HIGHPASS_SIMPLE_CUTOFF): c_float);
+    dsp_param_impl!(HighpassSimple => struct Cutoff(FMOD_DSP_HIGHPASS_SIMPLE_CUTOFF): c_float);
 }
 
 pub mod it_echo {
@@ -493,6 +497,8 @@ pub mod loudness_meter {
     }
 }
 
+#[allow(deprecated)]
+#[deprecated]
 pub mod lowpass {
     use super::*;
 
@@ -500,6 +506,8 @@ pub mod lowpass {
     dsp_param_impl!(Lowpass => struct Resonance(FMOD_DSP_LOWPASS_RESONANCE): c_float);
 }
 
+#[allow(deprecated)]
+#[deprecated]
 pub mod lowpass_simple {
     use super::*;
 
@@ -731,6 +739,8 @@ pub mod pan {
     enum_dsp_param_impl!(ModeType: u32);
 }
 
+#[allow(deprecated)]
+#[deprecated]
 pub mod param_eq {
     use super::*;
 

@@ -14,6 +14,7 @@ use crossterm::{
 use fmod_examples::media_path_for;
 use std::io::Write;
 
+#[allow(deprecated)]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let builder = unsafe {
         // Safety: we call this before calling any other functions and only in main, so this is safe
