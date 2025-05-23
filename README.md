@@ -1,8 +1,16 @@
 # fmod-oxide
 
+[![Latest version](https://img.shields.io/crates/v/fmod-oxide.svg)](https://crates.io/crates/fmod-oxide)
+![Crates.io Total Downloads](https://img.shields.io/crates/d/fmod-oxide)
+[![Documentation](https://docs.rs/fmod-oxide/badge.svg)](https://docs.rs/fmod-oxide)
+![Crates.io License](https://img.shields.io/crates/l/fmod-oxide)
+
+
 Safe rust bindings to the FMOD sound engine.
 This crate tries to be as rusty and low-cost as possible, without compromising on any APIs.
 Certain APIs, such as loading banks from a pointer, are marked as unsafe, but are still available for use.
+
+---
 
 Supports FMOD versions >2.0.2.28 and >2.0.3.07, and Windows/Linux/MacOS/HTML5 platforms.
 
