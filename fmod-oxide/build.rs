@@ -15,11 +15,7 @@ fn main() {
     // we should do this in the -sys crate but it doesn't work...?
     // this whole thing is really jank and does not work how i'd like
 
-    // hardcode for docsrs
-    #[cfg(not(docsrs))]
     let version_number = std::env::var("DEP_FMOD_VERSION_NUMBER").unwrap();
-    #[cfg(docsrs)]
-    let version_number = "131847"; // 0x20307
     let version_number: i64 = version_number.parse().unwrap();
 
     let minor = version_number & 0xFF;

@@ -93,6 +93,13 @@ fn find_fmod_directory() -> PathBuf {
 fn main() {
     // skip generating bindings in docs.rs, as we use the packaged "documentation.rs" instead
     if std::env::var("DOCS_RS").is_ok() {
+        println!("cargo::rustc-env=FMOD_DIR=omitted");
+        println!("cargo::rustc-env=FMOD_API_DIR=omitted");
+
+        println!("cargo::metadata=version_number={}", 0x00020307);
+        println!("cargo::metadata=minor=2");
+        println!("cargo::metadata=minor=0");
+        println!("cargo::metadata=minor=7");
         return;
     }
     #[cfg(feature = "force-docs-bindings")]

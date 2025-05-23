@@ -21,14 +21,7 @@ include!("../docs/documentation.rs");
 #[cfg(not(any(docsrs, feature = "force-docs-bindings")))]
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
-#[cfg(docsrs)]
-pub const INSTALL_DIR: &str = "<omitted for docsrs>";
-#[cfg(docsrs)]
-pub const API_DIR: &str = "<omitted for docsrs>";
-
-#[cfg(not(docsrs))]
 pub const INSTALL_DIR: &str = env!("FMOD_DIR");
-#[cfg(not(docsrs))]
 pub const API_DIR: &str = env!("FMOD_API_DIR");
 
 impl From<FMOD_BOOL> for bool {
