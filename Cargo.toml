@@ -15,5 +15,4 @@ edition = "2024"
 license = "MPL-2.0"
 repository = "https://github.com/melody-rs/fmod-oxide"
 keywords = ["gamedev", "audio", "sound", "fmod"]
-categories = ["api-bindings", "game-development", "multimedia::audio"]
 authors = ["Melody Madeline Lyons <melody@melody-is.gay>"]
