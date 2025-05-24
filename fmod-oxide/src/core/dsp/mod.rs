@@ -54,8 +54,8 @@ impl Dsp {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_DSP {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_DSP {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

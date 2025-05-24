@@ -23,7 +23,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_System_StartCommandCapture(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 filename.as_ptr(),
                 flags.into(),
             )
@@ -33,7 +33,7 @@ impl System {
 
     /// Stop recording Studio commands.
     pub fn stop_command_capture(&self) -> Result<()> {
-        unsafe { FMOD_Studio_System_StopCommandCapture(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_System_StopCommandCapture(self.as_ptr()).to_result() }
     }
 
     /// Load a command replay.
@@ -45,7 +45,7 @@ impl System {
         let mut replay = std::ptr::null_mut();
         unsafe {
             FMOD_Studio_System_LoadCommandReplay(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 filename.as_ptr(),
                 flags.into(),
                 &raw mut replay,

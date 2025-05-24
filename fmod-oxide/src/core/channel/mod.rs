@@ -43,8 +43,8 @@ impl Channel {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_CHANNEL {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_CHANNEL {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 
@@ -61,10 +61,10 @@ impl Deref for Channel {
         #[cfg(debug_assertions)]
         unsafe {
             // perform a debug check to ensure that the the cast results in the same pointer
-            let control = FMOD_Channel_CastToControl(self.inner.as_ptr());
+            let control = FMOD_Channel_CastToControl(self.as_ptr());
             assert_eq!(
                 control as usize,
-                self.inner.as_ptr() as usize,
+                self.as_ptr() as usize,
                 "ChannelControl cast was not equivalent! THIS IS A MAJOR BUG. PLEASE REPORT THIS!"
             );
         }

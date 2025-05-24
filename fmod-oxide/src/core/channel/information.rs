@@ -17,7 +17,7 @@ impl Channel {
     pub fn is_virtual(&self) -> Result<bool> {
         let mut is_virtual = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Channel_IsVirtual(self.inner.as_ptr(), &raw mut is_virtual).to_result()?;
+            FMOD_Channel_IsVirtual(self.as_ptr(), &raw mut is_virtual).to_result()?;
         }
         Ok(is_virtual.into())
     }
@@ -28,7 +28,7 @@ impl Channel {
     pub fn get_current_sound(&self) -> Result<Option<Sound>> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_Channel_GetCurrentSound(self.inner.as_ptr(), &raw mut sound).to_result()?;
+            FMOD_Channel_GetCurrentSound(self.as_ptr(), &raw mut sound).to_result()?;
         }
         Ok(if sound.is_null() {
             None
@@ -41,7 +41,7 @@ impl Channel {
     pub fn get_index(&self) -> Result<c_int> {
         let mut index = 0;
         unsafe {
-            FMOD_Channel_GetIndex(self.inner.as_ptr(), &raw mut index).to_result()?;
+            FMOD_Channel_GetIndex(self.as_ptr(), &raw mut index).to_result()?;
         }
         Ok(index)
     }

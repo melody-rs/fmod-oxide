@@ -17,7 +17,7 @@ impl EventDescription {
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
         unsafe {
-            FMOD_Studio_EventDescription_SetUserData(self.inner.as_ptr(), userdata).to_result()
+            FMOD_Studio_EventDescription_SetUserData(self.as_ptr(), userdata).to_result()
         }
     }
 
@@ -25,7 +25,7 @@ impl EventDescription {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_EventDescription_GetUserData(self.inner.as_ptr(), &raw mut userdata)
+            FMOD_Studio_EventDescription_GetUserData(self.as_ptr(), &raw mut userdata)
                 .to_result()?;
         }
         Ok(userdata)
@@ -38,7 +38,7 @@ impl EventDescription {
     pub fn set_callback<C: EventInstanceCallback>(&self, mask: EventCallbackMask) -> Result<()> {
         unsafe {
             FMOD_Studio_EventDescription_SetCallback(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 Some(event_callback_impl::<C>),
                 mask.into(),
             )

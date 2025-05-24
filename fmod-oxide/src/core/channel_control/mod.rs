@@ -51,8 +51,8 @@ impl ChannelControl {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_CHANNELCONTROL {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_CHANNELCONTROL {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

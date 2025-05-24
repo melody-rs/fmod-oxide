@@ -41,8 +41,8 @@ impl SyncPoint {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_SYNCPOINT {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_SYNCPOINT {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 
@@ -59,7 +59,7 @@ impl Sound {
     pub fn get_sync_point(&self, index: i32) -> Result<SyncPoint> {
         let mut sync_point = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSyncPoint(self.inner.as_ptr(), index, &raw mut sync_point).to_result()?;
+            FMOD_Sound_GetSyncPoint(self.as_ptr(), index, &raw mut sync_point).to_result()?;
             Ok(SyncPoint::from_ffi(sync_point))
         }
     }
@@ -75,7 +75,7 @@ impl Sound {
         let mut offset = 0;
         let name = get_string(|name| unsafe {
             FMOD_Sound_GetSyncPointInfo(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 point.into(),
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
@@ -92,7 +92,7 @@ impl Sound {
     pub fn get_sync_point_count(&self) -> Result<i32> {
         let mut count = 0;
         unsafe {
-            FMOD_Sound_GetNumSyncPoints(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Sound_GetNumSyncPoints(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -109,7 +109,7 @@ impl Sound {
         let mut sync_point = std::ptr::null_mut();
         unsafe {
             FMOD_Sound_AddSyncPoint(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 offset,
                 offset_type.into(),
                 name.as_ptr(),
@@ -125,7 +125,7 @@ impl Sound {
     /// For for more information on sync points see Sync Points.
     pub fn delete_sync_point(&self, point: SyncPoint) -> Result<()> {
         unsafe {
-            FMOD_Sound_DeleteSyncPoint(self.inner.as_ptr(), point.into()).to_result()?;
+            FMOD_Sound_DeleteSyncPoint(self.as_ptr(), point.into()).to_result()?;
         }
         Ok(())
     }

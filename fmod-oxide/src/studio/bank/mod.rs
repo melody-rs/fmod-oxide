@@ -40,8 +40,8 @@ impl Bank {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_STUDIO_BANK {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_STUDIO_BANK {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

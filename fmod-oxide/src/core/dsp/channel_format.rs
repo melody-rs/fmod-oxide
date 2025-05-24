@@ -22,7 +22,7 @@ impl Dsp {
     ) -> Result<()> {
         unsafe {
             FMOD_DSP_SetChannelFormat(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 channel_mask.into(),
                 channel_count,
                 source_speaker_mode.into(),
@@ -38,7 +38,7 @@ impl Dsp {
         let mut source_speaker_mode = 0;
         unsafe {
             FMOD_DSP_GetChannelFormat(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut channel_mask,
                 &raw mut channel_count,
                 &raw mut source_speaker_mode,
@@ -61,7 +61,7 @@ impl Dsp {
         let mut out_speaker_mode = 0;
         unsafe {
             FMOD_DSP_GetOutputChannelFormat(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 in_mask.into(),
                 in_channels,
                 in_speaker_mode.into(),

@@ -19,14 +19,14 @@ impl SoundGroup {
     ///
     /// [`SoundGroup::get_playing_count`] can be used to determine how many instances of the sounds in the [`SoundGroup`] are currently playing.
     pub fn set_max_audible(&self, max_audible: c_int) -> Result<()> {
-        unsafe { FMOD_SoundGroup_SetMaxAudible(self.inner.as_ptr(), max_audible).to_result() }
+        unsafe { FMOD_SoundGroup_SetMaxAudible(self.as_ptr(), max_audible).to_result() }
     }
 
     /// Retrieves the maximum number of playbacks to be audible at once in a sound group.
     pub fn get_max_audible(&self) -> Result<c_int> {
         let mut max_audible = 0;
         unsafe {
-            FMOD_SoundGroup_GetMaxAudible(self.inner.as_ptr(), &raw mut max_audible).to_result()?;
+            FMOD_SoundGroup_GetMaxAudible(self.as_ptr(), &raw mut max_audible).to_result()?;
         };
         Ok(max_audible)
     }
@@ -34,7 +34,7 @@ impl SoundGroup {
     /// This function changes the way the sound playback behaves when too many sounds are playing in a soundgroup.
     pub fn set_max_audible_behavior(&self, behavior: SoundGroupBehavior) -> Result<()> {
         unsafe {
-            FMOD_SoundGroup_SetMaxAudibleBehavior(self.inner.as_ptr(), behavior.into()).to_result()
+            FMOD_SoundGroup_SetMaxAudibleBehavior(self.as_ptr(), behavior.into()).to_result()
         }
     }
 
@@ -42,7 +42,7 @@ impl SoundGroup {
     pub fn get_max_audible_behavior(&self) -> Result<SoundGroupBehavior> {
         let mut behavior = 0;
         unsafe {
-            FMOD_SoundGroup_GetMaxAudibleBehavior(self.inner.as_ptr(), &raw mut behavior)
+            FMOD_SoundGroup_GetMaxAudibleBehavior(self.as_ptr(), &raw mut behavior)
                 .to_result()?;
         };
         let behavior = behavior.try_into()?;
@@ -58,27 +58,27 @@ impl SoundGroup {
     /// will fade to silence if [`SoundGroupBehavior::Mute`] is used,
     /// and any previous sounds that were silent because of this rule will fade in if they are more important.
     pub fn set_mute_fade_speed(&self, speed: c_float) -> Result<()> {
-        unsafe { FMOD_SoundGroup_SetMuteFadeSpeed(self.inner.as_ptr(), speed).to_result() }
+        unsafe { FMOD_SoundGroup_SetMuteFadeSpeed(self.as_ptr(), speed).to_result() }
     }
 
     /// Retrieves the current mute fade time.
     pub fn get_mute_fade_speed(&self) -> Result<c_float> {
         let mut speed = 0.0;
         unsafe {
-            FMOD_SoundGroup_GetMuteFadeSpeed(self.inner.as_ptr(), &raw mut speed).to_result()?;
+            FMOD_SoundGroup_GetMuteFadeSpeed(self.as_ptr(), &raw mut speed).to_result()?;
         }
         Ok(speed)
     }
 
     /// Sets the volume of the sound group.
     pub fn set_volume(&self, volume: c_float) -> Result<()> {
-        unsafe { FMOD_SoundGroup_SetVolume(self.inner.as_ptr(), volume).to_result() }
+        unsafe { FMOD_SoundGroup_SetVolume(self.as_ptr(), volume).to_result() }
     }
 
     /// Retrieves the volume of the sound group.
     pub fn get_volume(&self) -> Result<c_float> {
         let mut volume = 0.0;
-        unsafe { FMOD_SoundGroup_GetVolume(self.inner.as_ptr(), &raw mut volume).to_result()? };
+        unsafe { FMOD_SoundGroup_GetVolume(self.as_ptr(), &raw mut volume).to_result()? };
         Ok(volume)
     }
 }

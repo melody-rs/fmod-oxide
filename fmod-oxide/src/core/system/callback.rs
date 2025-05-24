@@ -458,7 +458,7 @@ unsafe extern "C" fn callback_impl<C: SystemCallback>(
 impl System {
     pub fn set_callback<C: SystemCallback>(&self, mask: SystemCallbackMask) -> Result<()> {
         unsafe {
-            FMOD_System_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>), mask.into())
+            FMOD_System_SetCallback(self.as_ptr(), Some(callback_impl::<C>), mask.into())
                 .to_result()
         }
     }

@@ -17,7 +17,7 @@ impl System {
     pub fn get_core_system(&self) -> Result<crate::core::System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_System_GetCoreSystem(self.inner.as_ptr(), &raw mut system).to_result()?;
+            FMOD_Studio_System_GetCoreSystem(self.as_ptr(), &raw mut system).to_result()?;
             Ok(crate::core::System::from_ffi(system))
         }
     }
@@ -30,7 +30,7 @@ impl System {
     pub fn lookup_id(&self, path: &Utf8CStr) -> Result<Guid> {
         let mut guid = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_System_LookupID(self.inner.as_ptr(), path.as_ptr(), guid.as_mut_ptr())
+            FMOD_Studio_System_LookupID(self.as_ptr(), path.as_ptr(), guid.as_mut_ptr())
                 .to_result()?;
 
             let guid = guid.assume_init().into();
@@ -43,12 +43,12 @@ impl System {
     /// The strings bank must be loaded prior to calling this function, otherwise [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] is returned.
     pub fn lookup_path(&self, id: Guid) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
-            FMOD_Studio_System_LookupPath(self.inner.as_ptr(), &id.into(), path, size, ret)
+            FMOD_Studio_System_LookupPath(self.as_ptr(), &id.into(), path, size, ret)
         })
     }
 
     /// Checks that the [`System`] reference is valid and has been initialized.
     pub fn is_valid(&self) -> bool {
-        unsafe { FMOD_Studio_System_IsValid(self.inner.as_ptr()).into() }
+        unsafe { FMOD_Studio_System_IsValid(self.as_ptr()).into() }
     }
 }

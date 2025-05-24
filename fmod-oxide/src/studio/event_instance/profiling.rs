@@ -20,7 +20,7 @@ impl EventInstance {
         let mut inclusive = 0;
         unsafe {
             FMOD_Studio_EventInstance_GetCPUUsage(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut exclusive,
                 &raw mut inclusive,
             )
@@ -36,7 +36,7 @@ impl EventInstance {
         let mut memory_usage = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_EventInstance_GetMemoryUsage(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 memory_usage.as_mut_ptr(),
             )
             .to_result()?;

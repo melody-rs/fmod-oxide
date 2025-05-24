@@ -25,7 +25,7 @@ impl System {
 
         unsafe {
             FMOD_Studio_System_GetParameterByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 &raw mut value,
                 &raw mut final_value,
@@ -45,7 +45,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_System_SetParameterByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 value,
                 ignore_seek_speed.into(),
@@ -66,7 +66,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_System_SetParameterByIDWithLabel(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 label.as_ptr(),
                 ignore_seek_speed.into(),
@@ -93,7 +93,7 @@ impl System {
 
         unsafe {
             FMOD_Studio_System_SetParametersByIDs(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 ids.as_ptr().cast(),
                 values.as_mut_ptr(),
                 ids.len() as c_int,
@@ -113,7 +113,7 @@ impl System {
 
         unsafe {
             FMOD_Studio_System_GetParameterByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 &raw mut value,
                 &raw mut final_value,
@@ -133,7 +133,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_System_SetParameterByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 value,
                 ignore_seek_speed.into(),
@@ -153,7 +153,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_System_SetParameterByNameWithLabel(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 label.as_ptr(),
                 ignore_seek_speed.into(),
@@ -173,7 +173,7 @@ impl System {
         let mut description = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_System_GetParameterDescriptionByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 description.as_mut_ptr(),
             )
@@ -189,7 +189,7 @@ impl System {
         let mut description = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_System_GetParameterDescriptionByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 description.as_mut_ptr(),
             )
@@ -204,7 +204,7 @@ impl System {
     pub fn parameter_description_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_System_GetParameterDescriptionCount(self.inner.as_ptr(), &raw mut count)
+            FMOD_Studio_System_GetParameterDescriptionCount(self.as_ptr(), &raw mut count)
                 .to_result()?;
         }
         Ok(count)
@@ -218,7 +218,7 @@ impl System {
 
         unsafe {
             FMOD_Studio_System_GetParameterDescriptionList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // bank is repr transparent and has the same layout as *mut FMOD_STUDIO_BANK, so this cast is ok
                 list.as_mut_ptr()
                     .cast::<FMOD_STUDIO_PARAMETER_DESCRIPTION>(),
@@ -252,7 +252,7 @@ impl System {
     ) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_System_GetParameterLabelByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 label_index,
                 path,
@@ -270,7 +270,7 @@ impl System {
     ) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_System_GetParameterLabelByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 label_index,
                 path,

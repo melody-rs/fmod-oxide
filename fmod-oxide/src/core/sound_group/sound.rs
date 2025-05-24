@@ -17,7 +17,7 @@ impl SoundGroup {
     /// Retrieves the current number of sounds in this sound group.
     pub fn get_sound_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_SoundGroup_GetNumSounds(self.inner.as_ptr(), &raw mut count).to_result()? };
+        unsafe { FMOD_SoundGroup_GetNumSounds(self.as_ptr(), &raw mut count).to_result()? };
         Ok(count)
     }
 
@@ -27,7 +27,7 @@ impl SoundGroup {
     pub fn get_sound(&self, index: c_int) -> Result<Sound> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_SoundGroup_GetSound(self.inner.as_ptr(), index, &raw mut sound).to_result()?;
+            FMOD_SoundGroup_GetSound(self.as_ptr(), index, &raw mut sound).to_result()?;
             Ok(Sound::from_ffi(sound))
         }
     }
@@ -38,12 +38,12 @@ impl SoundGroup {
     /// If the [`SoundGroup`] only has one [`Sound`], and that [`Sound`] is playing twice, the figure returned will be two.
     pub fn get_playing_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_SoundGroup_GetNumPlaying(self.inner.as_ptr(), &raw mut count).to_result()? };
+        unsafe { FMOD_SoundGroup_GetNumPlaying(self.as_ptr(), &raw mut count).to_result()? };
         Ok(count)
     }
 
     /// Stops all sounds within this soundgroup.
     pub fn stop(&self) -> Result<()> {
-        unsafe { FMOD_SoundGroup_Stop(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_SoundGroup_Stop(self.as_ptr()).to_result() }
     }
 }

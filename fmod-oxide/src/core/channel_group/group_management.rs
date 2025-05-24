@@ -20,7 +20,7 @@ impl ChannelGroup {
         let mut dsp_connection = std::ptr::null_mut();
         unsafe {
             FMOD_ChannelGroup_AddGroup(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 group.inner.as_ptr(),
                 propgate_dsp_clock.into(),
                 &raw mut dsp_connection,
@@ -37,7 +37,7 @@ impl ChannelGroup {
     /// Retrieves the number of [`ChannelGroup`]s that feed into to this group.
     pub fn get_group_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_ChannelGroup_GetNumGroups(self.inner.as_ptr(), &raw mut count).to_result()? }
+        unsafe { FMOD_ChannelGroup_GetNumGroups(self.as_ptr(), &raw mut count).to_result()? }
         Ok(count)
     }
 
@@ -45,7 +45,7 @@ impl ChannelGroup {
     pub fn get_group(&self, index: c_int) -> Result<ChannelGroup> {
         let mut group = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelGroup_GetGroup(self.inner.as_ptr(), index, &raw mut group).to_result()?;
+            FMOD_ChannelGroup_GetGroup(self.as_ptr(), index, &raw mut group).to_result()?;
             Ok(ChannelGroup::from_ffi(group))
         }
     }
@@ -54,7 +54,7 @@ impl ChannelGroup {
     pub fn get_parent_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelGroup_GetParentGroup(self.inner.as_ptr(), &raw mut channel_group)
+            FMOD_ChannelGroup_GetParentGroup(self.as_ptr(), &raw mut channel_group)
                 .to_result()?;
             Ok(ChannelGroup::from_ffi(channel_group))
         }

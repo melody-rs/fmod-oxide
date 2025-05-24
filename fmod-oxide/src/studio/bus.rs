@@ -44,8 +44,8 @@ impl Bus {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_STUDIO_BUS {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_STUDIO_BUS {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 
@@ -64,21 +64,21 @@ impl Bus {
     /// Pausing a bus will override the pause state of its inputs (meaning they return true from [`Bus::get_paused`]), while unpausing a bus will cause its inputs to obey their individual pause state.
     /// The pause state is processed in the Studio system update, so [`Bus::get_paused`] will return the state as determined by the last update.
     pub fn set_paused(&self, paused: bool) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_SetPaused(self.inner.as_ptr(), paused.into()).to_result() }
+        unsafe { FMOD_Studio_Bus_SetPaused(self.as_ptr(), paused.into()).to_result() }
     }
 
     /// Retrieves the pause state.
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_Bus_GetPaused(self.inner.as_ptr(), &raw mut paused).to_result()?;
+            FMOD_Studio_Bus_GetPaused(self.as_ptr(), &raw mut paused).to_result()?;
         }
         Ok(paused.into())
     }
 
     /// Stops all event instances that are routed into the bus.
     pub fn stop_all_events(&self, stop_mode: StopMode) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_StopAllEvents(self.inner.as_ptr(), stop_mode.into()).to_result() }
+        unsafe { FMOD_Studio_Bus_StopAllEvents(self.as_ptr(), stop_mode.into()).to_result() }
     }
 }
 
@@ -87,7 +87,7 @@ impl Bus {
     ///          
     /// This volume is applied as a scaling factor to the volume level set in FMOD Studio.
     pub fn set_volume(&self, volume: c_float) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_SetVolume(self.inner.as_ptr(), volume).to_result() }
+        unsafe { FMOD_Studio_Bus_SetVolume(self.as_ptr(), volume).to_result() }
     }
 
     /// Retrieves the volume level.
@@ -98,7 +98,7 @@ impl Bus {
         let mut volume = 0.0;
         let mut final_volume = 0.0;
         unsafe {
-            FMOD_Studio_Bus_GetVolume(self.inner.as_ptr(), &raw mut volume, &raw mut final_volume)
+            FMOD_Studio_Bus_GetVolume(self.as_ptr(), &raw mut volume, &raw mut final_volume)
                 .to_result()?;
         }
         Ok((volume, final_volume))
@@ -112,14 +112,14 @@ impl Bus {
     /// Muting a bus will override the mute state of its inputs (meaning they return true from [`Bus::get_mute`]), while unmuting a bus will cause its inputs to obey their individual mute state.
     /// The mute state is processed in the Studio system update, so [`Bus::get_mute`] will return the state as determined by the last update.
     pub fn set_mute(&self, mute: bool) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_SetMute(self.inner.as_ptr(), mute.into()).to_result() }
+        unsafe { FMOD_Studio_Bus_SetMute(self.as_ptr(), mute.into()).to_result() }
     }
 
     /// Retrieves the mute state.
     pub fn get_mute(&self) -> Result<bool> {
         let mut mute = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_Bus_GetMute(self.inner.as_ptr(), &raw mut mute).to_result()?;
+            FMOD_Studio_Bus_GetMute(self.as_ptr(), &raw mut mute).to_result()?;
         }
         Ok(mute.into())
     }
@@ -135,14 +135,14 @@ impl Bus {
     ///
     /// This function may be called at any time after a bank containing the bus has been loaded.
     pub fn set_port_index(&self, index: FMOD_PORT_INDEX) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_SetPortIndex(self.inner.as_ptr(), index).to_result() }
+        unsafe { FMOD_Studio_Bus_SetPortIndex(self.as_ptr(), index).to_result() }
     }
 
     /// Retrieves the port index assigned to the bus.
     pub fn get_port_index(&self) -> Result<FMOD_PORT_INDEX> {
         let mut index = 0;
         unsafe {
-            FMOD_Studio_Bus_GetPortIndex(self.inner.as_ptr(), &raw mut index).to_result()?;
+            FMOD_Studio_Bus_GetPortIndex(self.as_ptr(), &raw mut index).to_result()?;
         }
         Ok(index)
     }
@@ -156,8 +156,7 @@ impl Bus {
     pub fn get_channel_group(&self) -> Result<ChannelGroup> {
         let mut channel_group = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_Bus_GetChannelGroup(self.inner.as_ptr(), &raw mut channel_group)
-                .to_result()?;
+            FMOD_Studio_Bus_GetChannelGroup(self.as_ptr(), &raw mut channel_group).to_result()?;
             Ok(ChannelGroup::from_ffi(channel_group))
         }
     }
@@ -174,7 +173,7 @@ impl Bus {
     /// You can call [`super::System::flush_commands`] to ensure the [`ChannelGroup`] has been created.
     /// Alternatively you can keep trying to obtain the [`ChannelGroup`] via [`Bus::get_channel_group`] until it is ready.
     pub fn lock_channel_group(&self) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_LockChannelGroup(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_Bus_LockChannelGroup(self.as_ptr()).to_result() }
     }
 
     /// Unlocks the core [`ChannelGroup`].
@@ -182,7 +181,7 @@ impl Bus {
     /// This function allows the system to destroy the [`ChannelGroup`] when it is not needed.
     /// See Signal Paths in the FMOD documentation for details.
     pub fn unlock_channel_group(&self) -> Result<()> {
-        unsafe { FMOD_Studio_Bus_UnlockChannelGroup(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_Bus_UnlockChannelGroup(self.as_ptr()).to_result() }
     }
 }
 
@@ -198,12 +197,8 @@ impl Bus {
         let mut exclusive = 0;
         let mut inclusive = 0;
         unsafe {
-            FMOD_Studio_Bus_GetCPUUsage(
-                self.inner.as_ptr(),
-                &raw mut exclusive,
-                &raw mut inclusive,
-            )
-            .to_result()?;
+            FMOD_Studio_Bus_GetCPUUsage(self.as_ptr(), &raw mut exclusive, &raw mut inclusive)
+                .to_result()?;
         }
         Ok((exclusive, inclusive))
     }
@@ -214,8 +209,7 @@ impl Bus {
     pub fn get_memory_usage(&self) -> Result<MemoryUsage> {
         let mut memory_usage = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_Bus_GetMemoryUsage(self.inner.as_ptr(), memory_usage.as_mut_ptr())
-                .to_result()?;
+            FMOD_Studio_Bus_GetMemoryUsage(self.as_ptr(), memory_usage.as_mut_ptr()).to_result()?;
 
             let memory_usage = memory_usage.assume_init().into();
             Ok(memory_usage)
@@ -228,7 +222,7 @@ impl Bus {
     pub fn get_id(&self) -> Result<Guid> {
         let mut guid = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_Bus_GetID(self.inner.as_ptr(), guid.as_mut_ptr()).to_result()?;
+            FMOD_Studio_Bus_GetID(self.as_ptr(), guid.as_mut_ptr()).to_result()?;
 
             let guid = guid.assume_init().into();
 
@@ -241,12 +235,12 @@ impl Bus {
     /// The strings bank must be loaded prior to calling this function, otherwise [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] is returned.
     pub fn get_path(&self) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
-            FMOD_Studio_Bus_GetPath(self.inner.as_ptr(), path, size, ret)
+            FMOD_Studio_Bus_GetPath(self.as_ptr(), path, size, ret)
         })
     }
 
     /// Checks that the [`Bus`] reference is valid.
     pub fn is_valid(&self) -> bool {
-        unsafe { FMOD_Studio_Bus_IsValid(self.inner.as_ptr()).into() }
+        unsafe { FMOD_Studio_Bus_IsValid(self.as_ptr()).into() }
     }
 }

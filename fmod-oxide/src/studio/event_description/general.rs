@@ -18,7 +18,7 @@ impl EventDescription {
     pub fn get_id(&self) -> Result<Guid> {
         let mut guid = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_EventDescription_GetID(self.inner.as_ptr(), guid.as_mut_ptr())
+            FMOD_Studio_EventDescription_GetID(self.as_ptr(), guid.as_mut_ptr())
                 .to_result()?;
 
             let guid = guid.assume_init().into();
@@ -33,7 +33,7 @@ impl EventDescription {
     pub fn get_length(&self) -> Result<c_int> {
         let mut length = 0;
         unsafe {
-            FMOD_Studio_EventDescription_GetLength(self.inner.as_ptr(), &raw mut length)
+            FMOD_Studio_EventDescription_GetLength(self.as_ptr(), &raw mut length)
                 .to_result()?;
         }
         Ok(length)
@@ -44,12 +44,12 @@ impl EventDescription {
     /// The strings bank must be loaded prior to calling this function, otherwise [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] is returned.
     pub fn get_path(&self) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
-            FMOD_Studio_EventDescription_GetPath(self.inner.as_ptr(), path, size, ret)
+            FMOD_Studio_EventDescription_GetPath(self.as_ptr(), path, size, ret)
         })
     }
 
     /// Checks that the [`EventDescription`] reference is valid.
     pub fn is_valid(&self) -> bool {
-        unsafe { FMOD_Studio_EventDescription_IsValid(self.inner.as_ptr()).into() }
+        unsafe { FMOD_Studio_EventDescription_IsValid(self.as_ptr()).into() }
     }
 }

@@ -31,7 +31,7 @@ impl EventInstance {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_EventInstance_SetParameterByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 value,
                 ignore_seek_speed.into(),
@@ -57,7 +57,7 @@ impl EventInstance {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_EventInstance_SetParameterByNameWithLabel(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 label.as_ptr(),
                 ignore_seek_speed.into(),
@@ -77,7 +77,7 @@ impl EventInstance {
         let mut final_value = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetParameterByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 &raw mut value,
                 &raw mut final_value,
@@ -100,7 +100,7 @@ impl EventInstance {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_EventInstance_SetParameterByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 value,
                 ignore_seek_speed.into(),
@@ -124,7 +124,7 @@ impl EventInstance {
     ) -> Result<()> {
         unsafe {
             FMOD_Studio_EventInstance_SetParameterByIDWithLabel(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 label.as_ptr(),
                 ignore_seek_speed.into(),
@@ -144,7 +144,7 @@ impl EventInstance {
         let mut final_value = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetParameterByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 &raw mut value,
                 &raw mut final_value,
@@ -174,7 +174,7 @@ impl EventInstance {
 
         unsafe {
             FMOD_Studio_EventInstance_SetParametersByIDs(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 ids.as_ptr().cast(),
                 values.as_mut_ptr(),
                 ids.len() as c_int,

@@ -16,7 +16,7 @@ impl Sound {
     pub fn get_music_channel_count(&self) -> Result<i32> {
         let mut num_channels = 0;
         unsafe {
-            FMOD_Sound_GetMusicNumChannels(self.inner.as_ptr(), &raw mut num_channels)
+            FMOD_Sound_GetMusicNumChannels(self.as_ptr(), &raw mut num_channels)
                 .to_result()?;
         }
         Ok(num_channels)
@@ -25,7 +25,7 @@ impl Sound {
     /// Sets the volume of a MOD/S3M/XM/IT/MIDI music channel volume.
     pub fn set_music_channel_volume(&self, channel: c_int, volume: c_float) -> Result<()> {
         unsafe {
-            FMOD_Sound_SetMusicChannelVolume(self.inner.as_ptr(), channel, volume).to_result()?;
+            FMOD_Sound_SetMusicChannelVolume(self.as_ptr(), channel, volume).to_result()?;
         }
         Ok(())
     }
@@ -34,7 +34,7 @@ impl Sound {
     pub fn get_music_channel_volume(&self, channel: c_int) -> Result<c_float> {
         let mut volume = 0.0;
         unsafe {
-            FMOD_Sound_GetMusicChannelVolume(self.inner.as_ptr(), channel, &raw mut volume)
+            FMOD_Sound_GetMusicChannelVolume(self.as_ptr(), channel, &raw mut volume)
                 .to_result()?;
         }
         Ok(volume)
@@ -43,7 +43,7 @@ impl Sound {
     /// Sets the relative speed of MOD/S3M/XM/IT/MIDI music.
     pub fn set_music_speed(&self, speed: c_float) -> Result<()> {
         unsafe {
-            FMOD_Sound_SetMusicSpeed(self.inner.as_ptr(), speed).to_result()?;
+            FMOD_Sound_SetMusicSpeed(self.as_ptr(), speed).to_result()?;
         }
         Ok(())
     }
@@ -52,7 +52,7 @@ impl Sound {
     pub fn get_music_speed(&self) -> Result<c_float> {
         let mut speed = 0.0;
         unsafe {
-            FMOD_Sound_GetMusicSpeed(self.inner.as_ptr(), &raw mut speed).to_result()?;
+            FMOD_Sound_GetMusicSpeed(self.as_ptr(), &raw mut speed).to_result()?;
         }
         Ok(speed)
     }

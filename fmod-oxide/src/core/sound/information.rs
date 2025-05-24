@@ -22,7 +22,7 @@ impl Sound {
     pub fn get_name(&self) -> Result<Utf8CString> {
         get_string(|name| unsafe {
             FMOD_Sound_GetName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
             )
@@ -37,7 +37,7 @@ impl Sound {
         let mut bits = 0;
         unsafe {
             FMOD_Sound_GetFormat(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut kind,
                 &raw mut format,
                 &raw mut channels,
@@ -61,7 +61,7 @@ impl Sound {
     pub fn get_length(&self, unit: TimeUnit) -> Result<c_uint> {
         let mut length = 0;
         unsafe {
-            FMOD_Sound_GetLength(self.inner.as_ptr(), &raw mut length, unit.into()).to_result()?;
+            FMOD_Sound_GetLength(self.as_ptr(), &raw mut length, unit.into()).to_result()?;
         }
         Ok(length)
     }
@@ -76,7 +76,7 @@ impl Sound {
         let mut tags = 0;
         let mut updated = 0;
         unsafe {
-            FMOD_Sound_GetNumTags(self.inner.as_ptr(), &raw mut tags, &raw mut updated)
+            FMOD_Sound_GetNumTags(self.as_ptr(), &raw mut tags, &raw mut updated)
                 .to_result()?;
         }
         Ok((tags, updated))
@@ -113,7 +113,7 @@ impl Sound {
         let mut tag = MaybeUninit::uninit();
         unsafe {
             FMOD_Sound_GetTag(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.map_or(std::ptr::null(), Utf8CStr::as_ptr),
                 index,
                 tag.as_mut_ptr(),

@@ -22,7 +22,7 @@ impl System {
     pub fn get_buffer_usage(&self) -> Result<BufferUsage> {
         let mut usage = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_System_GetBufferUsage(self.inner.as_ptr(), usage.as_mut_ptr())
+            FMOD_Studio_System_GetBufferUsage(self.as_ptr(), usage.as_mut_ptr())
                 .to_result()?;
 
             let usage = usage.assume_init().into();
@@ -34,7 +34,7 @@ impl System {
     ///
     /// This function resets the buffer usage data tracked by the FMOD Studio System.
     pub fn reset_buffer_usage(&self) -> Result<()> {
-        unsafe { FMOD_Studio_System_ResetBufferUsage(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_System_ResetBufferUsage(self.as_ptr()).to_result() }
     }
 
     /// Retrieves the amount of CPU used for different parts of the Studio engine.
@@ -45,7 +45,7 @@ impl System {
         let mut usage_core = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_System_GetCPUUsage(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 usage.as_mut_ptr(),
                 usage_core.as_mut_ptr(),
             )
@@ -65,7 +65,7 @@ impl System {
     pub fn get_memory_usage(&self) -> Result<MemoryUsage> {
         let mut usage = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_System_GetMemoryUsage(self.inner.as_ptr(), usage.as_mut_ptr())
+            FMOD_Studio_System_GetMemoryUsage(self.as_ptr(), usage.as_mut_ptr())
                 .to_result()?;
 
             let usage = usage.assume_init().into();

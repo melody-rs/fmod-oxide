@@ -20,7 +20,7 @@ impl Dsp {
         let mut connection = std::ptr::null_mut();
         unsafe {
             FMOD_DSP_AddInput(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 input.inner.as_ptr(),
                 &raw mut connection,
                 kind.into(),
@@ -40,7 +40,7 @@ impl Dsp {
         let mut dsp = std::ptr::null_mut();
         unsafe {
             FMOD_DSP_GetInput(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 index,
                 &raw mut dsp,
                 &raw mut connection,
@@ -60,7 +60,7 @@ impl Dsp {
         let mut dsp = std::ptr::null_mut();
         unsafe {
             FMOD_DSP_GetOutput(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 index,
                 &raw mut dsp,
                 &raw mut connection,
@@ -76,7 +76,7 @@ impl Dsp {
     pub fn get_input_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_DSP_GetNumInputs(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_DSP_GetNumInputs(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -86,7 +86,7 @@ impl Dsp {
     /// This will flush the [`Dsp`] queue (which blocks against the mixer) to ensure the output list is correct, avoid this during time sensitive operations.
     pub fn get_output_count(&self) -> Result<c_int> {
         let mut count = 0;
-        unsafe { FMOD_DSP_GetNumOutputs(self.inner.as_ptr(), &raw mut count).to_result()? };
+        unsafe { FMOD_DSP_GetNumOutputs(self.as_ptr(), &raw mut count).to_result()? };
         Ok(count)
     }
 
@@ -95,7 +95,7 @@ impl Dsp {
     /// This is a convenience function that is faster than disconnecting all inputs and outputs individually.
     pub fn disconnect_all(&self, inputs: bool, outputs: bool) -> Result<()> {
         unsafe {
-            FMOD_DSP_DisconnectAll(self.inner.as_ptr(), inputs.into(), outputs.into()).to_result()
+            FMOD_DSP_DisconnectAll(self.as_ptr(), inputs.into(), outputs.into()).to_result()
         }
     }
 
@@ -111,6 +111,6 @@ impl Dsp {
     ) -> Result<()> {
         let target = target.map_or(std::ptr::null_mut(), Into::into);
         let connection = connection.map_or(std::ptr::null_mut(), Into::into);
-        unsafe { FMOD_DSP_DisconnectFrom(self.inner.as_ptr(), target, connection).to_result() }
+        unsafe { FMOD_DSP_DisconnectFrom(self.as_ptr(), target, connection).to_result() }
     }
 }

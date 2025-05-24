@@ -13,13 +13,13 @@ use crate::{FmodResultExt, Result};
 impl DspConnection {
     /// Sets the connection's volume scale.
     pub fn set_mix(&self, volume: c_float) -> Result<()> {
-        unsafe { FMOD_DSPConnection_SetMix(self.inner.as_ptr(), volume).to_result() }
+        unsafe { FMOD_DSPConnection_SetMix(self.as_ptr(), volume).to_result() }
     }
 
     /// Retrieves the connection's volume scale.
     pub fn get_mix(&self) -> Result<c_float> {
         let mut volume = 0.0;
-        unsafe { FMOD_DSPConnection_GetMix(self.inner.as_ptr(), &raw mut volume).to_result()? };
+        unsafe { FMOD_DSPConnection_GetMix(self.as_ptr(), &raw mut volume).to_result()? };
         Ok(volume)
     }
 
@@ -43,7 +43,7 @@ impl DspConnection {
         }
         unsafe {
             FMOD_DSPConnection_SetMixMatrix(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 matrix.as_ptr().cast::<f32>().cast_mut(),
                 OUT as c_int,
                 IN as c_int,
@@ -75,7 +75,7 @@ impl DspConnection {
         let mut out_channels = OUT as c_int;
         unsafe {
             FMOD_DSPConnection_GetMixMatrix(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 matrix.as_mut_ptr().cast::<f32>(),
                 &raw mut in_channels,
                 &raw mut out_channels,

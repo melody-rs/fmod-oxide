@@ -29,7 +29,7 @@ impl System {
     pub fn set_default_filesystem(&self, block_align: c_int) -> Result<()> {
         unsafe {
             FMOD_System_SetFileSystem(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 None,
                 None,
                 None,
@@ -52,7 +52,7 @@ impl System {
     pub fn set_filesystem_sync<F: FileSystemSync>(&self, block_align: c_int) -> Result<()> {
         unsafe {
             FMOD_System_SetFileSystem(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 Some(filesystem_open::<F>),
                 Some(filesystem_close::<F>),
                 Some(filesystem_read::<F>),
@@ -85,7 +85,7 @@ impl System {
     pub fn set_filesystem_async<F: FileSystemAsync>(&self, block_align: c_int) -> Result<()> {
         unsafe {
             FMOD_System_SetFileSystem(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 Some(filesystem_open::<F>),
                 Some(filesystem_close::<F>),
                 None,
@@ -107,7 +107,7 @@ impl System {
     pub fn attach_filesystem<F: FileSystemSync>(&self) -> Result<()> {
         unsafe {
             FMOD_System_AttachFileSystem(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 Some(filesystem_open::<F>),
                 Some(filesystem_close::<F>),
                 Some(filesystem_read::<F>),
@@ -120,7 +120,7 @@ impl System {
     /// Detach the currently attached listener filesystem.
     pub fn detach_filesystem(&self) -> Result<()> {
         unsafe {
-            FMOD_System_AttachFileSystem(self.inner.as_ptr(), None, None, None, None).to_result()
+            FMOD_System_AttachFileSystem(self.as_ptr(), None, None, None, None).to_result()
         }
     }
 }

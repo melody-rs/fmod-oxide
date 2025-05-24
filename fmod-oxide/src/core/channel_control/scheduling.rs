@@ -20,7 +20,7 @@ impl ChannelControl {
         let mut parent_clock = 0;
         unsafe {
             FMOD_ChannelControl_GetDSPClock(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut dsp_clock,
                 &raw mut parent_clock,
             )
@@ -40,7 +40,7 @@ impl ChannelControl {
         stop_channels: bool,
     ) -> Result<()> {
         unsafe {
-            FMOD_ChannelControl_SetDelay(self.inner.as_ptr(), start, end, stop_channels).to_result()
+            FMOD_ChannelControl_SetDelay(self.as_ptr(), start, end, stop_channels).to_result()
         }
     }
 
@@ -51,7 +51,7 @@ impl ChannelControl {
         let mut stop_channels = false;
         unsafe {
             FMOD_ChannelControl_GetDelay(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut dsp_start,
                 &raw mut dsp_end,
                 &raw mut stop_channels,
@@ -76,7 +76,7 @@ impl ChannelControl {
     /// ```
     pub fn add_fade_point(&self, dsp_clock: c_ulonglong, volume: f32) -> Result<()> {
         unsafe {
-            FMOD_ChannelControl_AddFadePoint(self.inner.as_ptr(), dsp_clock, volume).to_result()
+            FMOD_ChannelControl_AddFadePoint(self.as_ptr(), dsp_clock, volume).to_result()
         }
     }
 
@@ -89,7 +89,7 @@ impl ChannelControl {
     /// All fade points after `dsp_clock` will be removed.
     pub fn set_fade_point_ramp(&self, dsp_clock: c_ulonglong, volume: f32) -> Result<()> {
         unsafe {
-            FMOD_ChannelControl_SetFadePointRamp(self.inner.as_ptr(), dsp_clock, volume).to_result()
+            FMOD_ChannelControl_SetFadePointRamp(self.as_ptr(), dsp_clock, volume).to_result()
         }
     }
 
@@ -101,7 +101,7 @@ impl ChannelControl {
     ) -> Result<()> {
         unsafe {
             FMOD_ChannelControl_RemoveFadePoints(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 dsp_clock_start,
                 dsp_clock_end,
             )
@@ -114,7 +114,7 @@ impl ChannelControl {
         let mut num_points = 0;
         unsafe {
             FMOD_ChannelControl_GetFadePoints(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut num_points,
                 std::ptr::null_mut(),
                 std::ptr::null_mut(),
@@ -126,7 +126,7 @@ impl ChannelControl {
         let mut volumes = vec![0.0; num_points as usize];
         unsafe {
             FMOD_ChannelControl_GetFadePoints(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut num_points,
                 dsp_clocks.as_mut_ptr(),
                 volumes.as_mut_ptr(),

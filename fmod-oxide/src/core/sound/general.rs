@@ -18,20 +18,20 @@ impl Sound {
     /// Additionally, if the sound is still playing or has recently been stopped, the release may stall, as the mixer may still be using the sound.
     /// Using `Sound::get_open_state` and checking the open state for `FMOD_OPENSTATE_READY` and `FMOD_OPENSTATE_ERROR` is a good way to avoid stalls.
     pub fn release(&self) -> Result<()> {
-        unsafe { FMOD_Sound_Release(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Sound_Release(self.as_ptr()).to_result() }
     }
 
     /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_Sound_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_Sound_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_Sound_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -40,7 +40,7 @@ impl Sound {
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
+            FMOD_Sound_GetSystemObject(self.as_ptr(), &raw mut system).to_result()?;
             Ok(System::from_ffi(system))
         }
     }

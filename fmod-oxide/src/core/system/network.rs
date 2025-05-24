@@ -18,14 +18,14 @@ impl System {
     ///
     /// Basic authentication is supported using `user:password@host:port` format e.g. `bob:sekrit123@www.fmod.com:8888`
     pub fn set_network_proxy(&self, proxy: &Utf8CStr) -> Result<()> {
-        unsafe { FMOD_System_SetNetworkProxy(self.inner.as_ptr(), proxy.as_ptr()).to_result() }
+        unsafe { FMOD_System_SetNetworkProxy(self.as_ptr(), proxy.as_ptr()).to_result() }
     }
 
     /// Retrieves the URL of the proxy server used in internet streaming.
     pub fn get_network_proxy(&self) -> Result<Utf8CString> {
         get_string(|name| unsafe {
             FMOD_System_GetNetworkProxy(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
             )
@@ -34,14 +34,14 @@ impl System {
 
     /// Set the timeout for network streams.
     pub fn set_network_timeout(&self, timeout: c_int) -> Result<()> {
-        unsafe { FMOD_System_SetNetworkTimeout(self.inner.as_ptr(), timeout).to_result() }
+        unsafe { FMOD_System_SetNetworkTimeout(self.as_ptr(), timeout).to_result() }
     }
 
     /// Retrieve the timeout value for network streams.
     pub fn get_network_timeout(&self) -> Result<c_int> {
         let mut timeout = 0;
         unsafe {
-            FMOD_System_GetNetworkTimeout(self.inner.as_ptr(), &raw mut timeout).to_result()?;
+            FMOD_System_GetNetworkTimeout(self.as_ptr(), &raw mut timeout).to_result()?;
         }
         Ok(timeout)
     }

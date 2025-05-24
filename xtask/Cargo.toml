@@ -8,7 +8,7 @@ publish = false
 walkdir = "2.5.0"
 clap = { version = "4.5.4", features = ["derive"] }
 clang = { version = "2.0.0", features = ["clang_3_9"] }
-color-eyre = "0.6.3"
+color-eyre = "0.6.4"
 syn = { version = "2.0.63", features = ["full", "visit"] }
 itertools = "0.14.0"
 indexmap = "2.2.6"

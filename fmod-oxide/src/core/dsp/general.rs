@@ -36,7 +36,7 @@ impl Dsp {
     /// On Windows, this would be a `HWND`, on X11 a window id, etc.
     // FIXME Is that right?
     pub unsafe fn show_config_dialogue(&self, hwnd: *mut c_void, show: bool) -> Result<()> {
-        unsafe { FMOD_DSP_ShowConfigDialog(self.inner.as_ptr(), hwnd, show.into()).to_result() }
+        unsafe { FMOD_DSP_ShowConfigDialog(self.as_ptr(), hwnd, show.into()).to_result() }
     }
 
     /// Reset a DSPs internal state ready for new input signal.
@@ -44,7 +44,7 @@ impl Dsp {
     /// This will clear all internal state derived from input signal while retaining any set parameter values.
     /// The intended use of the function is to avoid audible artifacts if moving the [`Dsp`] from one part of the [`Dsp`] network to another.
     pub fn reset(&self) -> Result<()> {
-        unsafe { FMOD_DSP_Reset(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_DSP_Reset(self.as_ptr()).to_result() }
     }
 
     /// Frees a [`Dsp`] object.
@@ -52,13 +52,13 @@ impl Dsp {
     /// If [`Dsp`] is not removed from the network with `ChannelControl::removeDSP` after being added with `ChannelControl::addDSP`,
     /// it will not release and will instead return [`FMOD_RESULT::FMOD_ERR_DSP_INUSE`].
     pub fn release(&self) -> Result<()> {
-        unsafe { FMOD_DSP_Release(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_DSP_Release(self.as_ptr()).to_result() }
     }
 
     /// Retrieves the pre-defined type of a FMOD registered [`Dsp`] unit.
     pub fn get_type(&self) -> Result<DspType> {
         let mut dsp_type = 0;
-        unsafe { FMOD_DSP_GetType(self.inner.as_ptr(), &raw mut dsp_type).to_result()? };
+        unsafe { FMOD_DSP_GetType(self.as_ptr(), &raw mut dsp_type).to_result()? };
         let dsp_type = dsp_type.try_into()?;
         Ok(dsp_type)
     }
@@ -73,7 +73,7 @@ impl Dsp {
 
         unsafe {
             FMOD_DSP_GetInfo(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 buffer.as_mut_ptr().cast::<c_char>(),
                 &raw mut version,
                 &raw mut channels,
@@ -101,7 +101,7 @@ impl Dsp {
         let mut exclusive = 0;
         let mut inclusive = 0;
         unsafe {
-            FMOD_DSP_GetCPUUsage(self.inner.as_ptr(), &raw mut exclusive, &raw mut inclusive)
+            FMOD_DSP_GetCPUUsage(self.as_ptr(), &raw mut exclusive, &raw mut inclusive)
                 .to_result()?;
         }
         Ok((exclusive, inclusive))
@@ -110,14 +110,14 @@ impl Dsp {
     /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_DSP_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_DSP_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_DSP_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -126,7 +126,7 @@ impl Dsp {
     pub fn get_system(&self) -> Result<System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_DSP_GetSystemObject(self.inner.as_ptr(), &raw mut system).to_result()?;
+            FMOD_DSP_GetSystemObject(self.as_ptr(), &raw mut system).to_result()?;
             Ok(System::from_ffi(system))
         }
     }

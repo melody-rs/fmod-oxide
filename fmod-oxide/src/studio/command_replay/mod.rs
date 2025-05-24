@@ -40,8 +40,8 @@ impl CommandReplay {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_STUDIO_COMMANDREPLAY {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_STUDIO_COMMANDREPLAY {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

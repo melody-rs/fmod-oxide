@@ -26,7 +26,7 @@ impl System {
         let mut connected = 0;
         unsafe {
             FMOD_System_GetRecordNumDrivers(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut drivers,
                 &raw mut connected,
             )
@@ -47,7 +47,7 @@ impl System {
         let mut state = 0;
         let name = get_string(|name| unsafe {
             FMOD_System_GetRecordDriverInfo(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id,
                 name.as_mut_ptr().cast(),
                 name.len() as c_int,
@@ -84,7 +84,7 @@ impl System {
     pub fn get_record_position(&self, id: c_int) -> Result<c_uint> {
         let mut position = 0;
         unsafe {
-            FMOD_System_GetRecordPosition(self.inner.as_ptr(), id, &raw mut position)
+            FMOD_System_GetRecordPosition(self.as_ptr(), id, &raw mut position)
                 .to_result()?;
         }
         Ok(position)
@@ -103,7 +103,7 @@ impl System {
     /// otherwise a resampler will be allocated to handle the difference in frequencies, which adds latency.
     pub fn record_start(&self, id: c_int, sound: Sound, do_loop: bool) -> Result<()> {
         unsafe {
-            FMOD_System_RecordStart(self.inner.as_ptr(), id, sound.into(), do_loop.into())
+            FMOD_System_RecordStart(self.as_ptr(), id, sound.into(), do_loop.into())
                 .to_result()
         }
     }
@@ -112,7 +112,7 @@ impl System {
     ///
     /// Returns no error if unplugged or already stopped.
     pub fn record_stop(&self, id: c_int) -> Result<()> {
-        unsafe { FMOD_System_RecordStop(self.inner.as_ptr(), id).to_result() }
+        unsafe { FMOD_System_RecordStop(self.as_ptr(), id).to_result() }
     }
 
     /// Retrieves the state of the FMOD recording API, ie if it is currently recording or not.
@@ -126,7 +126,7 @@ impl System {
     pub fn is_recording(&self, id: c_int) -> Result<bool> {
         let mut recording = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_System_IsRecording(self.inner.as_ptr(), id, &raw mut recording).to_result()?;
+            FMOD_System_IsRecording(self.as_ptr(), id, &raw mut recording).to_result()?;
         }
         Ok(recording.into())
     }

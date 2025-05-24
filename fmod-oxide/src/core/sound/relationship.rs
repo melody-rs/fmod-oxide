@@ -17,14 +17,14 @@ impl Sound {
     /// By default, a sound is located in the 'master sound group'.
     /// This can be retrieved with `System::getMasterSoundGroup`.
     pub fn set_sound_group(&self, group: SoundGroup) -> Result<()> {
-        unsafe { FMOD_Sound_SetSoundGroup(self.inner.as_ptr(), group.into()).to_result() }
+        unsafe { FMOD_Sound_SetSoundGroup(self.as_ptr(), group.into()).to_result() }
     }
 
     /// Retrieves the sound's current sound group.
     pub fn sound_group(&self) -> Result<SoundGroup> {
         let mut group = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSoundGroup(self.inner.as_ptr(), &raw mut group).to_result()?;
+            FMOD_Sound_GetSoundGroup(self.as_ptr(), &raw mut group).to_result()?;
             Ok(SoundGroup::from_ffi(group))
         }
     }
@@ -35,7 +35,7 @@ impl Sound {
     pub fn get_sub_sound_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Sound_GetNumSubSounds(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Sound_GetNumSubSounds(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -53,7 +53,7 @@ impl Sound {
     pub fn get_sub_sound(&self, index: c_int) -> Result<Sound> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSubSound(self.inner.as_ptr(), index, &raw mut sound).to_result()?;
+            FMOD_Sound_GetSubSound(self.as_ptr(), index, &raw mut sound).to_result()?;
             Ok(Sound::from_ffi(sound))
         }
     }
@@ -62,7 +62,7 @@ impl Sound {
     pub fn get_sub_sound_parent(&self) -> Result<Option<Sound>> {
         let mut sound = std::ptr::null_mut();
         unsafe {
-            FMOD_Sound_GetSubSoundParent(self.inner.as_ptr(), &raw mut sound).to_result()?;
+            FMOD_Sound_GetSubSoundParent(self.as_ptr(), &raw mut sound).to_result()?;
         }
         if sound.is_null() {
             Ok(None)

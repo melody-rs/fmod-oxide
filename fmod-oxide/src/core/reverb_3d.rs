@@ -43,8 +43,8 @@ impl Reverb3D {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_REVERB3D {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_REVERB3D {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 
@@ -73,7 +73,7 @@ impl Reverb3D {
             .map_or(std::ptr::null(), std::ptr::from_ref)
             .cast();
         unsafe {
-            FMOD_Reverb3D_Set3DAttributes(self.inner.as_ptr(), position, min_distance, max_distance)
+            FMOD_Reverb3D_Set3DAttributes(self.as_ptr(), position, min_distance, max_distance)
                 .to_result()
         }
     }
@@ -87,7 +87,7 @@ impl Reverb3D {
         let mut max_distance = 0.0;
         unsafe {
             FMOD_Reverb3D_Get3DAttributes(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 position.as_mut_ptr(),
                 &raw mut min_distance,
                 &raw mut max_distance,
@@ -103,7 +103,7 @@ impl Reverb3D {
     /// Reverb presets are available, see the associated constants of [`ReverbProperties`].
     pub fn set_properties(&self, properties: ReverbProperties) -> Result<()> {
         unsafe {
-            FMOD_Reverb3D_SetProperties(self.inner.as_ptr(), std::ptr::from_ref(&properties).cast())
+            FMOD_Reverb3D_SetProperties(self.as_ptr(), std::ptr::from_ref(&properties).cast())
                 .to_result()
         }
     }
@@ -114,8 +114,7 @@ impl Reverb3D {
     pub fn get_properties(&self) -> Result<ReverbProperties> {
         let mut properties = MaybeUninit::uninit();
         unsafe {
-            FMOD_Reverb3D_GetProperties(self.inner.as_ptr(), properties.as_mut_ptr())
-                .to_result()?;
+            FMOD_Reverb3D_GetProperties(self.as_ptr(), properties.as_mut_ptr()).to_result()?;
             let properties = properties.assume_init().into();
             Ok(properties)
         }
@@ -125,7 +124,7 @@ impl Reverb3D {
     ///
     /// See the 3D Reverb guide for more information.
     pub fn set_active(&self, active: bool) -> Result<()> {
-        unsafe { FMOD_Reverb3D_SetActive(self.inner.as_ptr(), active.into()).to_result() }
+        unsafe { FMOD_Reverb3D_SetActive(self.as_ptr(), active.into()).to_result() }
     }
 
     /// Retrieves the active state.
@@ -134,7 +133,7 @@ impl Reverb3D {
     pub fn get_active(&self) -> Result<bool> {
         let mut active = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Reverb3D_GetActive(self.inner.as_ptr(), &raw mut active).to_result()?;
+            FMOD_Reverb3D_GetActive(self.as_ptr(), &raw mut active).to_result()?;
         }
         Ok(active.into())
     }
@@ -142,14 +141,14 @@ impl Reverb3D {
     /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_Reverb3D_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_Reverb3D_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Reverb3D_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_Reverb3D_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -159,6 +158,6 @@ impl Reverb3D {
     /// If you release all [`Reverb3D`] objects and have not added a new [`Reverb3D`] object,
     /// [`crate::System::set_reverb_properties`] should be called to reset the reverb properties.
     pub fn release(&self) -> Result<()> {
-        unsafe { FMOD_Reverb3D_Release(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Reverb3D_Release(self.as_ptr()).to_result() }
     }
 }

@@ -15,7 +15,7 @@ impl ChannelGroup {
     pub fn get_channel_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_ChannelGroup_GetNumChannels(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_ChannelGroup_GetNumChannels(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -24,7 +24,7 @@ impl ChannelGroup {
     pub fn get_channel(&self, index: c_int) -> Result<Channel> {
         let mut channel = std::ptr::null_mut();
         unsafe {
-            FMOD_ChannelGroup_GetChannel(self.inner.as_ptr(), index, &raw mut channel)
+            FMOD_ChannelGroup_GetChannel(self.as_ptr(), index, &raw mut channel)
                 .to_result()?;
             Ok(Channel::from_ffi(channel))
         }

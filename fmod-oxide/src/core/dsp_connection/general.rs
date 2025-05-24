@@ -20,7 +20,7 @@ impl DspConnection {
     pub fn get_input(&self) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSPConnection_GetInput(self.inner.as_ptr(), &raw mut dsp).to_result()?;
+            FMOD_DSPConnection_GetInput(self.as_ptr(), &raw mut dsp).to_result()?;
             Ok(Dsp::from_ffi(dsp))
         }
     }
@@ -33,7 +33,7 @@ impl DspConnection {
     pub fn get_output(&self) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_DSPConnection_GetOutput(self.inner.as_ptr(), &raw mut dsp).to_result()?;
+            FMOD_DSPConnection_GetOutput(self.as_ptr(), &raw mut dsp).to_result()?;
             Ok(Dsp::from_ffi(dsp))
         }
     }
@@ -42,7 +42,7 @@ impl DspConnection {
     pub fn get_type(&self) -> Result<DspConnectionType> {
         let mut connection_type = 0;
         unsafe {
-            FMOD_DSPConnection_GetType(self.inner.as_ptr(), &raw mut connection_type)
+            FMOD_DSPConnection_GetType(self.as_ptr(), &raw mut connection_type)
                 .to_result()?;
         };
         let connection_type = connection_type.try_into()?;
@@ -52,14 +52,14 @@ impl DspConnection {
     /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_DSPConnection_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_DSPConnection_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_DSPConnection_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_DSPConnection_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

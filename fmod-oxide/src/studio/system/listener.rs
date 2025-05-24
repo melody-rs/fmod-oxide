@@ -24,7 +24,7 @@ impl System {
         let attenuation_position = attenuation_position.map(Into::into);
         unsafe {
             FMOD_Studio_System_SetListenerAttributes(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 listener,
                 &attributes.into(),
                 attenuation_position
@@ -42,7 +42,7 @@ impl System {
 
         unsafe {
             FMOD_Studio_System_GetListenerAttributes(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 listener,
                 attributes.as_mut_ptr(),
                 attenuation_position.as_mut_ptr(),
@@ -68,7 +68,7 @@ impl System {
     /// The sum of all the listener weights should add up to at least 1. It is a user error to set all listener weights to 0.
     pub fn set_listener_weight(&self, listener: c_int, weight: c_float) -> Result<()> {
         unsafe {
-            FMOD_Studio_System_SetListenerWeight(self.inner.as_ptr(), listener, weight).to_result()
+            FMOD_Studio_System_SetListenerWeight(self.as_ptr(), listener, weight).to_result()
         }
     }
 
@@ -76,7 +76,7 @@ impl System {
     pub fn get_listener_weight(&self, listener: c_int) -> Result<c_float> {
         let mut weight = 0.0;
         unsafe {
-            FMOD_Studio_System_GetListenerWeight(self.inner.as_ptr(), listener, &raw mut weight)
+            FMOD_Studio_System_GetListenerWeight(self.as_ptr(), listener, &raw mut weight)
                 .to_result()?;
         }
         Ok(weight)
@@ -86,7 +86,7 @@ impl System {
     ///
     /// If the number of listeners is set to more than 1 then FMOD uses a 'closest sound to the listener' method to determine what should be heard.
     pub fn set_listener_count(&self, amount: c_int) -> Result<()> {
-        unsafe { FMOD_Studio_System_SetNumListeners(self.inner.as_ptr(), amount).to_result() }
+        unsafe { FMOD_Studio_System_SetNumListeners(self.as_ptr(), amount).to_result() }
     }
 
     /// Sets the number of listeners in the 3D sound scene.
@@ -95,7 +95,7 @@ impl System {
     pub fn get_listener_count(&self) -> Result<c_int> {
         let mut amount = 0;
         unsafe {
-            FMOD_Studio_System_GetNumListeners(self.inner.as_ptr(), &raw mut amount).to_result()?;
+            FMOD_Studio_System_GetNumListeners(self.as_ptr(), &raw mut amount).to_result()?;
         }
         Ok(amount)
     }

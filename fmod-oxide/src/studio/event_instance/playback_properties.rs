@@ -19,7 +19,7 @@ impl EventInstance {
     /// The pitch multiplier is used to modulate the event instance's pitch.
     /// The pitch multiplier can be set to any value greater than or equal to zero but the final combined pitch is clamped to the range [0, 100] before being applied.
     pub fn set_pitch(&self, pitch: c_float) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_SetPitch(self.inner.as_ptr(), pitch).to_result() }
+        unsafe { FMOD_Studio_EventInstance_SetPitch(self.as_ptr(), pitch).to_result() }
     }
 
     /// Retrieves the pitch multiplier.
@@ -31,7 +31,7 @@ impl EventInstance {
         let mut final_pitch = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetPitch(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut pitch,
                 &raw mut final_pitch,
             )
@@ -47,7 +47,7 @@ impl EventInstance {
     /// An FMOD spatializer or object spatializer may override the values set for [`EventProperty::MinimumDistance`] and [`EventProperty::MaximumDistance`]].
     pub fn set_property(&self, property: EventProperty, value: c_float) -> Result<()> {
         unsafe {
-            FMOD_Studio_EventInstance_SetProperty(self.inner.as_ptr(), property.into(), value)
+            FMOD_Studio_EventInstance_SetProperty(self.as_ptr(), property.into(), value)
                 .to_result()
         }
     }
@@ -60,7 +60,7 @@ impl EventInstance {
         let mut value = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetProperty(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 property.into(),
                 &raw mut value,
             )
@@ -72,7 +72,7 @@ impl EventInstance {
     /// Sets the timeline cursor position.
     pub fn set_timeline_position(&self, position: c_int) -> Result<()> {
         unsafe {
-            FMOD_Studio_EventInstance_SetTimelinePosition(self.inner.as_ptr(), position).to_result()
+            FMOD_Studio_EventInstance_SetTimelinePosition(self.as_ptr(), position).to_result()
         }
     }
 
@@ -80,7 +80,7 @@ impl EventInstance {
     pub fn get_timeline_position(&self) -> Result<c_int> {
         let mut position = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetTimelinePosition(self.inner.as_ptr(), &raw mut position)
+            FMOD_Studio_EventInstance_GetTimelinePosition(self.as_ptr(), &raw mut position)
                 .to_result()?;
         }
         Ok(position)
@@ -90,7 +90,7 @@ impl EventInstance {
     ///
     /// This volume is applied as a scaling factor for the event volume. It does not override the volume level set in FMOD Studio, nor any internal volume automation or modulation.
     pub fn set_volume(&self, volume: c_float) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_SetVolume(self.inner.as_ptr(), volume).to_result() }
+        unsafe { FMOD_Studio_EventInstance_SetVolume(self.as_ptr(), volume).to_result() }
     }
 
     /// Retrieves the volume level.
@@ -102,7 +102,7 @@ impl EventInstance {
         let mut final_volume = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetVolume(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut volume,
                 &raw mut final_volume,
             )
@@ -117,7 +117,7 @@ impl EventInstance {
     pub fn is_virtual(&self) -> Result<bool> {
         let mut is_virtual = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventInstance_IsVirtual(self.inner.as_ptr(), &raw mut is_virtual)
+            FMOD_Studio_EventInstance_IsVirtual(self.as_ptr(), &raw mut is_virtual)
                 .to_result()?;
         }
         Ok(is_virtual.into())

@@ -24,7 +24,7 @@ impl EventInstance {
         let mut attributes = attributes.into();
         unsafe {
             // FIXME is this supposed to take an &mut
-            FMOD_Studio_EventInstance_Set3DAttributes(self.inner.as_ptr(), &raw mut attributes)
+            FMOD_Studio_EventInstance_Set3DAttributes(self.as_ptr(), &raw mut attributes)
                 .to_result()
         }
     }
@@ -33,7 +33,7 @@ impl EventInstance {
     pub fn get_3d_attributes(&self) -> Result<Attributes3D> {
         let mut attributes = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_EventInstance_Get3DAttributes(self.inner.as_ptr(), attributes.as_mut_ptr())
+            FMOD_Studio_EventInstance_Get3DAttributes(self.as_ptr(), attributes.as_mut_ptr())
                 .to_result()?;
 
             let attributes = attributes.assume_init().into();
@@ -48,14 +48,14 @@ impl EventInstance {
     /// To create the mask you must perform bitwise OR and shift operations, the basic form is 1 << `listener_index` or'd together with other required listener indices.
     /// For example to create a mask for listener index `0` and `2` the calculation would be `mask = (1 << 0) | (1 << 2)`, to include all listeners use the default mask of `0xFFFFFFFF`.
     pub fn set_listener_mask(&self, mask: c_uint) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_SetListenerMask(self.inner.as_ptr(), mask).to_result() }
+        unsafe { FMOD_Studio_EventInstance_SetListenerMask(self.as_ptr(), mask).to_result() }
     }
 
     /// Retrieves the listener mask.
     pub fn get_listener_mask(&self) -> Result<c_uint> {
         let mut mask = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetListenerMask(self.inner.as_ptr(), &raw mut mask)
+            FMOD_Studio_EventInstance_GetListenerMask(self.as_ptr(), &raw mut mask)
                 .to_result()?;
         }
         Ok(mask)
@@ -67,7 +67,7 @@ impl EventInstance {
         let mut max = 0.0;
         unsafe {
             FMOD_Studio_EventInstance_GetMinMaxDistance(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut min,
                 &raw mut max,
             )

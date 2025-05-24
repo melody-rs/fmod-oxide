@@ -97,7 +97,7 @@ impl Sound {
         let mut disk_busy = FMOD_BOOL::FALSE;
         let error = unsafe {
             FMOD_Sound_GetOpenState(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut open_state,
                 &raw mut percent_buffered,
                 &raw mut starving,
@@ -144,7 +144,7 @@ impl Sound {
             let mut extra_len = 0;
 
             FMOD_Sound_Lock(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 offset,
                 length,
                 &raw mut data,
@@ -205,7 +205,7 @@ impl Sound {
         unsafe {
             let mut read = 0;
             FMOD_Sound_ReadData(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 buffer.as_mut_ptr().cast(),
                 buffer.len() as c_uint,
                 &raw mut read,
@@ -223,6 +223,6 @@ impl Sound {
     /// A stream can reset its stream buffer and position synchronization by calling [`Channel::set_position`].
     /// This causes reset and flush of the stream buffer.
     pub fn seek_data(&self, pcm: c_uint) -> Result<()> {
-        unsafe { FMOD_Sound_SeekData(self.inner.as_ptr(), pcm).to_result() }
+        unsafe { FMOD_Sound_SeekData(self.as_ptr(), pcm).to_result() }
     }
 }

@@ -17,12 +17,12 @@ impl EventInstance {
     /// Generally it is a best practice to call [`EventInstance::release`] on event instances immediately after starting them,
     /// unless you want to play the event instance multiple times or explicitly stop it and start it again later.
     pub fn start(&self) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_Start(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_EventInstance_Start(self.as_ptr()).to_result() }
     }
 
     /// Stops playback.
     pub fn stop(&self, mode: StopMode) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_Stop(self.inner.as_ptr(), mode.into()).to_result() }
+        unsafe { FMOD_Studio_EventInstance_Stop(self.as_ptr(), mode.into()).to_result() }
     }
 
     /// Retrieves the playback state.
@@ -33,7 +33,7 @@ impl EventInstance {
     pub fn get_playback_state(&self) -> Result<PlaybackState> {
         let mut state = 0;
         unsafe {
-            FMOD_Studio_EventInstance_GetPlaybackState(self.inner.as_ptr(), &raw mut state)
+            FMOD_Studio_EventInstance_GetPlaybackState(self.as_ptr(), &raw mut state)
                 .to_result()?;
         }
         let state = state.try_into()?;
@@ -45,7 +45,7 @@ impl EventInstance {
     /// This function allows pausing/unpausing of an event instance.
     pub fn set_paused(&self, paused: bool) -> Result<()> {
         unsafe {
-            FMOD_Studio_EventInstance_SetPaused(self.inner.as_ptr(), paused.into()).to_result()
+            FMOD_Studio_EventInstance_SetPaused(self.as_ptr(), paused.into()).to_result()
         }
     }
 
@@ -53,7 +53,7 @@ impl EventInstance {
     pub fn get_paused(&self) -> Result<bool> {
         let mut paused = FMOD_BOOL::FALSE;
         unsafe {
-            FMOD_Studio_EventInstance_GetPaused(self.inner.as_ptr(), &raw mut paused)
+            FMOD_Studio_EventInstance_GetPaused(self.as_ptr(), &raw mut paused)
                 .to_result()?;
         }
         Ok(paused.into())
@@ -65,6 +65,6 @@ impl EventInstance {
     ///
     /// This function returns [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] if the event has no sustain points.
     pub fn key_off(&self) -> Result<()> {
-        unsafe { FMOD_Studio_EventInstance_KeyOff(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_Studio_EventInstance_KeyOff(self.as_ptr()).to_result() }
     }
 }

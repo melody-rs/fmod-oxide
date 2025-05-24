@@ -30,7 +30,7 @@ impl System {
         let mut version = 0;
         let mut build_number = 0;
         unsafe {
-            FMOD_System_GetVersion(self.inner.as_ptr(), &raw mut version, &raw mut build_number)
+            FMOD_System_GetVersion(self.as_ptr(), &raw mut version, &raw mut build_number)
                 .to_result()?;
         }
         Ok((version, build_number))
@@ -39,7 +39,7 @@ impl System {
     pub fn get_version(&self) -> Result<c_uint> {
         let mut version = 0;
         unsafe {
-            FMOD_System_GetVersion(self.inner.as_ptr(), &mut version).to_result()?;
+            FMOD_System_GetVersion(self.as_ptr(), &mut version).to_result()?;
         }
         Ok(version)
     }
@@ -59,7 +59,7 @@ impl System {
     pub fn get_output_handle(&self) -> Result<*mut c_void> {
         let mut handle = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetOutputHandle(self.inner.as_ptr(), &raw mut handle).to_result()?;
+            FMOD_System_GetOutputHandle(self.as_ptr(), &raw mut handle).to_result()?;
         }
         Ok(handle)
     }
@@ -72,7 +72,7 @@ impl System {
         let mut real_channels = 0;
         unsafe {
             FMOD_System_GetChannelsPlaying(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut channels,
                 &raw mut real_channels,
             )
@@ -87,7 +87,7 @@ impl System {
     pub fn get_cpu_usage(&self) -> Result<CpuUsage> {
         let mut cpu_usage = MaybeUninit::zeroed();
         unsafe {
-            FMOD_System_GetCPUUsage(self.inner.as_ptr(), cpu_usage.as_mut_ptr()).to_result()?;
+            FMOD_System_GetCPUUsage(self.as_ptr(), cpu_usage.as_mut_ptr()).to_result()?;
             let cpu_usage = cpu_usage.assume_init().into();
             Ok(cpu_usage)
         }
@@ -102,7 +102,7 @@ impl System {
         let mut other_read = 0;
         unsafe {
             FMOD_System_GetFileUsage(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut sample_read,
                 &raw mut stream_read,
                 &raw mut other_read,
@@ -132,7 +132,7 @@ impl System {
 
         unsafe {
             FMOD_System_GetDefaultMixMatrix(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 source_mode.into(),
                 target_mode.into(),
                 matrix.as_mut_ptr(),
@@ -148,7 +148,7 @@ impl System {
         let mut channels = 0;
         unsafe {
             FMOD_System_GetSpeakerModeChannels(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 speaker_mode.into(),
                 &raw mut channels,
             )

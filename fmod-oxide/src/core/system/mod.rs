@@ -52,8 +52,8 @@ impl System {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_SYSTEM {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_SYSTEM {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

@@ -20,7 +20,7 @@ impl ChannelGroup {
         unsafe {
             get_string(|name| {
                 FMOD_ChannelGroup_GetName(
-                    self.inner.as_ptr(),
+                    self.as_ptr(),
                     name.as_mut_ptr().cast(),
                     name.len() as c_int,
                 )
@@ -37,6 +37,6 @@ impl ChannelGroup {
     /// According to the FMOD documentation, [`ChannelGroup`]s are actual pointers, rather than a handle.
     /// After a [`ChannelGroup`] is released it is no longer safe to use!
     pub unsafe fn release(&self) -> Result<()> {
-        unsafe { FMOD_ChannelGroup_Release(self.inner.as_ptr()).to_result() }
+        unsafe { FMOD_ChannelGroup_Release(self.as_ptr()).to_result() }
     }
 }

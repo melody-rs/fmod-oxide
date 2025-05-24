@@ -38,8 +38,8 @@ impl SoundGroup {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_SOUNDGROUP {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_SOUNDGROUP {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

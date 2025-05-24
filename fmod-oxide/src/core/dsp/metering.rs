@@ -20,7 +20,7 @@ impl Dsp {
         let mut input = MaybeUninit::zeroed();
         let mut output = MaybeUninit::zeroed();
         unsafe {
-            FMOD_DSP_GetMeteringInfo(self.inner.as_ptr(), input.as_mut_ptr(), output.as_mut_ptr())
+            FMOD_DSP_GetMeteringInfo(self.as_ptr(), input.as_mut_ptr(), output.as_mut_ptr())
                 .to_result()?;
             let input = input.assume_init().into();
             let output = output.assume_init().into();
@@ -41,7 +41,7 @@ impl Dsp {
     pub fn set_metering_enabled(&self, input_enabled: bool, output_enabled: bool) -> Result<()> {
         unsafe {
             FMOD_DSP_SetMeteringEnabled(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 input_enabled.into(),
                 output_enabled.into(),
             )
@@ -61,7 +61,7 @@ impl Dsp {
         let mut output_enabled = FMOD_BOOL::FALSE;
         unsafe {
             FMOD_DSP_GetMeteringEnabled(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut input_enabled,
                 &raw mut output_enabled,
             )

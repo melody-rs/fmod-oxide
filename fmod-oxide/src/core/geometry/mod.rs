@@ -38,8 +38,8 @@ impl Geometry {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_GEOMETRY {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_GEOMETRY {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

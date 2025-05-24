@@ -18,7 +18,7 @@ impl Bank {
     pub fn get_id(&self) -> Result<Guid> {
         let mut guid = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_Bank_GetID(self.inner.as_ptr(), guid.as_mut_ptr()).to_result()?;
+            FMOD_Studio_Bank_GetID(self.as_ptr(), guid.as_mut_ptr()).to_result()?;
 
             let guid = guid.assume_init().into();
 
@@ -29,13 +29,13 @@ impl Bank {
     /// Retrieves the path.
     pub fn get_path(&self) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
-            FMOD_Studio_Bank_GetPath(self.inner.as_ptr(), path, size, ret)
+            FMOD_Studio_Bank_GetPath(self.as_ptr(), path, size, ret)
         })
     }
 
     /// Checks that the Bank reference is valid.
     pub fn is_valid(&self) -> bool {
-        unsafe { FMOD_Studio_Bank_IsValid(self.inner.as_ptr()).into() }
+        unsafe { FMOD_Studio_Bank_IsValid(self.as_ptr()).into() }
     }
 
     /// Sets the bank's user data.
@@ -43,7 +43,7 @@ impl Bank {
     /// This function allows arbitrary user data to be attached to this object.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_Studio_Bank_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_Studio_Bank_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves the bank's user data.
@@ -52,7 +52,7 @@ impl Bank {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_Bank_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_Studio_Bank_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

@@ -40,8 +40,8 @@ impl Vca {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_STUDIO_VCA {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_STUDIO_VCA {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 
@@ -56,7 +56,7 @@ impl Vca {
     ///
     /// The VCA volume level is used to linearly modulate the levels of the buses and VCAs which it controls.
     pub fn set_volume(&self, volume: c_float) -> Result<()> {
-        unsafe { FMOD_Studio_VCA_SetVolume(self.inner.as_ptr(), volume).to_result() }
+        unsafe { FMOD_Studio_VCA_SetVolume(self.as_ptr(), volume).to_result() }
     }
 
     /// Retrieves the volume level.
@@ -67,7 +67,7 @@ impl Vca {
         let mut volume = 0.0;
         let mut final_volume = 0.0;
         unsafe {
-            FMOD_Studio_VCA_GetVolume(self.inner.as_ptr(), &raw mut volume, &raw mut final_volume)
+            FMOD_Studio_VCA_GetVolume(self.as_ptr(), &raw mut volume, &raw mut final_volume)
                 .to_result()?;
         }
         Ok((volume, final_volume))
@@ -79,7 +79,7 @@ impl Vca {
     pub fn get_id(&self) -> Result<Guid> {
         let mut guid = MaybeUninit::zeroed();
         unsafe {
-            FMOD_Studio_VCA_GetID(self.inner.as_ptr(), guid.as_mut_ptr()).to_result()?;
+            FMOD_Studio_VCA_GetID(self.as_ptr(), guid.as_mut_ptr()).to_result()?;
 
             let guid = guid.assume_init().into();
 
@@ -92,12 +92,12 @@ impl Vca {
     /// The strings bank must be loaded prior to calling this function, otherwise [`FMOD_RESULT::FMOD_ERR_EVENT_NOTFOUND`] is returned.
     pub fn get_path(&self) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
-            FMOD_Studio_VCA_GetPath(self.inner.as_ptr(), path, size, ret)
+            FMOD_Studio_VCA_GetPath(self.as_ptr(), path, size, ret)
         })
     }
 
     /// Checks that the VCA reference is valid.
     pub fn is_valid(&self) -> bool {
-        unsafe { FMOD_Studio_VCA_IsValid(self.inner.as_ptr()).into() }
+        unsafe { FMOD_Studio_VCA_IsValid(self.as_ptr()).into() }
     }
 }

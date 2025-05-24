@@ -45,8 +45,8 @@ impl EventDescription {
     }
 
     /// Converts `self` into its raw representation.
-    pub fn as_ptr(self) -> *mut FMOD_STUDIO_EVENTDESCRIPTION {
-        self.inner.as_ptr()
+    pub fn as_ptr(&self) -> *mut FMOD_STUDIO_EVENTDESCRIPTION {
+        std::ptr::from_ref(self).cast_mut().cast()
     }
 }
 

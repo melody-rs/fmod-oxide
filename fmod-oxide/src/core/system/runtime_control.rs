@@ -57,7 +57,7 @@ impl System {
             .cast();
         unsafe {
             FMOD_System_Set3DListenerAttributes(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 listener,
                 position,
                 velocity,
@@ -81,7 +81,7 @@ impl System {
         let mut up = MaybeUninit::zeroed();
         unsafe {
             FMOD_System_Get3DListenerAttributes(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 listener,
                 position.as_mut_ptr(),
                 velocity.as_mut_ptr(),
@@ -116,7 +116,7 @@ impl System {
             .map_or(std::ptr::null(), std::ptr::from_ref)
             .cast();
         unsafe {
-            FMOD_System_SetReverbProperties(self.inner.as_ptr(), instance, properties).to_result()
+            FMOD_System_SetReverbProperties(self.as_ptr(), instance, properties).to_result()
         }
     }
 
@@ -124,7 +124,7 @@ impl System {
     pub fn get_reverb_properties(&self, instance: c_int) -> Result<ReverbProperties> {
         let mut properties = MaybeUninit::zeroed();
         unsafe {
-            FMOD_System_GetReverbProperties(self.inner.as_ptr(), instance, properties.as_mut_ptr())
+            FMOD_System_GetReverbProperties(self.as_ptr(), instance, properties.as_mut_ptr())
                 .to_result()?;
             let properties = properties.assume_init().into();
             Ok(properties)
@@ -144,7 +144,7 @@ impl System {
     ) -> Result<()> {
         unsafe {
             FMOD_System_AttachChannelGroupToPort(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 kind.into(),
                 index.unwrap_or(FMOD_PORT_INDEX_NONE as FMOD_PORT_INDEX),
                 channel_group.into(),
@@ -159,7 +159,7 @@ impl System {
     /// Removing a [`ChannelGroup`] from a port will reroute the audio back to the main mix.
     pub fn detach_channel_group_from_port(&self, channel_group: ChannelGroup) -> Result<()> {
         unsafe {
-            FMOD_System_DetachChannelGroupFromPort(self.inner.as_ptr(), channel_group.into())
+            FMOD_System_DetachChannelGroupFromPort(self.as_ptr(), channel_group.into())
                 .to_result()
         }
     }

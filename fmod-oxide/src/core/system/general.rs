@@ -34,21 +34,21 @@ impl System {
     ///
     /// Note that the DSP engine should not be locked for a significant amount of time, otherwise inconsistency in the audio output may result. (audio skipping / stuttering).
     pub fn lock_dsp(&self) -> Result<DspLockGuard> {
-        unsafe { FMOD_System_LockDSP(self.inner.as_ptr()).to_result()? };
+        unsafe { FMOD_System_LockDSP(self.as_ptr()).to_result()? };
         Ok(DspLockGuard(*self))
     }
 
     /// Sets the user data.
     #[allow(clippy::not_unsafe_ptr_arg_deref)] // fmod doesn't dereference the passed in pointer, and the user dereferencing it is unsafe anyway
     pub fn set_userdata(&self, userdata: *mut c_void) -> Result<()> {
-        unsafe { FMOD_System_SetUserData(self.inner.as_ptr(), userdata).to_result() }
+        unsafe { FMOD_System_SetUserData(self.as_ptr(), userdata).to_result() }
     }
 
     /// Retrieves user data.
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_System_GetUserData(self.inner.as_ptr(), &raw mut userdata).to_result()?;
+            FMOD_System_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

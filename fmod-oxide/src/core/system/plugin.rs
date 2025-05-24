@@ -14,7 +14,7 @@ use crate::{FmodResultExt, Result};
 impl System {
     /// Specify a base search path for plugins so they can be placed somewhere else than the directory of the main executable.
     pub fn set_plugin_path(&self, path: &Utf8CStr) -> Result<()> {
-        unsafe { FMOD_System_SetPluginPath(self.inner.as_ptr(), path.as_ptr()).to_result() }
+        unsafe { FMOD_System_SetPluginPath(self.as_ptr(), path.as_ptr()).to_result() }
     }
 
     /// Loads an FMOD (DSP, Output or Codec) plugin from file.
@@ -36,7 +36,7 @@ impl System {
         let mut handle = 0;
         unsafe {
             FMOD_System_LoadPlugin(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 filename.as_ptr(),
                 &raw mut handle,
                 priority,
@@ -48,7 +48,7 @@ impl System {
 
     /// Unloads an FMOD (DSP, Output or Codec) plugin.
     pub fn unload_plugin(&self, handle: c_uint) -> Result<()> {
-        unsafe { FMOD_System_UnloadPlugin(self.inner.as_ptr(), handle).to_result() }
+        unsafe { FMOD_System_UnloadPlugin(self.as_ptr(), handle).to_result() }
     }
 
     /// Retrieves the number of nested plugins from the selected plugin.
@@ -60,7 +60,7 @@ impl System {
     pub fn get_nested_plugin_count(&self, handle: c_uint) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_GetNumNestedPlugins(self.inner.as_ptr(), handle, &raw mut count)
+            FMOD_System_GetNumNestedPlugins(self.as_ptr(), handle, &raw mut count)
                 .to_result()?;
         }
         Ok(count)
@@ -77,7 +77,7 @@ impl System {
     pub fn get_nested_plugin(&self, handle: c_uint, index: c_int) -> Result<c_uint> {
         let mut nested_handle = 0;
         unsafe {
-            FMOD_System_GetNestedPlugin(self.inner.as_ptr(), handle, index, &raw mut nested_handle)
+            FMOD_System_GetNestedPlugin(self.as_ptr(), handle, index, &raw mut nested_handle)
                 .to_result()?;
         }
         Ok(nested_handle)
@@ -87,7 +87,7 @@ impl System {
     pub fn get_plugin_count(&self, kind: PluginType) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_System_GetNumPlugins(self.inner.as_ptr(), kind.into(), &raw mut count)
+            FMOD_System_GetNumPlugins(self.as_ptr(), kind.into(), &raw mut count)
                 .to_result()?;
         }
         Ok(count)
@@ -99,7 +99,7 @@ impl System {
     pub fn get_plugin_handle(&self, kind: PluginType, index: c_int) -> Result<c_uint> {
         let mut handle = 0;
         unsafe {
-            FMOD_System_GetPluginHandle(self.inner.as_ptr(), kind.into(), index, &raw mut handle)
+            FMOD_System_GetPluginHandle(self.as_ptr(), kind.into(), index, &raw mut handle)
                 .to_result()?;
         }
         Ok(handle)
@@ -112,7 +112,7 @@ impl System {
 
         let name = get_string(|name| unsafe {
             FMOD_System_GetPluginInfo(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 handle,
                 &raw mut plugin_type,
                 name.as_mut_ptr().cast(),
@@ -127,14 +127,14 @@ impl System {
 
     /// Selects an output type given a plugin handle.
     pub fn set_output_by_plugin(&self, handle: c_uint) -> Result<()> {
-        unsafe { FMOD_System_SetOutputByPlugin(self.inner.as_ptr(), handle).to_result() }
+        unsafe { FMOD_System_SetOutputByPlugin(self.as_ptr(), handle).to_result() }
     }
 
     /// Retrieves the plugin handle for the currently selected output type.
     pub fn get_output_by_plugin(&self) -> Result<c_uint> {
         let mut handle = 0;
         unsafe {
-            FMOD_System_GetOutputByPlugin(self.inner.as_ptr(), &raw mut handle).to_result()?;
+            FMOD_System_GetOutputByPlugin(self.as_ptr(), &raw mut handle).to_result()?;
         }
         Ok(handle)
     }
@@ -150,7 +150,7 @@ impl System {
     pub fn create_dsp_by_plugin(&self, handle: c_uint) -> Result<Dsp> {
         let mut dsp = std::ptr::null_mut();
         unsafe {
-            FMOD_System_CreateDSPByPlugin(self.inner.as_ptr(), handle, &raw mut dsp).to_result()?;
+            FMOD_System_CreateDSPByPlugin(self.as_ptr(), handle, &raw mut dsp).to_result()?;
             Ok(Dsp::from_ffi(dsp))
         }
     }
@@ -160,7 +160,7 @@ impl System {
     pub fn get_dsp_info_by_plugin(&self, handle: c_uint) -> Result<*const FMOD_DSP_DESCRIPTION> {
         let mut dsp_description = std::ptr::null();
         unsafe {
-            FMOD_System_GetDSPInfoByPlugin(self.inner.as_ptr(), handle, &raw mut dsp_description)
+            FMOD_System_GetDSPInfoByPlugin(self.as_ptr(), handle, &raw mut dsp_description)
                 .to_result()?;
         }
         Ok(dsp_description)
@@ -215,7 +215,7 @@ impl System {
     ) -> Result<c_uint> {
         let mut handle = 0;
         unsafe {
-            FMOD_System_RegisterCodec(self.inner.as_ptr(), description, &raw mut handle, priority)
+            FMOD_System_RegisterCodec(self.as_ptr(), description, &raw mut handle, priority)
                 .to_result()?;
         }
         Ok(handle)
@@ -236,7 +236,7 @@ impl System {
     ) -> Result<c_uint> {
         let mut handle = 0;
         unsafe {
-            FMOD_System_RegisterDSP(self.inner.as_ptr(), dsp_description, &raw mut handle)
+            FMOD_System_RegisterDSP(self.as_ptr(), dsp_description, &raw mut handle)
                 .to_result()?;
         }
         Ok(handle)
@@ -257,7 +257,7 @@ impl System {
     ) -> Result<c_uint> {
         let mut handle = 0;
         unsafe {
-            FMOD_System_RegisterOutput(self.inner.as_ptr(), description, &raw mut handle)
+            FMOD_System_RegisterOutput(self.as_ptr(), description, &raw mut handle)
                 .to_result()?;
         }
         Ok(handle)

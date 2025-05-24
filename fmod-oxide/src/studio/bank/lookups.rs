@@ -18,7 +18,7 @@ impl Bank {
     pub fn bus_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetBusCount(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Studio_Bank_GetBusCount(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -36,7 +36,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetBusList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr().cast::<*mut FMOD_STUDIO_BUS>(),
                 list.capacity() as c_int,
@@ -61,7 +61,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetBusList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // Because we use NonNull, Option<Bus> has the same layout as *mut FMOD_STUDIO_BUS, so this is ok!
                 slice.as_mut_ptr().cast(),
                 slice.len() as c_int,
@@ -80,7 +80,7 @@ impl Bank {
     pub fn event_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetEventCount(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Studio_Bank_GetEventCount(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -96,7 +96,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetEventList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr(),
                 list.capacity() as c_int,
@@ -124,7 +124,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetEventList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // Because we use NonNull, Option<EventDescription> has the same layout as *mut FMOD_STUDIO_EVENTDESCRIPTION, so this is ok!
                 slice.as_mut_ptr().cast(),
                 slice.len() as c_int,
@@ -140,7 +140,7 @@ impl Bank {
     pub fn string_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetStringCount(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Studio_Bank_GetStringCount(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -152,7 +152,7 @@ impl Bank {
         let mut guid = MaybeUninit::zeroed();
         let path = get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_Bank_GetStringInfo(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 index,
                 guid.as_mut_ptr(),
                 path,
@@ -168,7 +168,7 @@ impl Bank {
     pub fn vca_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_Bank_GetVCACount(self.inner.as_ptr(), &raw mut count).to_result()?;
+            FMOD_Studio_Bank_GetVCACount(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -186,7 +186,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetVCAList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // bus is repr transparent and has the same layout as *mut FMOD_STUDIO_BUS, so this cast is ok
                 list.as_mut_ptr().cast::<*mut FMOD_STUDIO_VCA>(),
                 list.capacity() as c_int,
@@ -211,7 +211,7 @@ impl Bank {
 
         unsafe {
             FMOD_Studio_Bank_GetVCAList(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 // Because we use NonNull, Option<Vca> has the same layout as *mut FMOD_STUDIO_VCA, so this is ok!
                 slice.as_mut_ptr().cast(),
                 slice.len() as c_int,

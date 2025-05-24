@@ -17,7 +17,7 @@ impl Dsp {
     ///
     /// When created a [`Dsp`] is inactive. If `ChannelControl::addDSP` is used it will automatically be activated, otherwise it must be set to active manually.
     pub fn set_active(&self, active: bool) -> Result<()> {
-        unsafe { FMOD_DSP_SetActive(self.inner.as_ptr(), active.into()).to_result() }
+        unsafe { FMOD_DSP_SetActive(self.as_ptr(), active.into()).to_result() }
     }
 
     /// Retrieves the processing active state.
@@ -28,7 +28,7 @@ impl Dsp {
     /// If `ChannelControl::addDSP` is used it will automatically be activated, otherwise it must be set to active manually.
     pub fn get_active(&self) -> Result<bool> {
         let mut active = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetActive(self.inner.as_ptr(), &raw mut active).to_result()? };
+        unsafe { FMOD_DSP_GetActive(self.as_ptr(), &raw mut active).to_result()? };
         Ok(active.into())
     }
 
@@ -36,7 +36,7 @@ impl Dsp {
     ///
     /// If `bypass` is true, processing of this unit is skipped but it continues to process its inputs.
     pub fn set_bypass(&self, bypass: bool) -> Result<()> {
-        unsafe { FMOD_DSP_SetBypass(self.inner.as_ptr(), bypass.into()).to_result() }
+        unsafe { FMOD_DSP_SetBypass(self.as_ptr(), bypass.into()).to_result() }
     }
 
     /// Retrieves the processing bypass state.
@@ -44,7 +44,7 @@ impl Dsp {
     /// If `bypass` is true, processing of this unit is skipped but it continues to process its inputs.
     pub fn get_bypass(&self) -> Result<bool> {
         let mut bypass = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetBypass(self.inner.as_ptr(), &raw mut bypass).to_result()? };
+        unsafe { FMOD_DSP_GetBypass(self.as_ptr(), &raw mut bypass).to_result()? };
         Ok(bypass.into())
     }
 
@@ -52,7 +52,7 @@ impl Dsp {
     ///
     /// The dry signal path is silent by default, because dsp effects transform the input and pass the newly processed result to the output.
     pub fn set_wet_dry_mix(&self, pre_wet: c_float, post_wet: c_float, dry: c_float) -> Result<()> {
-        unsafe { FMOD_DSP_SetWetDryMix(self.inner.as_ptr(), pre_wet, post_wet, dry).to_result() }
+        unsafe { FMOD_DSP_SetWetDryMix(self.as_ptr(), pre_wet, post_wet, dry).to_result() }
     }
 
     /// Retrieves the scale of the wet and dry signal components.
@@ -62,7 +62,7 @@ impl Dsp {
         let mut dry = 0.0;
         unsafe {
             FMOD_DSP_GetWetDryMix(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut pre_wet,
                 &raw mut post_wet,
                 &raw mut dry,
@@ -80,7 +80,7 @@ impl Dsp {
     /// A reverb or echo may take a longer time to go idle after it stops receiving a valid signal, compared to an effect with a shorter tail length like an EQ filter.
     pub fn get_idle(&self) -> Result<bool> {
         let mut idle = FMOD_BOOL::FALSE;
-        unsafe { FMOD_DSP_GetIdle(self.inner.as_ptr(), &raw mut idle).to_result()? };
+        unsafe { FMOD_DSP_GetIdle(self.as_ptr(), &raw mut idle).to_result()? };
         Ok(idle.into())
     }
 }

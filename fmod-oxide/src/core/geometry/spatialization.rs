@@ -16,7 +16,7 @@ impl Geometry {
     /// Position is in world space.
     pub fn set_position(&self, position: Vector) -> Result<()> {
         unsafe {
-            FMOD_Geometry_SetPosition(self.inner.as_ptr(), std::ptr::from_ref(&position).cast())
+            FMOD_Geometry_SetPosition(self.as_ptr(), std::ptr::from_ref(&position).cast())
                 .to_result()
         }
     }
@@ -27,7 +27,7 @@ impl Geometry {
     pub fn get_position(&self) -> Result<Vector> {
         let mut position = MaybeUninit::uninit();
         unsafe {
-            FMOD_Geometry_GetPosition(self.inner.as_ptr(), position.as_mut_ptr()).to_result()?;
+            FMOD_Geometry_GetPosition(self.as_ptr(), position.as_mut_ptr()).to_result()?;
             let position = position.assume_init().into();
             Ok(position)
         }
@@ -39,7 +39,7 @@ impl Geometry {
     pub fn set_rotation(&self, forward: Vector, up: Vector) -> Result<()> {
         unsafe {
             FMOD_Geometry_SetRotation(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 std::ptr::from_ref(&forward).cast(),
                 std::ptr::from_ref(&up).cast(),
             )
@@ -52,7 +52,7 @@ impl Geometry {
         let mut forward = MaybeUninit::uninit();
         let mut up = MaybeUninit::uninit();
         unsafe {
-            FMOD_Geometry_GetRotation(self.inner.as_ptr(), forward.as_mut_ptr(), up.as_mut_ptr())
+            FMOD_Geometry_GetRotation(self.as_ptr(), forward.as_mut_ptr(), up.as_mut_ptr())
                 .to_result()?;
             let forward = forward.assume_init().into();
             let up = up.assume_init().into();
@@ -65,7 +65,7 @@ impl Geometry {
     /// An object can be scaled/warped in all 3 dimensions separately using this function without having to modify polygon data.
     pub fn set_scale(&self, scale: Vector) -> Result<()> {
         unsafe {
-            FMOD_Geometry_SetScale(self.inner.as_ptr(), std::ptr::from_ref(&scale).cast())
+            FMOD_Geometry_SetScale(self.as_ptr(), std::ptr::from_ref(&scale).cast())
                 .to_result()
         }
     }
@@ -74,7 +74,7 @@ impl Geometry {
     pub fn get_scale(&self) -> Result<Vector> {
         let mut scale = MaybeUninit::uninit();
         unsafe {
-            FMOD_Geometry_GetScale(self.inner.as_ptr(), scale.as_mut_ptr()).to_result()?;
+            FMOD_Geometry_GetScale(self.as_ptr(), scale.as_mut_ptr()).to_result()?;
             let scale = scale.assume_init().into();
             Ok(scale)
         }

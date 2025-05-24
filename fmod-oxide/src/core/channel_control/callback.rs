@@ -117,7 +117,7 @@ impl ChannelControl {
     /// Sets the callback for [`ChannelControl`] level notifications.
     pub fn set_callback<C: ChannelControlCallback>(&self) -> Result<()> {
         unsafe {
-            FMOD_ChannelControl_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>))
+            FMOD_ChannelControl_SetCallback(self.as_ptr(), Some(callback_impl::<C>))
                 .to_result()
         }
     }

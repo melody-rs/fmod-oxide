@@ -20,7 +20,7 @@ impl EventDescription {
         let mut description = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_EventDescription_GetParameterDescriptionByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 description.as_mut_ptr(),
             )
@@ -36,7 +36,7 @@ impl EventDescription {
         let mut description = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_EventDescription_GetParameterDescriptionByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 description.as_mut_ptr(),
             )
@@ -56,7 +56,7 @@ impl EventDescription {
         let mut description = MaybeUninit::zeroed();
         unsafe {
             FMOD_Studio_EventDescription_GetParameterDescriptionByIndex(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 index,
                 description.as_mut_ptr(),
             )
@@ -74,7 +74,7 @@ impl EventDescription {
         let mut count = 0;
         unsafe {
             FMOD_Studio_EventDescription_GetParameterDescriptionCount(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 &raw mut count,
             )
             .to_result()?;
@@ -93,7 +93,7 @@ impl EventDescription {
     ) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_EventDescription_GetParameterLabelByName(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 name.as_ptr(),
                 label_index,
                 path,
@@ -111,7 +111,7 @@ impl EventDescription {
     ) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_EventDescription_GetParameterLabelByID(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 id.into(),
                 label_index,
                 path,
@@ -131,7 +131,7 @@ impl EventDescription {
     ) -> Result<Utf8CString> {
         get_string_out_size(|path, size, ret| unsafe {
             FMOD_Studio_EventDescription_GetParameterLabelByIndex(
-                self.inner.as_ptr(),
+                self.as_ptr(),
                 index,
                 label_index,
                 path,

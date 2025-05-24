@@ -47,6 +47,6 @@ unsafe extern "C" fn callback_impl<C: DspCallback>(
 impl Dsp {
     /// Sets the callback for DSP notifications.
     pub fn set_callback<C: DspCallback>(&self) -> Result<()> {
-        unsafe { FMOD_DSP_SetCallback(self.inner.as_ptr(), Some(callback_impl::<C>)).to_result() }
+        unsafe { FMOD_DSP_SetCallback(self.as_ptr(), Some(callback_impl::<C>)).to_result() }
     }
 }
