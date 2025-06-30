@@ -57,7 +57,16 @@ macro_rules! enum_dsp_param_impl {
         impl ReadableParameter for $name {
             fn get_parameter(dsp: Dsp, index: c_int) -> Result<Self> {
                 let value: c_int = dsp.get_parameter(index)?;
-                Self::try_from(value as $repr).map_err(Into::into)
+                // cope with stupid enum repr hack; on msvc all the enums are repr(i32), but on
+                // other platforms they're either repr(u32) or repr(i32) depending on the enum.
+                #[cfg(target_env = "msvc")]
+                {
+                    Self::try_from(value as i32).map_err(Into::into)
+                }
+                #[cfg(not(target_env = "msvc"))]
+                {
+                    Self::try_from(value as $repr).map_err(Into::into)
+                }
             }
 
             fn get_parameter_string(dsp: Dsp, index: c_int) -> Result<lanyard::Utf8CString> {
@@ -82,7 +91,9 @@ pub mod channel_mix {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum Output {
         Default = FMOD_DSP_CHANNELMIX_OUTPUT_DEFAULT,
         AllMono = FMOD_DSP_CHANNELMIX_OUTPUT_ALLMONO,
@@ -304,7 +315,9 @@ pub mod echo {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum DelayType {
         Fade = FMOD_DSP_ECHO_DELAYCHANGEMODE_FADE,
         Lerp = FMOD_DSP_ECHO_DELAYCHANGEMODE_LERP,
@@ -337,7 +350,9 @@ pub mod fft {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum WindowType {
         Rect = FMOD_DSP_FFT_WINDOW_RECT,
         Triangle = FMOD_DSP_FFT_WINDOW_TRIANGLE,
@@ -351,7 +366,9 @@ pub mod fft {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum DownmixType {
         None = FMOD_DSP_FFT_DOWNMIX_NONE,
         Mono = FMOD_DSP_FFT_DOWNMIX_MONO,
@@ -553,7 +570,9 @@ pub mod multiband_dynamics {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum ModeType {
         Disabled = FMOD_DSP_MULTIBAND_DYNAMICS_MODE_DISABLED,
         CompressUp = FMOD_DSP_MULTIBAND_DYNAMICS_MODE_COMPRESS_UP,
@@ -594,7 +613,9 @@ pub mod multiband_eq {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum FilterType {
         Disabled = FMOD_DSP_MULTIBAND_EQ_FILTER_DISABLED,
         Lowpass12DB = FMOD_DSP_MULTIBAND_EQ_FILTER_LOWPASS_12DB,
@@ -648,7 +669,9 @@ pub mod oscillator {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum OscillatorType {
         Sine = 0,
         Square = 1,
@@ -685,7 +708,9 @@ pub mod pan {
 
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-        #[repr(u32)]
+        // stupid enum repr hack
+        #[cfg_attr(target_env = "msvc", repr(i32))]
+        #[cfg_attr(not(target_env = "msvc"), repr(u32))]
         pub enum RolloffType {
             LinearSquared = FMOD_DSP_PAN_3D_ROLLOFF_LINEARSQUARED,
             Linear = FMOD_DSP_PAN_3D_ROLLOFF_LINEAR,
@@ -697,7 +722,9 @@ pub mod pan {
 
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-        #[repr(u32)]
+        // stupid enum repr hack
+        #[cfg_attr(target_env = "msvc", repr(i32))]
+        #[cfg_attr(not(target_env = "msvc"), repr(u32))]
         pub enum ExtentModeType {
             Auto = FMOD_DSP_PAN_3D_EXTENT_MODE_AUTO,
             User = FMOD_DSP_PAN_3D_EXTENT_MODE_USER,
@@ -720,7 +747,9 @@ pub mod pan {
 
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-        #[repr(u32)]
+        // stupid enum repr hack
+        #[cfg_attr(target_env = "msvc", repr(i32))]
+        #[cfg_attr(not(target_env = "msvc"), repr(u32))]
         pub enum StereoModeType {
             Distributed = FMOD_DSP_PAN_2D_STEREO_MODE_DISTRIBUTED,
             Discrete = FMOD_DSP_PAN_2D_STEREO_MODE_DISCRETE,
@@ -730,7 +759,9 @@ pub mod pan {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum ModeType {
         Mono = FMOD_DSP_PAN_MODE_MONO,
         Stereo = FMOD_DSP_PAN_MODE_STEREO,
@@ -803,7 +834,9 @@ pub mod three_eq {
 
     #[derive(Debug, Clone, Copy, PartialEq, Eq)]
     #[derive(num_enum::TryFromPrimitive, num_enum::IntoPrimitive)]
-    #[repr(u32)]
+    // stupid enum repr hack
+    #[cfg_attr(target_env = "msvc", repr(i32))]
+    #[cfg_attr(not(target_env = "msvc"), repr(u32))]
     pub enum CrossoverSlopeType {
         _12DB = FMOD_DSP_THREE_EQ_CROSSOVERSLOPE_12DB,
         _24DB = FMOD_DSP_THREE_EQ_CROSSOVERSLOPE_24DB,

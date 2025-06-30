@@ -17,9 +17,10 @@ impl bindgen::callbacks::ParseCallbacks for VersionCallbacks {
 
 #[cfg(windows)]
 fn find_fmod_directory() -> PathBuf {
+    println!("cargo:rerun-if-env-changed=FMOD_SYS_FMOD_DIRECTORY");
     if let Some(override_dir) = std::env::var_os("FMOD_SYS_FMOD_DIRECTORY").map(PathBuf::from) {
         if override_dir.exists() {
-            return path;
+            return override_dir;
         }
     }
 
