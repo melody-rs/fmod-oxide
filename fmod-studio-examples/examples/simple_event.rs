@@ -79,9 +79,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     let explosion_instance = explosion_description.create_instance()?;
 
                     explosion_instance.start()?;
-
-                    // Release will clean up the instance when it completes
-                    explosion_instance.release()?;
                 }
                 '2' => {
                     looping_ambiance_instance.start()?;

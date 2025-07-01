@@ -7,7 +7,10 @@
 use fmod_sys::*;
 use std::ffi::c_int;
 
-use crate::studio::{EventDescription, EventInstance};
+use crate::{
+    owned::Owned,
+    studio::{EventDescription, EventInstance},
+};
 
 #[cfg(doc)]
 use crate::studio::Bank;
@@ -21,12 +24,12 @@ impl EventDescription {
     /// Use [`EventDescription::get_sample_loading_state`] to check the loading status.
     ///
     /// Sample data can be loaded ahead of time with [`EventDescription::load_sample_data`] or [`Bank::load_sample_data`]. See Sample Data Loading for more information.
-    pub fn create_instance(&self) -> Result<EventInstance> {
+    pub fn create_instance(&self) -> Result<Owned<EventInstance>> {
         let mut instance = std::ptr::null_mut();
         unsafe {
             FMOD_Studio_EventDescription_CreateInstance(self.as_ptr(), &raw mut instance)
                 .to_result()?;
-            Ok(EventInstance::from_ffi(instance))
+            Ok(Owned::new(instance))
         }
     }
 
@@ -41,7 +44,7 @@ impl EventDescription {
     }
 
     /// Retrieves a list of the instances.
-    pub fn get_instance_list(&self) -> Result<Vec<EventInstance>> {
+    pub fn get_instance_list(&self) -> Result<Vec<&EventInstance>> {
         let expected_count = self.instance_count()?;
         let mut count = 0;
         let mut list = vec![std::ptr::null_mut(); expected_count as usize];
@@ -61,7 +64,7 @@ impl EventDescription {
             // *mut FMOD_STUDIO_EVENTINSTANCE is transmutable to EventInstance
             Ok(std::mem::transmute::<
                 Vec<*mut fmod_sys::FMOD_STUDIO_EVENTINSTANCE>,
-                Vec<EventInstance>,
+                Vec<&EventInstance>,
             >(list))
         }
     }

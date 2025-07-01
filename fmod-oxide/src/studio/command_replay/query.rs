@@ -22,9 +22,7 @@ impl CommandReplay {
     ///
     /// [`System::load_bank_file`] commands in the replay are redirected to load banks from the specified directory, instead of using the directory recorded in the captured commands.
     pub fn set_bank_path(&self, path: &Utf8CStr) -> Result<()> {
-        unsafe {
-            FMOD_Studio_CommandReplay_SetBankPath(self.as_ptr(), path.as_ptr()).to_result()
-        }
+        unsafe { FMOD_Studio_CommandReplay_SetBankPath(self.as_ptr(), path.as_ptr()).to_result() }
     }
 
     /// Retrieves the command index corresponding to the given playback time.
@@ -44,8 +42,7 @@ impl CommandReplay {
     pub fn get_command_count(&self) -> Result<c_int> {
         let mut count = 0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetCommandCount(self.as_ptr(), &raw mut count)
-                .to_result()?;
+            FMOD_Studio_CommandReplay_GetCommandCount(self.as_ptr(), &raw mut count).to_result()?;
         }
         Ok(count)
     }
@@ -81,18 +78,16 @@ impl CommandReplay {
     pub fn get_length(&self) -> Result<c_float> {
         let mut length = 0.0;
         unsafe {
-            FMOD_Studio_CommandReplay_GetLength(self.as_ptr(), &raw mut length)
-                .to_result()?;
+            FMOD_Studio_CommandReplay_GetLength(self.as_ptr(), &raw mut length).to_result()?;
         }
         Ok(length)
     }
 
     /// Retrieves the Studio System object associated with this replay object.
-    pub fn get_system(&self) -> Result<System> {
+    pub fn get_system(&self) -> Result<&System> {
         let mut system = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_CommandReplay_GetSystem(self.as_ptr(), &raw mut system)
-                .to_result()?;
+            FMOD_Studio_CommandReplay_GetSystem(self.as_ptr(), &raw mut system).to_result()?;
             Ok(System::from_ffi(system))
         }
     }

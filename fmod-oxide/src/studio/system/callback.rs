@@ -21,27 +21,27 @@ use crate::{
 #[allow(unused_variables)]
 pub trait SystemCallback {
     /// Called at the start of the main Studio update. For async mode this will be on its own thread.
-    fn preupdate(system: System, userdata: *mut c_void) -> Result<()> {
+    fn preupdate(system: &System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
     /// Called at the end of the main Studio update. For async mode this will be on its own thread.
-    fn postupdate(system: System, userdata: *mut c_void) -> Result<()> {
+    fn postupdate(system: &System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
     /// Called directly when a bank has just been unloaded, after all resources are freed.
-    fn bank_unload(system: System, bank: Bank, userdata: *mut c_void) -> Result<()> {
+    fn bank_unload(system: &System, bank: Bank, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
     /// Called after a live update connection has been established.
-    fn liveupdate_connected(system: System, userdata: *mut c_void) -> Result<()> {
+    fn liveupdate_connected(system: &System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 
     /// Called after live update session disconnects.
-    fn liveupdate_disconnected(system: System, userdata: *mut c_void) -> Result<()> {
+    fn liveupdate_disconnected(system: &System, userdata: *mut c_void) -> Result<()> {
         Ok(())
     }
 }
@@ -96,12 +96,8 @@ impl System {
     /// Sets a callback for the Studio System.
     pub fn set_callback<C: SystemCallback>(&self, mask: SystemCallbackMask) -> Result<()> {
         unsafe {
-            FMOD_Studio_System_SetCallback(
-                self.as_ptr(),
-                Some(callback_impl::<C>),
-                mask.into(),
-            )
-            .to_result()
+            FMOD_Studio_System_SetCallback(self.as_ptr(), Some(callback_impl::<C>), mask.into())
+                .to_result()
         }
     }
 }

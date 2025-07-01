@@ -179,6 +179,9 @@ pub use lanyard::*;
 #[cfg(test)]
 mod tests;
 
+mod owned;
+pub use owned::Owned;
+
 /// The FMOD Studio API.
 ///
 /// The Studio API is a more high-level library which is tightly integrated with *FMOD Studio*, FMOD's production tool.

@@ -8,7 +8,7 @@ use fmod_sys::*;
 use lanyard::Utf8CStr;
 
 use crate::studio::{CommandCaptureFlags, CommandReplay, CommandReplayFlags, System};
-use crate::{FmodResultExt, Result};
+use crate::{FmodResultExt, Owned, Result};
 
 impl System {
     /// Recording Studio commands to a file.
@@ -22,12 +22,8 @@ impl System {
         flags: CommandCaptureFlags,
     ) -> Result<()> {
         unsafe {
-            FMOD_Studio_System_StartCommandCapture(
-                self.as_ptr(),
-                filename.as_ptr(),
-                flags.into(),
-            )
-            .to_result()
+            FMOD_Studio_System_StartCommandCapture(self.as_ptr(), filename.as_ptr(), flags.into())
+                .to_result()
         }
     }
 
@@ -41,7 +37,7 @@ impl System {
         &self,
         filename: &Utf8CStr,
         flags: CommandReplayFlags,
-    ) -> Result<CommandReplay> {
+    ) -> Result<Owned<CommandReplay>> {
         let mut replay = std::ptr::null_mut();
         unsafe {
             FMOD_Studio_System_LoadCommandReplay(
@@ -51,7 +47,7 @@ impl System {
                 &raw mut replay,
             )
             .to_result()?;
-            Ok(CommandReplay::from_ffi(replay))
+            Ok(Owned::new(replay))
         }
     }
 }

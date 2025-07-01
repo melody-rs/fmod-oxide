@@ -23,47 +23,47 @@ use crate::{
 #[allow(unused_variables)]
 pub trait EventInstanceCallback {
     /// Called when an instance is fully created.
-    fn created(event: EventInstance) -> Result<()> {
+    fn created(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// Called when an instance is just about to be destroyed.
-    fn destroyed(event: EventInstance) -> Result<()> {
+    fn destroyed(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// [`EventInstance::start`] has been called on an event which was not already playing.
     /// The event will remain in this state until its sample data has been loaded.
-    fn starting(event: EventInstance) -> Result<()> {
+    fn starting(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// The event has commenced playing.
     /// Normally this callback will be issued immediately after [`EventInstanceCallback::starting`], but may be delayed until sample data has loaded.
-    fn started(event: EventInstance) -> Result<()> {
+    fn started(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// [`EventInstance::start`] has been called on an event which was already playing.
-    fn restarted(event: EventInstance) -> Result<()> {
+    fn restarted(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// The event has stopped.
-    fn stopped(event: EventInstance) -> Result<()> {
+    fn stopped(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// [`EventInstance::start`] has been called but the polyphony settings did not allow the event to start.
     ///
     /// In this case none of [`EventInstanceCallback::starting`], [`EventInstanceCallback::started`] and [`EventInstanceCallback::stopped`] will be called.
-    fn start_failed(event: EventInstance) -> Result<()> {
+    fn start_failed(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// A programmer sound is about to play. FMOD expects the callback to provide an [`Sound`] object for it to use.
     fn create_programmer_sound(
-        event: EventInstance,
+        event: &EventInstance,
         sound_props: ProgrammerSoundProperties<'_>,
     ) -> Result<()> {
         Ok(())
@@ -71,20 +71,20 @@ pub trait EventInstanceCallback {
 
     /// A programmer sound has stopped playing. At this point it is safe to release the [`Sound`] object that was used.
     fn destroy_programmer_sound(
-        event: EventInstance,
+        event: &EventInstance,
         sound_props: ProgrammerSoundProperties<'_>,
     ) -> Result<()> {
         Ok(())
     }
 
     /// Called when a DSP plug-in instance has just been created.
-    fn plugin_created(event: EventInstance, plugin_props: PluginInstanceProperties) -> Result<()> {
+    fn plugin_created(event: &EventInstance, plugin_props: PluginInstanceProperties) -> Result<()> {
         Ok(())
     }
 
     /// Called when a DSP plug-in instance is about to be destroyed.
     fn plugin_destroyed(
-        event: EventInstance,
+        event: &EventInstance,
         plugin_props: PluginInstanceProperties,
     ) -> Result<()> {
         Ok(())
@@ -92,45 +92,45 @@ pub trait EventInstanceCallback {
 
     /// Called when the timeline passes a named marker.
     fn timeline_marker(
-        event: EventInstance,
+        event: &EventInstance,
         timeline_props: TimelineMarkerProperties,
     ) -> Result<()> {
         Ok(())
     }
 
     /// Called when the timeline hits a beat in a tempo section.
-    fn timeline_beat(event: EventInstance, timeline_beat: TimelineBeatProperties) -> Result<()> {
+    fn timeline_beat(event: &EventInstance, timeline_beat: TimelineBeatProperties) -> Result<()> {
         Ok(())
     }
 
     /// Called when the event plays a sound.
-    fn sound_played(event: EventInstance, sound: Sound) -> Result<()> {
+    fn sound_played(event: &EventInstance, sound: Sound) -> Result<()> {
         Ok(())
     }
 
     /// Called when the event finishes playing a sound.
-    fn sound_stopped(event: EventInstance, sound: Sound) -> Result<()> {
+    fn sound_stopped(event: &EventInstance, sound: Sound) -> Result<()> {
         Ok(())
     }
 
     /// Called when the event becomes virtual.
-    fn real_to_virtual(event: EventInstance) -> Result<()> {
+    fn real_to_virtual(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// Called when the event becomes real.
-    fn virtual_to_real(event: EventInstance) -> Result<()> {
+    fn virtual_to_real(event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// Called when a new event is started by a start event command.
-    fn start_event_command(event: EventInstance, new_event: EventInstance) -> Result<()> {
+    fn start_event_command(event: &EventInstance, new_event: &EventInstance) -> Result<()> {
         Ok(())
     }
 
     /// Called when the timeline hits a beat in a tempo section of a nested event.
     fn nested_timeline_beat(
-        event: EventInstance,
+        event: &EventInstance,
         timeline_props: TimelineNestedBeatProperties,
     ) -> Result<()> {
         Ok(())
@@ -236,8 +236,7 @@ impl EventInstance {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_EventInstance_GetUserData(self.as_ptr(), &raw mut userdata)
-                .to_result()?;
+            FMOD_Studio_EventInstance_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }

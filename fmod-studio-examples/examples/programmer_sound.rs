@@ -15,9 +15,9 @@ use fmod::{Utf8CStr, c, studio::EventInstanceCallback};
 use fmod_studio_examples::media_path_for;
 use std::{io::Write, sync::Mutex};
 
-pub struct ProgrammerSoundContext {
+pub struct ProgrammerSoundContext<'a> {
     core_system: fmod::System,
-    studio_system: fmod::studio::System,
+    studio_system: &'a fmod::studio::System,
     dialogue_string: &'static Utf8CStr,
 }
 
@@ -25,7 +25,7 @@ struct Callback;
 
 impl EventInstanceCallback for Callback {
     fn create_programmer_sound(
-        event: fmod::studio::EventInstance,
+        event: &fmod::studio::EventInstance,
         sound_props: fmod::studio::ProgrammerSoundProperties<'_>,
     ) -> fmod::Result<()> {
         let context: &Mutex<ProgrammerSoundContext> = unsafe { &*event.get_userdata()?.cast() };
@@ -46,7 +46,7 @@ impl EventInstanceCallback for Callback {
     }
 
     fn destroy_programmer_sound(
-        _: fmod::studio::EventInstance,
+        _: &fmod::studio::EventInstance,
         sound_props: fmod::studio::ProgrammerSoundProperties<'_>,
     ) -> fmod::Result<()> {
         sound_props.sound.release()
@@ -98,7 +98,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let programmer_sound_context = Mutex::new(ProgrammerSoundContext {
         core_system: system.get_core_system()?,
-        studio_system: system,
+        studio_system: &system,
         dialogue_string: DIALOGUE[dialogue_index],
     });
     let programmer_sound_context = &programmer_sound_context;

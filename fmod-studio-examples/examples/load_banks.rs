@@ -161,7 +161,7 @@ struct SystemCallbacks;
 
 impl fmod::studio::SystemCallback for SystemCallbacks {
     fn bank_unload(
-        _: fmod::studio::System,
+        _: &fmod::studio::System,
         bank: fmod::studio::Bank,
         _: *mut c_void,
     ) -> fmod::Result<()> {

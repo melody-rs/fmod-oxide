@@ -24,7 +24,7 @@ pub struct ErrorCallbackInfo<'a> {
     /// Error code result.
     pub error: Error,
     /// Type of instance the error occurred on.
-    pub instance: Instance,
+    pub instance: Instance<'a>,
     /// Function that the error occurred on.
     pub function_name: &'a Utf8CStr,
     /// Function parameters that the error ocurred on.
@@ -33,7 +33,7 @@ pub struct ErrorCallbackInfo<'a> {
 
 /// Identifier used to represent the different types of instance in the error callback.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Instance {
+pub enum Instance<'a> {
     /// Type representing no known instance type.
     None,
     /// Type representing [`System`].
@@ -60,13 +60,13 @@ pub enum Instance {
 
     /// Type representing [`studio::System`].
     #[cfg(feature = "studio")]
-    StudioSystem(studio::System),
+    StudioSystem(&'a studio::System),
     /// Type representing [`studio::EventDescription`].
     #[cfg(feature = "studio")]
     StudioEventDescription(studio::EventDescription),
     #[cfg(feature = "studio")]
     /// Type representing [`studio::EventInstance`].
-    StudioEventInstance(studio::EventInstance),
+    StudioEventInstance(&'a studio::EventInstance),
     #[cfg(feature = "studio")]
     /// Type representing [`studio::Bus`].
     StudioBus(studio::Bus),
@@ -78,7 +78,7 @@ pub enum Instance {
     StudioBank(studio::Bank),
     #[cfg(feature = "studio")]
     /// Type representing [`studio::CommandReplay`].
-    StudioCommandReplay(studio::CommandReplay),
+    StudioCommandReplay(&'a studio::CommandReplay),
 
     /// Represents a raw FMOD Studio type.
     /// Because the Studio feature is disabled, you shouldn't be able to get this variant.
@@ -112,7 +112,7 @@ pub enum Instance {
     StudioCommandReplay(*mut c_void),
 }
 
-impl Instance {
+impl Instance<'_> {
     fn from_raw(kind: c_uint, pointer: *mut c_void) -> Self {
         match kind {
             FMOD_ERRORCALLBACK_INSTANCETYPE_NONE => Instance::None,

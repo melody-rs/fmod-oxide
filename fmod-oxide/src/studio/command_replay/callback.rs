@@ -4,7 +4,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-use crate::{FmodResultExt, Result};
+use crate::{FmodResultExt, Result, owned::Owned};
 use fmod_sys::*;
 use lanyard::Utf8CStr;
 use std::ffi::{c_char, c_float, c_int, c_uint, c_void};
@@ -20,11 +20,11 @@ use crate::{
 pub trait CreateInstanceCallback {
     /// Callback for command replay event instance creation.
     fn create_instance_callback(
-        replay: CommandReplay,
+        replay: &CommandReplay,
         command_index: c_int,
         description: EventDescription,
         userdata: *mut c_void,
-    ) -> Result<Option<EventInstance>>;
+    ) -> Result<Option<Owned<EventInstance>>>;
 }
 
 unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
@@ -40,7 +40,8 @@ unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
         let result = C::create_instance_callback(replay, command_index, description, userdata);
         match result {
             Ok(Some(instance)) => {
-                std::ptr::write(event_instance, instance.into());
+                std::ptr::write(event_instance, instance.as_ptr());
+                std::mem::forget(instance);
                 FMOD_RESULT::FMOD_OK
             }
             Ok(None) => FMOD_RESULT::FMOD_OK,
@@ -55,7 +56,7 @@ unsafe extern "C" fn create_instance_impl<C: CreateInstanceCallback>(
 pub trait FrameCallback {
     /// Callback for when the command replay goes to the next frame.
     fn frame_callback(
-        replay: CommandReplay,
+        replay: &CommandReplay,
         command_index: c_int,
         current_time: c_float,
         userdata: *mut c_void,
@@ -81,7 +82,7 @@ unsafe extern "C" fn frame_impl<C: FrameCallback>(
 pub trait LoadBankCallback {
     /// Callback for command replay bank loading.
     fn load_bank_callback(
-        replay: CommandReplay,
+        replay: &CommandReplay,
         command_index: c_int,
         guid: Option<Guid>,
         filename: Option<&Utf8CStr>,
@@ -137,8 +138,7 @@ impl CommandReplay {
     pub fn get_userdata(&self) -> Result<*mut c_void> {
         let mut userdata = std::ptr::null_mut();
         unsafe {
-            FMOD_Studio_CommandReplay_GetUserData(self.as_ptr(), &raw mut userdata)
-                .to_result()?;
+            FMOD_Studio_CommandReplay_GetUserData(self.as_ptr(), &raw mut userdata).to_result()?;
         }
         Ok(userdata)
     }
@@ -182,11 +182,8 @@ impl CommandReplay {
     /// `Studio::System::loadBankFile` commands and skip other load commands.
     pub fn set_load_bank_callback<C: LoadBankCallback>(&self) -> Result<()> {
         unsafe {
-            FMOD_Studio_CommandReplay_SetLoadBankCallback(
-                self.as_ptr(),
-                Some(load_bank_impl::<C>),
-            )
-            .to_result()
+            FMOD_Studio_CommandReplay_SetLoadBankCallback(self.as_ptr(), Some(load_bank_impl::<C>))
+                .to_result()
         }
     }
 }

@@ -7,7 +7,7 @@
 use fmod_sys::*;
 
 use crate::studio::{InitFlags, System, SystemBuilder};
-use crate::{FmodResultExt, Result};
+use crate::{FmodResultExt, Owned, Result};
 
 impl System {
     /// A convenience function over [`SystemBuilder`] with sane defaults.
@@ -15,24 +15,8 @@ impl System {
     /// # Safety
     ///
     /// See [`SystemBuilder::new`] for safety info.
-    pub unsafe fn new() -> Result<Self> {
+    pub unsafe fn new() -> Result<Owned<Self>> {
         unsafe { SystemBuilder::new() }?.build(0, InitFlags::NORMAL, crate::InitFlags::NORMAL)
-    }
-
-    ///This function will free the memory used by the Studio System object and everything created under it.
-    ///
-    /// # Safety
-    ///
-    /// Calling either of this function concurrently with any FMOD Studio API function (including this function) may cause undefined behavior.
-    /// External synchronization must be used if calls to [`SystemBuilder::new`] or [`System::release`] could overlap other FMOD Studio API calls.
-    /// All other FMOD Studio API functions are thread safe and may be called freely from any thread unless otherwise documented.
-    ///
-    /// All handles or pointers to objects associated with a Studio System object become invalid when the Studio System object is released.
-    /// The FMOD Studio API attempts to protect against stale handles and pointers being used with a different Studio System object but this protection cannot be guaranteed and attempting to use stale handles or pointers may cause undefined behavior.
-    ///
-    /// This function is not safe to be called at the same time across multiple threads.
-    pub unsafe fn release(&self) -> Result<()> {
-        unsafe { FMOD_Studio_System_Release(self.as_ptr()).to_result() }
     }
 
     /// Update the FMOD Studio System.

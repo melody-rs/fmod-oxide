@@ -21,7 +21,7 @@ enum State {
     Quit,
 }
 
-fn execute_selection(system: fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
+fn execute_selection(system: &fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
     loop {
         while crossterm::event::poll(std::time::Duration::from_micros(1000))? {
             let event = crossterm::event::read()?;
@@ -73,7 +73,7 @@ fn execute_selection(system: fmod::studio::System) -> Result<State, Box<dyn std:
     }
 }
 
-fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
+fn execute_record(system: &fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
     let master_bank = system.load_bank_file(
         &media_path_for("Master.bank"),
         fmod::studio::LoadBankFlags::NONBLOCKING,
@@ -148,8 +148,6 @@ fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::er
                     }
 
                     event_instance.start()?;
-                    // Release will clean up the instance when it completes
-                    event_instance.release()?;
                 }
                 'a' => {
                     attributes.position.x -= 1.0;
@@ -228,7 +226,7 @@ fn execute_record(system: fmod::studio::System) -> Result<State, Box<dyn std::er
     })
 }
 
-fn execute_playback(system: fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
+fn execute_playback(system: &fmod::studio::System) -> Result<State, Box<dyn std::error::Error>> {
     let replay = system.load_command_replay(
         &media_path_for("playback.cmd.txt"),
         fmod::studio::CommandReplayFlags::NORMAL,
@@ -330,9 +328,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut state = State::Selection;
     loop {
         match state {
-            State::Selection => state = execute_selection(system)?,
-            State::Record => state = execute_record(system)?,
-            State::Playback => state = execute_playback(system)?,
+            State::Selection => state = execute_selection(&system)?,
+            State::Record => state = execute_record(&system)?,
+            State::Playback => state = execute_playback(&system)?,
             State::Quit => break,
         };
     }

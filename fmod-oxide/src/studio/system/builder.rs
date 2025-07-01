@@ -9,7 +9,7 @@ use std::ffi::{c_int, c_void};
 use fmod_sys::*;
 
 use crate::studio::{AdvancedSettings, InitFlags, System};
-use crate::{FmodResultExt, Result};
+use crate::{FmodResultExt, Owned, Result};
 
 /// A builder for creating and initializing a [`System`].
 ///
@@ -86,7 +86,7 @@ impl SystemBuilder {
         max_channels: c_int,
         studio_flags: InitFlags,
         flags: crate::InitFlags,
-    ) -> Result<System> {
+    ) -> Result<Owned<System>> {
         unsafe {
             // we don't need
             self.build_with_extra_driver_data(
@@ -114,7 +114,7 @@ impl SystemBuilder {
         mut studio_flags: InitFlags,
         flags: crate::InitFlags,
         driver_data: *mut c_void,
-    ) -> Result<System> {
+    ) -> Result<Owned<System>> {
         if self.sync_update {
             studio_flags.insert(InitFlags::SYNCHRONOUS_UPDATE);
         } else {
@@ -130,7 +130,7 @@ impl SystemBuilder {
                 driver_data,
             )
             .to_result()?;
-            Ok(System::from_ffi(self.system))
+            Ok(Owned::new(self.system))
         }
     }
 }

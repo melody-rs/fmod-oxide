@@ -24,7 +24,7 @@ struct Callback;
 
 impl EventInstanceCallback for Callback {
     fn timeline_marker(
-        event: fmod::studio::EventInstance,
+        event: &fmod::studio::EventInstance,
         timeline_props: fmod::studio::TimelineMarkerProperties,
     ) -> fmod::Result<()> {
         let callback_info = unsafe { &*event.get_userdata()?.cast::<CallbackInfo>() };
@@ -37,7 +37,7 @@ impl EventInstanceCallback for Callback {
     }
 
     fn timeline_beat(
-        event: fmod::studio::EventInstance,
+        event: &fmod::studio::EventInstance,
         timeline_beat: fmod::studio::TimelineBeatProperties,
     ) -> fmod::Result<()> {
         let callback_info = unsafe { &*event.get_userdata()?.cast::<CallbackInfo>() };
@@ -55,7 +55,7 @@ impl EventInstanceCallback for Callback {
         Ok(())
     }
 
-    fn sound_played(event: fmod::studio::EventInstance, sound: fmod::Sound) -> fmod::Result<()> {
+    fn sound_played(event: &fmod::studio::EventInstance, sound: fmod::Sound) -> fmod::Result<()> {
         let callback_info = unsafe { &*event.get_userdata()?.cast::<CallbackInfo>() };
         let mut entries = callback_info.entries.lock().unwrap();
 
@@ -66,7 +66,7 @@ impl EventInstanceCallback for Callback {
         Ok(())
     }
 
-    fn sound_stopped(event: fmod::studio::EventInstance, sound: fmod::Sound) -> fmod::Result<()> {
+    fn sound_stopped(event: &fmod::studio::EventInstance, sound: fmod::Sound) -> fmod::Result<()> {
         let callback_info = unsafe { &*event.get_userdata()?.cast::<CallbackInfo>() };
         let mut entries = callback_info.entries.lock().unwrap();
 
