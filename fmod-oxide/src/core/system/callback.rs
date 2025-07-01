@@ -6,7 +6,7 @@
 #![allow(missing_docs, deprecated)]
 
 use crate::{Error, FmodResultExt, Result};
-use std::ffi::{c_int, c_uint, c_void};
+use std::ffi::{c_int, c_void};
 
 use fmod_sys::*;
 use lanyard::Utf8CStr;
@@ -113,7 +113,7 @@ pub enum Instance<'a> {
 }
 
 impl Instance<'_> {
-    fn from_raw(kind: c_uint, pointer: *mut c_void) -> Self {
+    fn from_raw(kind: FMOD_ERRORCALLBACK_INSTANCETYPE, pointer: *mut c_void) -> Self {
         match kind {
             FMOD_ERRORCALLBACK_INSTANCETYPE_NONE => Instance::None,
             FMOD_ERRORCALLBACK_INSTANCETYPE_SYSTEM => {
