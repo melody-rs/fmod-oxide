@@ -1,6 +1,6 @@
 [package]
 name = "fmod-audio-sys"
-version = "0.1.2"
+version = "0.1.3"
 description = "ffi bindings to FMOD and FMOD Studio"
 categories = ["api-bindings", "game-development", "multimedia::audio"]
 readme = "README.md"
