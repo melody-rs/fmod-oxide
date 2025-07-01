@@ -7,5 +7,5 @@ publish = false
 
 [dependencies]
 crossterm = "0.29.0"
-fmod-oxide = { version = "0.1.0", path = "../fmod-oxide/" }
+fmod-oxide = { version = "*", path = "../fmod-oxide/" }
 aligned-vec = "0.6.4"

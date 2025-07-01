@@ -5,4 +5,4 @@ edition = "2021"
 publish = false
 
 [dependencies]
-fmod-oxide = { version = "0.1.0", path = "../fmod-oxide" }
+fmod-oxide = { version = "*", path = "../fmod-oxide" }
