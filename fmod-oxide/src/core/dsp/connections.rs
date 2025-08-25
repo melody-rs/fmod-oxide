@@ -10,6 +10,9 @@ use std::ffi::c_int;
 use crate::{Dsp, DspConnection, DspConnectionType};
 use crate::{FmodResultExt, Result};
 
+#[cfg(doc)]
+use crate::System;
+
 impl Dsp {
     /// Adds a [`Dsp`] unit as an input to this object.
     ///
@@ -27,6 +30,28 @@ impl Dsp {
             )
             .to_result()?;
             Ok(DspConnection::from_ffi(connection))
+        }
+    }
+
+    /// Adds a [`Dsp`] unit as an impit to this object.
+    ///
+    /// Unlike [`Dsp::add_input`], this takes a preallocated [`DspConnection`] created from [`System::create_dsp_connection`].
+    // this could be an extra enum variant instead of a new function but this is easier to understand imo?
+    // we'd also need 2 enums, one for create_dsp_connection, one for here...
+    // FIXME maybe have custom preallocated connection type to prevent UB?
+    // is *using* other connections that aren't prealloc'd UB?? FMOD docs why so unclear
+    #[cfg(fmod_gte_2_3_9)]
+    pub fn add_input_preallocated(&self, input: Dsp, connection: DspConnection) -> Result<()> {
+        // we could also use (&raw mut connection).cast() but this is easier to read
+        let mut raw_connection = connection.as_ptr();
+        unsafe {
+            FMOD_DSP_AddInput(
+                self.inner.as_ptr(),
+                input.inner.as_ptr(),
+                &raw mut raw_connection,
+                FMOD_DSPCONNECTION_TYPE_PREALLOCATED,
+            )
+            .to_result()
         }
     }
 

@@ -11,6 +11,8 @@ use std::ffi::c_int;
 use crate::{
     Channel, ChannelGroup, Dsp, DspType, Reverb3D, Sound, SoundBuilder, SoundGroup, System,
 };
+#[cfg(fmod_gte_2_3_9)]
+use crate::{DspConnection, DspConnectionType};
 use crate::{FmodResultExt, Result};
 
 #[cfg(doc)]
@@ -132,6 +134,20 @@ impl System {
             FMOD_System_CreateDSPByType(self.inner.as_ptr(), kind.into(), &raw mut dsp)
                 .to_result()?;
             Ok(Dsp::from_ffi(dsp))
+        }
+    }
+
+    /// Create a [`DspConnection`] object.
+    ///
+    /// Creating a DSP connection with this function allows you to configure its
+    /// initial state before using it to connect two DSPs via [`Dsp::add_input`].
+    #[cfg(fmod_gte_2_3_9)]
+    pub fn create_dsp_connection(&self, kind: DspConnectionType) -> Result<DspConnection> {
+        let mut connection = std::ptr::null_mut();
+        unsafe {
+            FMOD_System_CreateDSPConnection(self.inner.as_ptr(), kind.into(), &raw mut connection)
+                .to_result()?;
+            Ok(DspConnection::from_ffi(connection))
         }
     }
 

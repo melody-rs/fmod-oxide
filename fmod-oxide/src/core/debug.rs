@@ -49,6 +49,9 @@ bitflags::bitflags! {
         const CODEC = FMOD_DEBUG_TYPE_CODEC;
         /// Verbose logging for internal errors, use this for tracking the origin of error codes.
         const TRACE = FMOD_DEBUG_TYPE_TRACE;
+        /// Verbose logging for whenever a [`Channel`] changes its virtual state.
+        #[cfg(fmod_gte_2_3_9)]
+        const VIRTUAL = FMOD_DEBUG_TYPE_VIRTUAL;
         /// Display the time stamp of the log message in milliseconds.
         const DISPLAY_TIMESTAMPS = FMOD_DEBUG_DISPLAY_TIMESTAMPS;
         /// Display the source code file and line number for where the message originated.

@@ -7,7 +7,7 @@ macro_rules! rustc_cfg {
       }
   };
 }
-
+const COMPARABLE_MINORS: [(i64, i64, i64); 1] = [(2, 3, 9)];
 const COMPARABLE_MAJORS: [(i64, i64); 5] = [(1, 10), (2, 0), (2, 1), (2, 2), (2, 3)];
 const COMPARABLE_PRODUCTS: [i64; 2] = [1, 2];
 
@@ -26,6 +26,51 @@ fn main() {
     rustc_cfg!(true, "fmod_{}", product);
     rustc_cfg!(true, "fmod_{}_{}", product, major);
     rustc_cfg!(true, "fmod_{}_{}_{}", product, major, minor);
+
+    for v in &COMPARABLE_MINORS {
+        rustc_cfg!(
+            (product, major, minor) < *v,
+            r#"fmod_lt_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+        rustc_cfg!(
+            (product, major, minor) <= *v,
+            r#"fmod_lte_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+        rustc_cfg!(
+            (product, major, minor) == *v,
+            r#"fmod_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+        rustc_cfg!(
+            (product, major, minor) == *v,
+            r#"fmod_eq_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+        rustc_cfg!(
+            (product, major, minor) >= *v,
+            r#"fmod_gte_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+        rustc_cfg!(
+            (product, major, minor) > *v,
+            r#"fmod_gt_{}_{}_{}"#,
+            v.0,
+            v.1,
+            v.2
+        );
+    }
 
     for v in &COMPARABLE_MAJORS {
         rustc_cfg!((product, major) < *v, r#"fmod_lt_{}_{}"#, v.0, v.1);

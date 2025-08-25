@@ -1,5 +1,5 @@
-# FMOD 2.03.07
-# Coverage: 1214/1399 (86.78%)
+# FMOD 2.03.09
+# Coverage: 1217/1402 (86.80%)
 Checked boxes mean that particular function/struct/enum/macro is mentioned in fmod-oxide.
 
 It's a pretty decent metric for how much of FMOD this crate exposes.
@@ -73,6 +73,7 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_System_CreateStream`
 - [x] `FMOD_System_CreateDSP`
 - [x] `FMOD_System_CreateDSPByType`
+- [x] `FMOD_System_CreateDSPConnection`
 - [x] `FMOD_System_CreateChannelGroup`
 - [x] `FMOD_System_CreateSoundGroup`
 - [x] `FMOD_System_CreateReverb3D`
@@ -109,7 +110,7 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_System_SetOutput`
 - [x] `FMOD_System_GetSpeakerModeChannels`
 ## Sound
-- [x] `FMOD_Sound_SeekData`
+- [x] `FMOD_Sound_ReadData`
 - [x] `FMOD_Sound_SetDefaults`
 - [x] `FMOD_Sound_GetDefaults`
 - [x] `FMOD_Sound_Set3DMinMaxDistance`
@@ -127,8 +128,8 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_Sound_GetNumTags`
 - [x] `FMOD_Sound_GetTag`
 - [x] `FMOD_Sound_GetOpenState`
-- [x] `FMOD_Sound_ReadData`
 - [x] `FMOD_Sound_Release`
+- [x] `FMOD_Sound_SeekData`
 - [x] `FMOD_Sound_Unlock`
 - [x] `FMOD_Sound_GetSoundGroup`
 - [x] `FMOD_Sound_GetNumSyncPoints`
@@ -649,6 +650,7 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_DSPCONNECTION_TYPE_SIDECHAIN`
 - [x] `FMOD_DSPCONNECTION_TYPE_SEND`
 - [x] `FMOD_DSPCONNECTION_TYPE_SEND_SIDECHAIN`
+- [x] `FMOD_DSPCONNECTION_TYPE_PREALLOCATED`
 ## FMOD_TAGTYPE
 - [x] `FMOD_TAGTYPE_UNKNOWN`
 - [x] `FMOD_TAGTYPE_ID3V1`
@@ -1125,6 +1127,7 @@ It's a pretty decent metric for how much of FMOD this crate exposes.
 - [x] `FMOD_DEBUG_TYPE_FILE`
 - [x] `FMOD_DEBUG_TYPE_CODEC`
 - [x] `FMOD_DEBUG_TYPE_TRACE`
+- [x] `FMOD_DEBUG_TYPE_VIRTUAL`
 - [x] `FMOD_DEBUG_DISPLAY_TIMESTAMPS`
 - [x] `FMOD_DEBUG_DISPLAY_LINENUMBERS`
 - [x] `FMOD_DEBUG_DISPLAY_THREAD`

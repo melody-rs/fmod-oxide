@@ -239,7 +239,7 @@ pub fn collect(
                     .unwrap_or_else(|| "Unknown".to_string());
 
                 if verbose {
-                    println!("Found C function: {}: {}", name, category);
+                    println!("Found C function: {name}: {category}");
                 }
 
                 let (category, _) = categories.insert_full(category);
