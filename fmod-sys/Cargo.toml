@@ -24,7 +24,7 @@ name = "fmod_sys"
 document-features = "0.2"
 
 [build-dependencies]
-bindgen = "0.71.1"
+bindgen = "0.72.1"
 cc = "1.0"
 
 [features]

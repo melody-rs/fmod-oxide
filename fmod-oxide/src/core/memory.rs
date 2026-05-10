@@ -4,6 +4,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#![allow(unpredictable_function_pointer_comparisons)] // FIXME technically we should remove the partialeq & eq impls but thats a breaking change
+
 use crate::{FmodResultExt, Result};
 use fmod_sys::*;
 use std::ffi::{c_char, c_int, c_uint, c_void};

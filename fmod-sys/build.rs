@@ -168,6 +168,7 @@ fn main() {
         .derive_hash(true)
         .derive_default(true)
         .prepend_enum_name(false) // fmod already does this
+        .layout_tests(false)
         .header("src/wrapper.h");
 
     #[cfg(feature = "studio")]
