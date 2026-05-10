@@ -178,11 +178,10 @@ pub fn collect(
     let mut fmod_version = None;
 
     for entity in entities {
-        if let Some(name) = entity.get_name() {
-            if !seen.insert(name) {
+        if let Some(name) = entity.get_name()
+            && !seen.insert(name) {
                 continue;
             }
-        }
 
         match entity.get_kind() {
             clang::EntityKind::MacroDefinition => {
