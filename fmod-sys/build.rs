@@ -113,6 +113,7 @@ fn main() {
     fs::create_dir_all(&docs_dir).expect("Failed to create docs directory");
 
     let build_is_windows = std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "windows");
+    let target_env = std::env::var("CARGO_CFG_TARGET_ENV").unwrap_or_default();
     let build_is_wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|env| env == "wasm32");
     let build_is_emscripten =
         std::env::var("CARGO_CFG_TARGET_OS").is_ok_and(|env| env == "emscripten");
@@ -319,7 +320,20 @@ fn main() {
         build.flag_if_supported("-Wunused-command-line-argument"); // why is this raised?
     }
 
-    if build_is_windows {
+    if build_is_windows && target_env == "gnu" {
+        // FMOD's Windows C++ API is built with the Microsoft C++ ABI, including in the
+        // import libraries consumed by MinGW. Compile this C-ABI shim with the same ABI;
+        // compiling it with MinGW would produce incompatible Itanium-mangled references.
+        assert!(
+            build_is_x86_64,
+            "Windows GNU builds are currently supported only for x86_64"
+        );
+        build
+            .target("x86_64-pc-windows-msvc")
+            .compiler("clang-cl")
+            .archiver("llvm-lib")
+            .flag("/Zl");
+    } else if build_is_windows && target_env == "msvc" {
         let target = if build_is_x86_64 {
             "x86_64-pc-windows-msvc"
         } else if build_is_x86 {
