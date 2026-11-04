@@ -71,9 +71,9 @@ If no target specific directory was found, it'll default to `<fmod install dir>`
 
 #### Windows GNU
 
-Cross-compiling for `x86_64-pc-windows-gnu` requires `clang-cl` and `llvm-lib` to be available on `PATH`.
-FMOD's x64 Windows SDK exposes its C++ API with the Microsoft C++ ABI, so the crate uses those tools for its small C ABI shim while the Rust application
-and all other dependencies remain Windows GNU binaries.
+There are some functions not exposed in FMOD's C API, so this crate uses a small C++ shim to expose those functions.
+Due to ABI mismatches, cross-compiling for `x86_64-pc-windows-gnu` requires `clang-cl` and `llvm-lib`.
+They must be present in `PATH`!
 
 ### Using with webassembly
 
