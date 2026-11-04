@@ -26,4 +26,8 @@ fmod-audio-sys = "2.220.0"
 You'll need to download and install FMOD's API.
 On Windows, all you need to do is run the installer- everything else is handled for you.
 
+Cross-compiling for `x86_64-pc-windows-gnu` requires `clang-cl` and `llvm-lib` to be available on `PATH`.
+FMOD's x64 Windows SDK exposes its C++ API with the Microsoft C++ ABI, so the crate uses those tools for its small C ABI shim while the Rust application
+and all other dependencies remain Windows GNU binaries.
+
 On other platforms, you'll need to place FMOD somewhere (usually your binary's root) and set `FMOD_SYS_FMOD_DIRECTORY` via `.cargo/config.toml`.

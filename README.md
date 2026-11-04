@@ -69,6 +69,12 @@ The logic is quite basic at the moment, but it'll check if `<fmod install dir>/<
 
 If no target specific directory was found, it'll default to `<fmod install dir>`
 
+#### Windows GNU
+
+Cross-compiling for `x86_64-pc-windows-gnu` requires `clang-cl` and `llvm-lib` to be available on `PATH`.
+FMOD's x64 Windows SDK exposes its C++ API with the Microsoft C++ ABI, so the crate uses those tools for its small C ABI shim while the Rust application
+and all other dependencies remain Windows GNU binaries.
+
 ### Using with webassembly
 
 Currently only `wasm32-unknown-emscripten` works well.
